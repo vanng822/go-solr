@@ -1,4 +1,3 @@
-
 package solr
 
 import (
@@ -7,39 +6,39 @@ import (
 
 type SelectResponse struct {
 	results *Collection
-	status int
-	qtime int
+	status  int
+	qtime   int
 }
 
 type UpdateResponse struct {
-	success bool 
+	success bool
 }
 
 type ErrorResponse struct {
 	message string
-	status int
+	status  int
 }
 
 type Connection struct {
 	url *url.URL
 }
 
-func (c *Connection) Select(select_url string) (*SelectResponse, error) {
+func (self *Connection) Select(select_url string) (*SelectResponse, error) {
 	return nil, nil
 }
 
-func (c *Connection) Update(data string) (*UpdateResponse, error) {
+func (self *Connection) Update(data string) (*UpdateResponse, error) {
 	return nil, nil
 }
 
-func (c *Connection) Commit() (*UpdateResponse, error) {
+func (self *Connection) Commit() (*UpdateResponse, error) {
 	return nil, nil
 }
 
-func (c *Connection) Optimize() (*UpdateResponse, error) {
+func (self *Connection) Optimize() (*UpdateResponse, error) {
 	return nil, nil
 }
 
-func (c *Connection) Rollback() (*UpdateResponse, error) {
+func (self *Connection) Rollback() (*UpdateResponse, error) {
 	return nil, nil
 }

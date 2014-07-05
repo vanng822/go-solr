@@ -1,6 +1,5 @@
 package solr
 
-
 import (
 	"net/url"
 )
@@ -10,15 +9,14 @@ type Document struct {
 }
 
 type Collection struct {
-	docs []Document
-	start int
+	docs     []Document
+	start    int
 	numFound int
 }
 
-
-type SolrInterface struct{
+type SolrInterface struct {
 	format string
-	conn *Connection
+	conn   *Connection
 }
 
 func NewSolrInterface(solrUrl string) (*SolrInterface, error) {
@@ -27,42 +25,41 @@ func NewSolrInterface(solrUrl string) (*SolrInterface, error) {
 		return nil, err
 	}
 	conn := &Connection{url: u}
-	
+
 	si := &SolrInterface{conn: conn, format: "json"}
-	
+
 	return si, nil
 }
 
-func (si *SolrInterface) Search() {
+func (self *SolrInterface) Search() {
 
 }
 
-func (si *SolrInterface) Add(docs []string) {
+func (self *SolrInterface) Add(docs []string) {
 
 }
 
-func (si *SolrInterface) Delete(data string) (*UpdateResponse, error) {
+func (self *SolrInterface) Delete(data string) (*UpdateResponse, error) {
 	// prepare delete message here
 	message := data
-	return si.conn.Update(message)
+	return self.conn.Update(message)
 }
 
-func (si *SolrInterface) Update(data string) (*UpdateResponse, error) {
+func (self *SolrInterface) Update(data string) (*UpdateResponse, error) {
 	// prepare message
 	message := data
-	
-	return si.conn.Update(message)
+
+	return self.conn.Update(message)
 }
 
-func (si *SolrInterface) Commit() (*UpdateResponse, error) {
-	return si.conn.Commit()
+func (self *SolrInterface) Commit() (*UpdateResponse, error) {
+	return self.conn.Commit()
 }
 
 func (si *SolrInterface) Optimize() (*UpdateResponse, error) {
 	return si.conn.Optimize()
 }
 
-func (si *SolrInterface) Rollback() (*UpdateResponse, error) {
-	return si.conn.Rollback()
+func (self *SolrInterface) Rollback() (*UpdateResponse, error) {
+	return self.conn.Rollback()
 }
-
