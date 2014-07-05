@@ -56,8 +56,8 @@ func (self *SolrInterface) Commit() (*UpdateResponse, error) {
 	return self.conn.Commit()
 }
 
-func (si *SolrInterface) Optimize() (*UpdateResponse, error) {
-	return si.conn.Optimize()
+func (self *SolrInterface) Optimize() (*UpdateResponse, error) {
+	return self.conn.Optimize()
 }
 
 func (self *SolrInterface) Rollback() (*UpdateResponse, error) {
