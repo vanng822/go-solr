@@ -24,11 +24,8 @@ func NewSolrInterface(solrUrl string) (*SolrInterface, error) {
 	if err != nil {
 		return nil, err
 	}
-	conn := &Connection{url: u}
 
-	si := &SolrInterface{conn: conn, format: "json"}
-
-	return si, nil
+	return &SolrInterface{conn: &Connection{url: u}, format: "json"}, nil
 }
 
 func (self *SolrInterface) Search() {
