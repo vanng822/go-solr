@@ -4,9 +4,9 @@ package solr
 import "testing"
 
 
-func SolrTest(t *testing.T) {
+func TestSolr(t *testing.T) {
 
-	if _, err := NewSolrInterface(""); err != nil {
+	if _, err := NewSolrInterface("https://www.test.tld"); err != nil {
 		t.Errorf("Can not instance a new solr interface, err: %s", err)
 	}
 }
