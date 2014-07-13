@@ -3,7 +3,7 @@ package solr
 import "testing"
 import "fmt"
 
-func TestSolrSearch(t *testing.T) {
+func TestSolrQuery(t *testing.T) {
 	q := Query{
 		params: QueryParams{
 			"facet.field": []string{"accepts_4x4s", "accepts_bicycles"},
@@ -16,3 +16,10 @@ func TestSolrSearch(t *testing.T) {
 
 	fmt.Println(q.String())
 }
+
+func TestSolrSearch(t *testing.T) {
+	//s := new(Search)
+	//s.conn = &Connection
+}
+
+
