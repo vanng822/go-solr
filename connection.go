@@ -107,7 +107,7 @@ func (c *Connection) Update(data map[string]interface{}) (*UpdateResponse, error
 		return nil, err
 	}
 	r, err := HTTPPost(c.url.String(), b, nil)
-	if err != nil || r == nil {
+	if err != nil {
 		return nil, err
 	}
 	resp, err := bytes2Json(&r)
