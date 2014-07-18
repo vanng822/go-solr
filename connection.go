@@ -110,12 +110,13 @@ func (c *Connection) Update(data map[string]interface{}) (*UpdateResponse, error
 	if err != nil || r == nil {
 		return nil, err
 	}
-	//resp, err := bytes2Json(&r)
+	resp, err := bytes2Json(&r)
 	if err != nil {
 		return nil, err
 	}
 	// check error in resp
-
+	_ = resp
+	
 	return &UpdateResponse{true}, nil
 }
 
