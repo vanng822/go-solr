@@ -71,7 +71,12 @@ func (s *Search) QueryString() string {
 }
 
 func (s *Search) Result() (*Collection, error) {
-	//s.conn.Select(s.QueryString())
-
+	res, err := s.conn.Select(s.QueryString())
+	if err != nil {
+		return nil, err
+	}
+	## TODO fetch collection
+	_ = res
+	
 	return nil, nil
 }
