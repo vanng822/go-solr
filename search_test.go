@@ -13,6 +13,8 @@ func TestSolrQuery(t *testing.T) {
 		},
 	}
 	q.params["bf"] = []string{"something"}
+	
+	q.AddParam("qf", []string{"some qf"})
 
 	fmt.Println(q.String())
 }

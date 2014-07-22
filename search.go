@@ -12,6 +12,10 @@ type Query struct {
 	params QueryParams
 }
 
+func(q *Query) AddParam(k string, v []string) {
+	q.params[k] = v
+}
+
 func (q *Query) String() string {
 	query := url.Values{}
 
@@ -75,7 +79,7 @@ func (s *Search) Result() (*Collection, error) {
 	if err != nil {
 		return nil, err
 	}
-	## TODO fetch collection
+	// TODO fetch collection
 	_ = res
 	
 	return nil, nil
