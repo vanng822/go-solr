@@ -12,6 +12,9 @@ func TestSolrQuery(t *testing.T) {
 			
 		},
 	}
+	
+	//q := NewQuery()
+	
 	q.params["bf"] = []string{"something"}
 	
 	q.AddParam("qf", []string{"some qf"})

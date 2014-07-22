@@ -12,6 +12,12 @@ type Query struct {
 	params QueryParams
 }
 
+func NewQuery() *Query {
+	q := new(Query)
+	q.params = QueryParams{}
+	return q
+}
+
 func(q *Query) AddParam(k string, v []string) {
 	q.params[k] = v
 }
