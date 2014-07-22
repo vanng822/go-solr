@@ -16,6 +16,10 @@ func(q *Query) AddParam(k string, v []string) {
 	q.params[k] = v
 }
 
+func(q *Query) RemoveParam(k string) {
+	delete(q.params, k)
+}
+
 func (q *Query) String() string {
 	query := url.Values{}
 
