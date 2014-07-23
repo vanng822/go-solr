@@ -16,7 +16,7 @@ func TestSolrQueryAddParam(t *testing.T) {
 	fmt.Println(q.String())
 }
 
-func TestSolrQueryMultiple(t *testing.T) {
+func TestSolrSearchMultipleQuery(t *testing.T) {
 	q := NewQuery()
 	q.AddParam("testing", "test")
 	s := NewSearch(q)
@@ -32,6 +32,9 @@ func TestSolrQueryRemoveParam(t *testing.T) {
 	q := NewQuery()
 	q.AddParam("testing", "test")
 	q.AddParam("testing2", "testing 2")
+	if q.String() != "testing=test&testing2=testing+2" {
+		t.Errorf("Expected to be: 'testing=test&testing2=testing+2'")
+	}
 	q.RemoveParam("testing2")
 	if q.String() != "testing=test" {
 		t.Errorf("Expected to be: 'testing=test'")
