@@ -26,8 +26,10 @@ func NewSolrInterface(solrUrl string) (*SolrInterface, error) {
 	return &SolrInterface{conn: c, format: "json"}, nil
 }
 
-func (si *SolrInterface) Search() {
-
+func (si *SolrInterface) Search(q *Query) *Search {
+	s := NewSearch(q)
+	
+	return s
 }
 
 func (si *SolrInterface) Add(docs []string) {

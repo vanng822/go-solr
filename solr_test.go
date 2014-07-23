@@ -1,12 +1,19 @@
 
 package solr
 
-import "testing"
-
+import (
+	"fmt"
+	"testing"
+)
 
 func TestSolr(t *testing.T) {
-
-	if _, err := NewSolrInterface("https://www.test.tld"); err != nil {
+	si, err := NewSolrInterface("https://www.test.tld")
+	
+	if err != nil {
 		t.Errorf("Can not instance a new solr interface, err: %s", err)
 	}
+	q := NewQuery()
+	q.AddParam("testing", []string{"test"})
+	s := si.Search(q)
+	fmt.Println(s.QueryString())
 }

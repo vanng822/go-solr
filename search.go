@@ -49,6 +49,15 @@ type Search struct {
 	debug   string
 }
 
+func NewSearch(q *Query) * Search {
+	s := new(Search)
+	if q != nil {
+		s.AddQuery(q)
+	}
+	return s
+}
+
+
 func (s *Search) Query() *Query {
 	q := NewQuery()
 	s.AddQuery(q)
