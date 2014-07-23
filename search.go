@@ -42,7 +42,7 @@ func (q *Query) String() string {
 }
 
 type Search struct {
-	queries []Query
+	queries []*Query
 	conn    *Connection
 	start   int
 	rows    int
@@ -50,12 +50,12 @@ type Search struct {
 }
 
 func (s *Search) Query() *Query {
-	q := Query{params: QueryParams{}}
+	q := NewQuery()
 	s.AddQuery(q)
-	return &q
+	return q
 }
 
-func (s *Search) AddQuery(q Query) {
+func (s *Search) AddQuery(q *Query) {
 	s.queries = append(s.queries, q)
 }
 
