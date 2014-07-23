@@ -13,7 +13,7 @@ func TestSolr(t *testing.T) {
 		t.Errorf("Can not instance a new solr interface, err: %s", err)
 	}
 	q := NewQuery()
-	q.AddParam("testing", []string{"test"})
+	q.AddParam("testing", "test")
 	s := si.Search(q)
 	fmt.Println(s.QueryString())
 }

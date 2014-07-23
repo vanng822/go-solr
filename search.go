@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-type QueryParams map[string][]string
+type QueryParams map[string]string
 
 type Query struct {
 	params QueryParams
@@ -18,7 +18,7 @@ func NewQuery() *Query {
 	return q
 }
 
-func(q *Query) AddParam(k string, v []string) {
+func(q *Query) AddParam(k string, v string) {
 	q.params[k] = v
 }
 
@@ -31,10 +31,7 @@ func (q *Query) String() string {
 
 	if len(q.params) > 0 {
 		for k, v := range q.params {
-			l := len(v)
-			for x := 0; x < l; x++ {
-				query.Add(k, v[x])
-			}
+			query.Add(k, v)
 		}
 	}
 
