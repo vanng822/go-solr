@@ -19,7 +19,7 @@ func TestSolrQueryAddParam(t *testing.T) {
 func TestSolrSearchMultipleQuery(t *testing.T) {
 	q := NewQuery()
 	q.AddParam("testing", "test")
-	s := NewSearch(q)
+	s := NewSearch(nil, q)
 	q2 := NewQuery()
 	q2.AddParam("testing", "testing 2")
 	s.AddQuery(q2)
@@ -32,8 +32,9 @@ func TestSolrQueryRemoveParam(t *testing.T) {
 	q := NewQuery()
 	q.AddParam("testing", "test")
 	q.AddParam("testing2", "testing 2")
-	if q.String() != "testing=test&testing2=testing+2" {
-		t.Errorf("Expected to be: 'testing=test&testing2=testing+2'")
+	// random order in for loop of range on map
+	if q.String() != "testing=test&testing2=testing+2" && q.String() != "testing2=testing+2&testing=test" {
+		t.Errorf("Expected to be: 'testing=test&testing2=testing+2' or 'testing2=testing+2&testing=test'")
 	}
 	q.RemoveParam("testing2")
 	if q.String() != "testing=test" {

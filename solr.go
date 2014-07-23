@@ -27,7 +27,7 @@ func NewSolrInterface(solrUrl string) (*SolrInterface, error) {
 }
 
 func (si *SolrInterface) Search(q *Query) *Search {
-	s := NewSearch(q)
+	s := NewSearch(si.conn, q)
 	
 	return s
 }

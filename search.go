@@ -46,10 +46,13 @@ type Search struct {
 	debug   string
 }
 
-func NewSearch(q *Query) * Search {
+func NewSearch(c *Connection, q *Query) * Search {
 	s := new(Search)
 	if q != nil {
 		s.AddQuery(q)
+	}
+	if c != nil {
+		s.conn = c
 	}
 	return s
 }
