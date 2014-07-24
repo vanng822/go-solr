@@ -34,8 +34,18 @@ func HTTPPost(path string, data *[]byte, headers [][]string) ([]byte, error) {
 	return body, nil
 }
 
-func HTTPGet(url string) ([]byte, error) {
-	resp, err := http.Get(url)
+func HTTPGet(url string, headers [][]string) ([]byte, error) {
+	client := &http.Client{}
+	req, err := http.NewRequest("GET", url, nil)
+	
+	if len(headers) > 0 {
+		for i := range headers {
+			req.Header.Add(headers[i][0], headers[i][1])
+		}
+	}
+	
+	resp, err := client.Do(req)
+	
 	if err != nil {
 		return nil, err
 	}
@@ -43,6 +53,7 @@ func HTTPGet(url string) ([]byte, error) {
 	defer resp.Body.Close()
 
 	body, err := ioutil.ReadAll(resp.Body)
+	
 	if err != nil {
 		return nil, err
 	}
