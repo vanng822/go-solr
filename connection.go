@@ -60,7 +60,7 @@ func HTTPGet(url string, headers [][]string) ([]byte, error) {
 	return body, nil
 }
 
-func bytes2Json(data *[]byte) (map[string]interface{}, error) {
+func bytes2json(data *[]byte) (map[string]interface{}, error) {
 	var container interface{}
 	
 	err := json.Unmarshal(*data, &container)
@@ -72,7 +72,7 @@ func bytes2Json(data *[]byte) (map[string]interface{}, error) {
 	return container.(map[string]interface{}), nil
 }
 
-func json2Bytes(data map[string]interface{}) (*[]byte, error) {
+func json2bytes(data map[string]interface{}) (*[]byte, error) {
 	b, err := json.Marshal(data)
 	if err != nil {
 		return nil, fmt.Errorf("Failed to encode JSON")
@@ -114,7 +114,7 @@ func (c *Connection) Select(selectUrl string) (*SelectResponse, error) {
 }
 
 func (c *Connection) Update(data map[string]interface{}) (*UpdateResponse, error) {
-	b, err := json2Bytes(data)
+	b, err := json2bytes(data)
 	if err != nil {
 		return nil, err
 	}
@@ -122,7 +122,7 @@ func (c *Connection) Update(data map[string]interface{}) (*UpdateResponse, error
 	if err != nil {
 		return nil, err
 	}
-	resp, err := bytes2Json(&r)
+	resp, err := bytes2json(&r)
 	if err != nil {
 		return nil, err
 	}

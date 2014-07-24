@@ -14,7 +14,7 @@ func TestConnection(t *testing.T) {
 
 func TestBytes2Json(t *testing.T) {
 	data := []byte(`{"t":"s","two":2,"obj":{"c":"b","j":"F"},"a":[1,2,3]}`)
-	d, _ := bytes2Json(&data)
+	d, _ := bytes2json(&data)
 	PrintMapInterface(d)
 }
 
@@ -52,11 +52,11 @@ func TestJson2Bytes(t *testing.T) {
 		"a":   []interface{}{1, 2, 3},
 	}
 
-	b, err := json2Bytes(test_json)
+	b, err := json2bytes(test_json)
 	if err != nil {
 		fmt.Println(err)
 	}
-	d, _ := bytes2Json(b)
+	d, _ := bytes2json(b)
 
 	PrintMapInterface(d)
 }
