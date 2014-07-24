@@ -60,15 +60,16 @@ func HTTPGet(url string, headers [][]string) ([]byte, error) {
 	return body, nil
 }
 
-func bytes2Json(data *[]byte) (*interface{}, error) {
+func bytes2Json(data *[]byte) (map[string]interface{}, error) {
 	var container interface{}
+	
 	err := json.Unmarshal(*data, &container)
 
 	if err != nil {
 		return nil, fmt.Errorf("Response decode error")
 	}
 
-	return &container, nil
+	return container.(map[string]interface{}), nil
 }
 
 func json2Bytes(data map[string]interface{}) (*[]byte, error) {
