@@ -15,6 +15,14 @@ func TestConnection(t *testing.T) {
 func TestBytes2Json(t *testing.T) {
 	data := []byte(`{"t":"s","two":2,"obj":{"c":"b","j":"F"},"a":[1,2,3]}`)
 	d, _ := bytes2json(&data)
+	if d["t"] != "s" {
+		t.Errorf("t should have s as value")
+	}
+	
+	if d["two"].(float64) != 2 {
+		t.Errorf("two should have 2 as value")
+	}
+	
 	PrintMapInterface(d)
 }
 
@@ -57,6 +65,14 @@ func TestJson2Bytes(t *testing.T) {
 		fmt.Println(err)
 	}
 	d, _ := bytes2json(b)
-
+	
+	if d["t"] != "s" {
+		t.Errorf("t should have s as value")
+	}
+	
+	if d["two"].(float64) != 2 {
+		t.Errorf("two should have 2 as value")
+	}
+	
 	PrintMapInterface(d)
 }
