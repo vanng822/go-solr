@@ -109,7 +109,18 @@ func NewConnection(solrUrl string) (*Connection, error) {
 	return &Connection{url: u}, nil
 }
 
-func (c *Connection) Select(selectUrl string) (*SelectResponse, error) {
+func (c *Connection) Select(selectQuery string) (*SelectResponse, error) {
+	r, err := HTTPGet(fmt.Sprintf("%s/select?%s", c.url.String(), selectQuery), nil)
+	if err != nil {
+		return nil, err
+	}
+	resp, err := bytes2json(&r)
+	if err != nil {
+		return nil, err
+	}
+	// check error and parse result
+	_ = resp
+	
 	return nil, nil
 }
 
