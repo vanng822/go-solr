@@ -129,7 +129,7 @@ func (c *Connection) Update(data map[string]interface{}) (*UpdateResponse, error
 	if err != nil {
 		return nil, err
 	}
-	r, err := HTTPPost(c.url.String(), b, nil)
+	r, err := HTTPPost(fmt.Sprintf("%s/update/", c.url.String()), b, nil)
 	if err != nil {
 		return nil, err
 	}
