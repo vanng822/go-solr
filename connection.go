@@ -66,7 +66,7 @@ func bytes2json(data *[]byte) (map[string]interface{}, error) {
 	err := json.Unmarshal(*data, &container)
 
 	if err != nil {
-		return nil, fmt.Errorf("Response decode error")
+		return nil, err
 	}
 
 	return container.(map[string]interface{}), nil
@@ -75,7 +75,7 @@ func bytes2json(data *[]byte) (map[string]interface{}, error) {
 func json2bytes(data map[string]interface{}) (*[]byte, error) {
 	b, err := json.Marshal(data)
 	if err != nil {
-		return nil, fmt.Errorf("Failed to encode JSON")
+		return nil, err
 	}
 
 	return &b, nil
