@@ -32,8 +32,8 @@ func (si *SolrInterface) Search(q *Query) *Search {
 	return s
 }
 
-func (si *SolrInterface) Add(docs []string) {
-
+func (si *SolrInterface) Add(docs []*Document) {
+	
 }
 
 func (si *SolrInterface) Delete(data map[string]interface{}) (*UpdateResponse, error) {
