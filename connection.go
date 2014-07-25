@@ -110,7 +110,7 @@ func NewConnection(solrUrl string) (*Connection, error) {
 }
 
 func (c *Connection) Select(selectQuery string) (*SelectResponse, error) {
-	r, err := HTTPGet(fmt.Sprintf("%s/select?%s", c.url.String(), selectQuery), nil)
+	r, err := HTTPGet(fmt.Sprintf("%s/select/?%s", c.url.String(), selectQuery), nil)
 	if err != nil {
 		return nil, err
 	}
