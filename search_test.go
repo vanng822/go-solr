@@ -28,6 +28,17 @@ func TestSolrSearchMultipleQuery(t *testing.T) {
 	}
 }
 
+func TestSolrSearchDebugQuery(t *testing.T) {
+	q := NewQuery()
+	q.AddParam("testing", "test")
+	s := NewSearch(nil, q)
+	s.debug = "true"
+	res := s.QueryString()
+	if res != "wt=json&debug=true&indent=true&testing=test" {
+		t.Errorf("Expected to be: 'wt=json&debug=true&indent=true&testing=test' but got '%s'", res)
+	}
+}
+
 func TestSolrQueryRemoveParam(t *testing.T) {
 	q := NewQuery()
 	q.AddParam("testing", "test")

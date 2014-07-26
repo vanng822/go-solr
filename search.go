@@ -71,8 +71,8 @@ func (s *Search) QueryString() string {
 		query = append(query, fmt.Sprintf("rows=%d", s.rows))
 	}
 
-	if s.debug == "on" {
-		query = append(query, "debug=on")
+	if s.debug != "" {
+		query = append(query, fmt.Sprintf("debug=%s&indent=true", s.debug))
 	}
 
 	if len(s.queries) > 0 {
