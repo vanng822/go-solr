@@ -37,15 +37,15 @@ func HTTPPost(path string, data *[]byte, headers [][]string) ([]byte, error) {
 func HTTPGet(url string, headers [][]string) ([]byte, error) {
 	client := &http.Client{}
 	req, err := http.NewRequest("GET", url, nil)
-	
+
 	if len(headers) > 0 {
 		for i := range headers {
 			req.Header.Add(headers[i][0], headers[i][1])
 		}
 	}
-	
+
 	resp, err := client.Do(req)
-	
+
 	if err != nil {
 		return nil, err
 	}
@@ -53,7 +53,7 @@ func HTTPGet(url string, headers [][]string) ([]byte, error) {
 	defer resp.Body.Close()
 
 	body, err := ioutil.ReadAll(resp.Body)
-	
+
 	if err != nil {
 		return nil, err
 	}
@@ -62,7 +62,7 @@ func HTTPGet(url string, headers [][]string) ([]byte, error) {
 
 func bytes2json(data *[]byte) (map[string]interface{}, error) {
 	var container interface{}
-	
+
 	err := json.Unmarshal(*data, &container)
 
 	if err != nil {
@@ -82,14 +82,24 @@ func json2bytes(data map[string]interface{}) (*[]byte, error) {
 }
 
 type SelectResponse struct {
+	/**
+	responseHeader map[string]interface{}
+	response       map[string]interface{}
+	facet_counts   map[string]interface{}
+	highlighting   map[string]interface{}
+	debug          map[string]interface{}
+	error          map[string]interface{}
+	*/
+	response map[string]interface{}
+	// status quick access to status
+	status int
+	// results parsed documents, basically response object
 	results *Collection
-	status  int
-	qtime   int
 }
 
 type UpdateResponse struct {
 	success bool
-	result map[string]interface{}
+	result  map[string]interface{}
 }
 
 type ErrorResponse struct {
@@ -106,7 +116,7 @@ func NewConnection(solrUrl string) (*Connection, error) {
 	if err != nil {
 		return nil, err
 	}
-	
+
 	return &Connection{url: u}, nil
 }
 
@@ -121,7 +131,7 @@ func (c *Connection) Select(selectQuery string) (*SelectResponse, error) {
 	}
 	// check error and parse result
 	_ = resp
-	
+
 	return nil, nil
 }
 
@@ -140,7 +150,7 @@ func (c *Connection) Update(data map[string]interface{}) (*UpdateResponse, error
 	}
 	// check error in resp
 	_ = resp
-	
+
 	return &UpdateResponse{success: true, result: resp}, nil
 }
 
