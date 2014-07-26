@@ -89,6 +89,7 @@ type SelectResponse struct {
 
 type UpdateResponse struct {
 	success bool
+	result map[string]interface{}
 }
 
 type ErrorResponse struct {
@@ -140,7 +141,7 @@ func (c *Connection) Update(data map[string]interface{}) (*UpdateResponse, error
 	// check error in resp
 	_ = resp
 	
-	return &UpdateResponse{true}, nil
+	return &UpdateResponse{success: true, result: resp}, nil
 }
 
 func (c *Connection) Commit() (*UpdateResponse, error) {
