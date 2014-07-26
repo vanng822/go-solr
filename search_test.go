@@ -45,8 +45,8 @@ func TestSolrQueryRemoveParam(t *testing.T) {
 	q.AddParam("testing2", "testing 2")
 	// random order in for loop of range on map
 	res := q.String()
-	if res != "testing2=testing+2&testing=test" {
-		t.Errorf("Expected to be: 'testing2=testing+2&testing=test' but got %s", res)
+	if res != "testing2=testing+2&testing=test" && res != "testing=test&testing2=testing+2" {
+		t.Errorf("Expected to be: 'testing2=testing+2&testing=test' or 'testing=test&testing2=testing+2' but got %s", res)
 	}
 	q.RemoveParam("testing2")
 	if q.String() != "testing=test" {
