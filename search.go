@@ -6,36 +6,27 @@ import (
 	"strings"
 )
 
-type QueryParams map[string]string
 
 type Query struct {
-	params QueryParams
+	params url.Values
 }
 
 func NewQuery() *Query {
 	q := new(Query)
-	q.params = QueryParams{}
+	q.params = url.Values{}
 	return q
 }
 
 func(q *Query) AddParam(k string, v string) {
-	q.params[k] = v
+	q.params.Add(k, v)
 }
 
 func(q *Query) RemoveParam(k string) {
-	delete(q.params, k)
+	q.params.Del(k)
 }
 
 func (q *Query) String() string {
-	query := url.Values{}
-
-	if len(q.params) > 0 {
-		for k, v := range q.params {
-			query.Add(k, v)
-		}
-	}
-
-	return query.Encode()
+	return q.params.Encode()
 }
 
 type Search struct {
