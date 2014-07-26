@@ -61,8 +61,8 @@ func (s *Search) AddQuery(q *Query) {
 
 func (s *Search) QueryString() string {
 
-	query := []string{}
-
+	query := []string{"wt=json"}
+	
 	if s.start > 0 {
 		query = append(query, fmt.Sprintf("start=%d", s.start))
 	}

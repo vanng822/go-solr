@@ -23,8 +23,8 @@ func TestSolrSearchMultipleQuery(t *testing.T) {
 	q2 := NewQuery()
 	q2.AddParam("testing", "testing 2")
 	s.AddQuery(q2)
-	if s.QueryString() != "testing=test&testing=testing+2" {
-		t.Errorf("Expected to be: 'testing=test&testing=testing+2'")
+	if s.QueryString() != "wt=json&testing=test&testing=testing+2" {
+		t.Errorf("Expected to be: 'wt=json&testing=test&testing=testing+2'")
 	}
 }
 
@@ -33,8 +33,9 @@ func TestSolrQueryRemoveParam(t *testing.T) {
 	q.AddParam("testing", "test")
 	q.AddParam("testing2", "testing 2")
 	// random order in for loop of range on map
-	if q.String() != "testing=test&testing2=testing+2" && q.String() != "testing2=testing+2&testing=test" {
-		t.Errorf("Expected to be: 'testing=test&testing2=testing+2' or 'testing2=testing+2&testing=test'")
+	res := q.String()
+	if res != "testing2=testing+2&testing=test" {
+		t.Errorf("Expected to be: 'testing2=testing+2&testing=test' but got %s", res)
 	}
 	q.RemoveParam("testing2")
 	if q.String() != "testing=test" {
