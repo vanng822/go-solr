@@ -5,6 +5,26 @@ import (
 	"testing"
 )
 
+func TestSolrDocument(t *testing.T) {
+	d := Document{"id": "test_id","title": "test title"}
+	if d.Has("id") == false {
+		t.Errorf("Has id expected to be true")
+	}
+	
+	if d.Has("not_exist") == true {
+		t.Errorf("Has not_exist expected to be false")
+	}
+	
+	if d.Get("title").(string) != "test title" {
+		t.Errorf("title expected to have value 'test title'")
+	}
+	
+	d.Set("new_title", "new title")
+	if d.Get("new_title").(string) != "new title" {
+		t.Errorf("new_title expected to have value 'new title'")
+	}
+}
+
 func TestSolrSuccessSelect(t *testing.T) {
 	go mockStartServer()
 
