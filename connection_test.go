@@ -37,13 +37,16 @@ func PrintMapInterface(d map[string]interface{}) {
 			fmt.Println(k, "is float", vv)
 		case map[string]interface{}:
 			fmt.Println(k, "type is map[string]interface{}")
-			for i, u := range vv {
-				fmt.Println(i, u)
-			}
+			PrintMapInterface(vv)
 		case []interface{}:
 			fmt.Println(k, "type is []interface{}")
 			for i, u := range vv {
-				fmt.Println(i, u)
+				switch uu := u.(type) {
+				case map[string]interface{}:
+					PrintMapInterface(uu)
+				default:
+					fmt.Println(i, u)
+				}
 			}
 		default:
 			fmt.Println(k, "is of a type I don't know how to handle", vv)
