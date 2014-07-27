@@ -51,7 +51,7 @@ func (si *SolrInterface) Search(q *Query) *Search {
 	return s
 }
 
-func (si *SolrInterface) Add(docs []*Document) (*UpdateResponse, error) {
+func (si *SolrInterface) Add(docs []Document) (*UpdateResponse, error) {
 	return nil, nil	
 }
 
