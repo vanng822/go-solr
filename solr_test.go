@@ -1,4 +1,3 @@
-
 package solr
 
 import (
@@ -6,18 +5,40 @@ import (
 	"testing"
 )
 
-func TestSolr(t *testing.T) {
-	si, err := NewSolrInterface("https://www.test.tld")
-	
+func TestSolrSuccessSelect(t *testing.T) {
+	go mockStartServer()
+
+	si, err := NewSolrInterface("http://127.0.0.1:12345/success")
+
 	if err != nil {
 		t.Errorf("Can not instance a new solr interface, err: %s", err)
 	}
-	q := NewQuery()
-	q.AddParam("testing", "test")
-	s := si.Search(q)
-	q2 := NewQuery()
-	q2.AddParam("testing", "testing 2")
-	s.AddQuery(q2)
 	
-	fmt.Println(s.QueryString())
+	q := NewQuery()
+	q.AddParam("q", "*:*")
+	s := si.Search(q)
+	
+	res, err := s.Result()
+
+	if err != nil {
+		t.Errorf("cannot seach %s", err)
+	}
+	
+	if res.results.numFound != 1 {
+		t.Errorf("results.numFound expected to be 1")
+	}
+	
+	if res.results.start != 0 {
+		t.Errorf("results.start expected to be 0")
+	}
+	
+	if len(res.results.docs) != 1 {
+		t.Errorf("len of .docs should be 1")
+	}
+	
+	if res.results.docs[0].Get("id").(string) != "change.me" {
+		t.Errorf("id of first document should be change.me")
+	}
+	
+	fmt.Println(" ")
 }

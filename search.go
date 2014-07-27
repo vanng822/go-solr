@@ -84,13 +84,6 @@ func (s *Search) QueryString() string {
 	return strings.Join(query, "&")
 }
 
-func (s *Search) Result() (*Collection, error) {
-	res, err := s.conn.Select(s.QueryString())
-	if err != nil {
-		return nil, err
-	}
-	// TODO fetch collection
-	_ = res
-	
-	return nil, nil
+func (s *Search) Result() (*SelectResponse, error) {
+	return s.conn.Select(s.QueryString())
 }

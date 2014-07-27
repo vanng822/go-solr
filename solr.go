@@ -1,11 +1,30 @@
 package solr
 
 import (
+	"fmt"
 )
 
-type Document struct {
-	fields map[string]interface{}
+type Document map[string]interface{}
+
+// Has check if a key exist in document
+func (d Document) Has(k string) bool {
+	_, ok := d[k]
+	return ok
 }
+
+// Get returns value of a key if key exists else panic
+func (d Document) Get(k string) interface{} {
+	if v, ok := d[k]; ok {
+		return v
+	}
+	panic(fmt.Sprintf("Try to access field '%s' which does not exist", k))
+}
+
+// Set add a key/value to document
+func(d Document) Set(k string, v interface{}) {
+	d[k] = v
+}
+
 
 type Collection struct {
 	docs     []Document

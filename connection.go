@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
+	"log"
 )
 
 func HTTPPost(path string, data *[]byte, headers [][]string) ([]byte, error) {
@@ -82,7 +83,7 @@ func json2bytes(data map[string]interface{}) (*[]byte, error) {
 }
 
 func hasError(response map[string]interface{}) bool {
-	_,ok := response["error"]
+	_, ok := response["error"]
 	return ok
 }
 
@@ -135,9 +136,24 @@ func (c *Connection) Select(selectQuery string) (*SelectResponse, error) {
 		return nil, err
 	}
 	// check error and parse result
-	_ = resp
 
-	return nil, nil
+	result := SelectResponse{response: resp}
+	result.results = new(Collection)
+	
+	if hasError(resp) == false {
+		if response, ok := resp["response"].(map[string]interface{}); ok {
+			log.Println("Response is ok")
+			result.results.numFound = int(response["numFound"].(float64))
+			result.results.start = int(response["start"].(float64))
+			if docs, ok := response["docs"].([]interface{}); ok {
+				for _, v := range docs {
+					result.results.docs = append(result.results.docs, Document(v.(map[string]interface {})))
+				}
+			}
+		}
+	}
+
+	return &result, nil
 }
 
 func (c *Connection) Update(data map[string]interface{}) (*UpdateResponse, error) {
@@ -157,7 +173,7 @@ func (c *Connection) Update(data map[string]interface{}) (*UpdateResponse, error
 	if hasError(resp) {
 		return &UpdateResponse{success: false, result: resp}, nil
 	}
-	
+
 	return &UpdateResponse{success: true, result: resp}, nil
 }
 
