@@ -24,6 +24,7 @@ func mockSuccessSelect(w http.ResponseWriter, req *http.Request) {
 }
 
 func mockFailSelect(w http.ResponseWriter, req *http.Request) {
+	w.WriteHeader(400)
 	io.WriteString(w, `{
 		  "responseHeader":{
 		    "status":400,

@@ -140,6 +140,8 @@ func (c *Connection) Select(selectQuery string) (*SelectResponse, error) {
 	result := SelectResponse{response: resp}
 	result.results = new(Collection)
 	
+	result.status = int(resp["responseHeader"].(map[string]interface{})["status"].(float64))
+	
 	if hasError(resp) == false {
 		if response, ok := resp["response"].(map[string]interface{}); ok {
 			log.Println("Response is ok")
