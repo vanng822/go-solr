@@ -18,11 +18,11 @@ func TestBytes2Json(t *testing.T) {
 	if d["t"] != "s" {
 		t.Errorf("t should have s as value")
 	}
-	
+
 	if d["two"].(float64) != 2 {
 		t.Errorf("two should have 2 as value")
 	}
-	
+
 	PrintMapInterface(d)
 }
 
@@ -65,14 +65,52 @@ func TestJson2Bytes(t *testing.T) {
 		fmt.Println(err)
 	}
 	d, _ := bytes2json(b)
-	
+
 	if d["t"] != "s" {
 		t.Errorf("t should have s as value")
 	}
-	
+
 	if d["two"].(float64) != 2 {
 		t.Errorf("two should have 2 as value")
 	}
-	
+
 	PrintMapInterface(d)
+}
+
+func TestHasError(t *testing.T) {
+	data := map[string]interface{}{
+		"responseHeader": map[string]interface{}{
+			"status": 400,
+			"QTime":  30,
+			"params": map[string]interface{}{
+				"indent": "true",
+				"q":      "**",
+				"wt":     "json"}},
+		"error": map[string]interface{}{
+			"msg":  "no field name specified in query and no default specified via 'df' param",
+			"code": 400}}
+
+	if hasError(data) != true {
+		t.Errorf("Should have an error")
+	}
+
+	data2 := map[string]interface{}{
+		"responseHeader": map[string]interface{}{
+			"status": 400,
+			"QTime":  30,
+			"params": map[string]interface{}{
+				"indent": "true",
+				"q":      "**",
+				"wt":     "json"}},
+		"response": map[string]interface{}{
+			"numFound": 1,
+			"start":    0,
+			"docs": []map[string]interface{}{{
+				"id":        "change.me",
+				"title":     "change.me",
+				"_version_": 14}}}}
+
+	if hasError(data2) != false {
+		t.Errorf("Should not has an error")
+	}
 }

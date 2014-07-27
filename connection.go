@@ -81,6 +81,11 @@ func json2bytes(data map[string]interface{}) (*[]byte, error) {
 	return &b, nil
 }
 
+func hasError(response map[string]interface{}) bool {
+	_,ok := response["error"]
+	return ok
+}
+
 type SelectResponse struct {
 	/**
 	responseHeader map[string]interface{}
@@ -149,8 +154,10 @@ func (c *Connection) Update(data map[string]interface{}) (*UpdateResponse, error
 		return nil, err
 	}
 	// check error in resp
-	_ = resp
-
+	if hasError(resp) {
+		return &UpdateResponse{success: false, result: resp}, nil
+	}
+	
 	return &UpdateResponse{success: true, result: resp}, nil
 }
 
