@@ -32,6 +32,14 @@ type Collection struct {
 	numFound int
 }
 
+type SolrResult struct {
+	response map[string]interface{}
+	// status quick access to status
+	status int
+	// results parsed documents, basically response object
+	results *Collection
+}
+
 type SolrInterface struct {
 	format string
 	conn   *Connection

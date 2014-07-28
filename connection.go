@@ -7,7 +7,6 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
-	"log"
 )
 
 func HTTPPost(path string, data *[]byte, headers [][]string) ([]byte, error) {
@@ -99,8 +98,6 @@ type SelectResponse struct {
 	response map[string]interface{}
 	// status quick access to status
 	status int
-	// results parsed documents, basically response object
-	results *Collection
 }
 
 type UpdateResponse struct {
@@ -135,26 +132,9 @@ func (c *Connection) Select(selectQuery string) (*SelectResponse, error) {
 	if err != nil {
 		return nil, err
 	}
-	// check error and parse result
 
 	result := SelectResponse{response: resp}
-	result.results = new(Collection)
-	
 	result.status = int(resp["responseHeader"].(map[string]interface{})["status"].(float64))
-	
-	if hasError(resp) == false {
-		if response, ok := resp["response"].(map[string]interface{}); ok {
-			log.Println("Response is ok")
-			result.results.numFound = int(response["numFound"].(float64))
-			result.results.start = int(response["start"].(float64))
-			if docs, ok := response["docs"].([]interface{}); ok {
-				for _, v := range docs {
-					result.results.docs = append(result.results.docs, Document(v.(map[string]interface {})))
-				}
-			}
-		}
-	}
-
 	return &result, nil
 }
 
