@@ -92,6 +92,7 @@ type SelectResponse struct {
 	response       map[string]interface{}
 	facet_counts   map[string]interface{}
 	highlighting   map[string]interface{}
+	grouped        map[string]interface{}
 	debug          map[string]interface{}
 	error          map[string]interface{}
 	*/

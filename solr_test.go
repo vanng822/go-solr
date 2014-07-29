@@ -38,7 +38,7 @@ func TestSolrSuccessSelect(t *testing.T) {
 	q.AddParam("q", "*:*")
 	s := si.Search(q)
 	
-	res, err := s.Result()
+	res, err := s.Result(nil)
 
 	if err != nil {
 		t.Errorf("cannot seach %s", err)
@@ -79,8 +79,9 @@ func TestSolrFailSelect(t *testing.T) {
 	q.AddParam("q", "*:*")
 	s := si.Search(q)
 	
-	res, err := s.Result()
-
+	parser := new(StandardResultParser)
+	res, err := s.Result(parser)
+	
 	if err != nil {
 		t.Errorf("cannot seach %s", err)
 	}

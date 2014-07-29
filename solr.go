@@ -21,10 +21,9 @@ func (d Document) Get(k string) interface{} {
 }
 
 // Set add a key/value to document
-func(d Document) Set(k string, v interface{}) {
+func (d Document) Set(k string, v interface{}) {
 	d[k] = v
 }
-
 
 type Collection struct {
 	docs     []Document
@@ -33,11 +32,15 @@ type Collection struct {
 }
 
 type SolrResult struct {
-	response map[string]interface{}
 	// status quick access to status
 	status int
 	// results parsed documents, basically response object
-	results *Collection
+	results      *Collection
+	facet_counts map[string]interface{}
+	highlighting map[string]interface{}
+	
+	// grouped for grouping result, not supported for now
+	grouped      map[string]interface{}
 }
 
 type SolrInterface struct {
@@ -55,12 +58,12 @@ func NewSolrInterface(solrUrl string) (*SolrInterface, error) {
 
 func (si *SolrInterface) Search(q *Query) *Search {
 	s := NewSearch(si.conn, q)
-	
+
 	return s
 }
 
 func (si *SolrInterface) Add(docs []Document) (*UpdateResponse, error) {
-	return nil, nil	
+	return nil, nil
 }
 
 func (si *SolrInterface) Delete(data map[string]interface{}) (*UpdateResponse, error) {

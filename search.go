@@ -84,25 +84,13 @@ func (s *Search) QueryString() string {
 	return strings.Join(query, "&")
 }
 
-func (s *Search) Result() (*SolrResult, error) {
+func (s *Search) Result(parser ResultParser) (*SolrResult, error) {
 	resp, err := s.conn.Select(s.QueryString())
 	if err != nil {
 		return nil, err
 	}
-	result := &SolrResult{response: resp.response}
-	result.results = new(Collection)
-	result.status = resp.status
-	if resp.status == 0 {
-		if response, ok := resp.response["response"].(map[string]interface{}); ok {
-			result.results.numFound = int(response["numFound"].(float64))
-			result.results.start = int(response["start"].(float64))
-			if docs, ok := response["docs"].([]interface{}); ok {
-				for _, v := range docs {
-					result.results.docs = append(result.results.docs, Document(v.(map[string]interface {})))
-				}
-			}
-		}
+	if parser == nil {
+		parser = new(StandardResultParser)
 	}
-	
-	return result, nil
+	return parser.Parse(resp)
 }
