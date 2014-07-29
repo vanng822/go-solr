@@ -24,10 +24,10 @@ func (parser *StandardResultParser) Parse(response *SelectResponse) (*SolrResult
 
 
 func (parser *StandardResultParser) ParseResponse(response *SelectResponse, sr *SolrResult) {
-	if response, ok := response.response["response"].(map[string]interface{}); ok {
-		sr.results.numFound = int(response["numFound"].(float64))
-		sr.results.start = int(response["start"].(float64))
-		if docs, ok := response["docs"].([]interface{}); ok {
+	if resp, ok := response.response["response"].(map[string]interface{}); ok {
+		sr.results.numFound = int(resp["numFound"].(float64))
+		sr.results.start = int(resp["start"].(float64))
+		if docs, ok := resp["docs"].([]interface{}); ok {
 			for _, v := range docs {
 				sr.results.docs = append(sr.results.docs, Document(v.(map[string]interface{})))
 			}
