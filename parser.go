@@ -16,7 +16,7 @@ func (parser *StandardResultParser) Parse(response *SelectResponse) (*SolrResult
 	if response.status == 0 {
 		parser.ParseResponse(response, sr)
 		parser.ParseFacetCounts(response, sr)
-		parser.ParseLighlighting(response, sr)
+		parser.ParseHighlighting(response, sr)
 	}
 
 	return sr, nil
@@ -45,7 +45,7 @@ func (parser *StandardResultParser) ParseFacetCounts(response *SelectResponse, s
 	}
 }
 
-func (parser *StandardResultParser) ParseLighlighting(response *SelectResponse, sr *SolrResult) {
+func (parser *StandardResultParser) ParseHighlighting(response *SelectResponse, sr *SolrResult) {
 	if highlighting, ok := response.response["highlighting"]; ok {
 		sr.highlighting = highlighting.(map[string]interface{})
 	}
