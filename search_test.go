@@ -37,18 +37,6 @@ func TestSolrSearchDebugQuery(t *testing.T) {
 	if res != "wt=json&debug=true&indent=true&testing=test" {
 		t.Errorf("Expected to be: 'wt=json&debug=true&indent=true&testing=test' but got '%s'", res)
 	}
-	
-	resp, err := s.Result(&StandardResultParser{})
-	if resp != nil {
-		t.Errorf("resp expected to be nil due to no connection is set")
-	}
-	if err == nil {
-		t.Errorf("err expected to be not empty due to no connection is set")
-	}
-	expectedErrorMessage := "No connection found for making request to solr"
-	if err.Error() != expectedErrorMessage {
-		t.Errorf("The error message expecte to be '%s' but got '%s'", expectedErrorMessage, err.Error())
-	}
 }
 
 func TestSolrSearchWithoutConnection(t *testing.T) {
