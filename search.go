@@ -85,6 +85,9 @@ func (s *Search) QueryString() string {
 }
 
 func (s *Search) Result(parser ResultParser) (*SolrResult, error) {
+	if s.conn == nil {
+		return nil, fmt.Errorf("No connection found for making request to solr")
+	}
 	resp, err := s.conn.Select(s.QueryString())
 	if err != nil {
 		return nil, err
