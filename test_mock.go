@@ -63,6 +63,41 @@ func mockSuccessSelectFacet(w http.ResponseWriter, req *http.Request) {
 				    "facet_ranges":{}}}`)
 }
 
+func mockSuccessSelectHighlight(w http.ResponseWriter, req *http.Request) {
+	io.WriteString(w, `{
+					  "responseHeader":{
+					    "status":0,
+					    "QTime":0,
+					    "params":{
+					      "indent":"true",
+					      "q":"*:*",
+					      "wt":"json",
+					      "hl":"true"}},
+					  "response":{"numFound":4,"start":0,"docs":[
+					      {
+					        "id":"change.me",
+					        "title":["change.me"],
+					        "_version_":1474893319511212032},
+					      {
+					        "id":"change.me2",
+					        "title":["change.me2"],
+					        "_version_":1474893328448225280},
+					      {
+					        "id":"change.me3",
+					        "title":["change.me3"],
+					        "_version_":1474893336208736256},
+					      {
+					        "id":"change.me2",
+					        "title":["change.me22"],
+					        "_version_":1474893362047746048}]
+					  },
+					  "highlighting":{
+					    "change.me":{},
+					    "change.me2":{},
+					    "change.me3":{},
+					    "change.me2":{}}}`)
+}
+
 func mockFailSelect(w http.ResponseWriter, req *http.Request) {
 	w.WriteHeader(400)
 	io.WriteString(w, `{
@@ -82,7 +117,8 @@ func mockStartServer() {
 	http.HandleFunc("/success/select/", mockSuccessSelect)
 	http.HandleFunc("/fail/select/", mockFailSelect)
 	http.HandleFunc("/facet_counts/select/", mockSuccessSelectFacet)
-
+	http.HandleFunc("/highlight/select/", mockSuccessSelectHighlight)
+	
 	err := http.ListenAndServe(":12345", nil)
 	if err != nil {
 		log.Fatal("ListenAndServe: ", err)

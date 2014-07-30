@@ -104,6 +104,7 @@ func TestSolrFailSelect(t *testing.T) {
 	fmt.Println(" ")
 }
 
+
 func TestSolrFacetSelect(t *testing.T) {
 	si, err := NewSolrInterface("http://127.0.0.1:12345/facet_counts")
 
@@ -164,5 +165,57 @@ func TestSolrFacetSelect(t *testing.T) {
 
 	if id_len != 6 {
 		t.Errorf("results.facet_counts.facet_fields.id.len expected be 6 but got %d", id_len)
+	}
+}
+
+
+func TestSolrHighlightSelect(t *testing.T) {
+	si, err := NewSolrInterface("http://127.0.0.1:12345/highlight")
+
+	if err != nil {
+		t.Errorf("Can not instance a new solr interface, err: %s", err)
+	}
+
+	q := NewQuery()
+	q.AddParam("q", "*:*")
+	q.AddParam("hl", "true")
+
+	s := si.Search(q)
+	fmt.Println(s.QueryString())
+	parser := new(StandardResultParser)
+	res, err := s.Result(parser)
+
+	if err != nil {
+		t.Errorf("cannot seach %s", err)
+	}
+
+	if res.status != 0 {
+		t.Errorf("Status expected to be 0 but got %d", res.status)
+	}
+
+	if res.results.numFound != 4 {
+		t.Errorf("results.numFound expected to be 4 but got %d", res.results.numFound)
+	}
+
+	if res.results.start != 0 {
+		t.Errorf("results.start expected to be 0 but got %d", res.results.start)
+	}
+
+	if len(res.results.docs) != 4 {
+		t.Errorf("len of .docs should be 4 but got %d", len(res.results.docs))
+	}
+
+	third_doc := res.results.docs[2]
+
+	if third_doc.Get("id") != "change.me3" {
+		t.Errorf("id of third document expected to be 'change.me3' but got '%s'", third_doc.Get("id"))
+	}
+
+
+	_, ok:= res.highlighting["change.me"]
+
+	if ok == false {
+		t.Errorf("results.facet_counts.facet_fields.id expected")
+		return
 	}
 }
