@@ -106,10 +106,6 @@ type UpdateResponse struct {
 	result  map[string]interface{}
 }
 
-type ErrorResponse struct {
-	message string
-	status  int
-}
 
 type Connection struct {
 	url *url.URL
