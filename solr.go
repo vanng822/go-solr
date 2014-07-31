@@ -38,9 +38,10 @@ type SolrResult struct {
 	results      *Collection
 	facet_counts map[string]interface{}
 	highlighting map[string]interface{}
-	
+	error        map[string]interface{}
+
 	// grouped for grouping result, not supported for now
-	grouped      map[string]interface{}
+	grouped map[string]interface{}
 }
 
 type SolrInterface struct {

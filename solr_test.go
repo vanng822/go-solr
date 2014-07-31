@@ -88,6 +88,15 @@ func TestSolrFailSelect(t *testing.T) {
 	if res.status != 400 {
 		t.Errorf("Status expected to be 400")
 	}
+	expectedMsg := "no field name specified in query and no default specified via 'df' param"
+	msg, ok := res.error["msg"].(string)
+	if ok != true {
+		t.Errorf("error expected to have a message")
+	}
+	
+	if  msg != expectedMsg {
+		t.Errorf("Error msg expected to be '%s' but got '%s'", expectedMsg, msg)
+	}
 
 	if res.results.numFound != 0 {
 		t.Errorf("results.numFound expected to be 0")

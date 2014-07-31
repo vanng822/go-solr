@@ -17,9 +17,17 @@ func (parser *StandardResultParser) Parse(response *SelectResponse) (*SolrResult
 		parser.ParseResponse(response, sr)
 		parser.ParseFacetCounts(response, sr)
 		parser.ParseHighlighting(response, sr)
+	} else {
+		parser.ParseError(response, sr)
 	}
 
 	return sr, nil
+}
+
+func (parser *StandardResultParser) ParseError(response *SelectResponse, sr *SolrResult) {
+	if error, ok := response.response["error"]; ok {
+		sr.error = error.(map[string]interface{})
+	}
 }
 
 
