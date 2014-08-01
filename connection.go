@@ -9,6 +9,7 @@ import (
 	"net/url"
 )
 
+// HTTPPost make a POST request to path which also includes domain, headers are optional
 func HTTPPost(path string, data *[]byte, headers [][]string) ([]byte, error) {
 	client := &http.Client{}
 	req, err := http.NewRequest("POST", path, bytes.NewReader(*data))
@@ -34,6 +35,7 @@ func HTTPPost(path string, data *[]byte, headers [][]string) ([]byte, error) {
 	return body, nil
 }
 
+// HTTPGet make a GET request to url, headers are optional
 func HTTPGet(url string, headers [][]string) ([]byte, error) {
 	client := &http.Client{}
 	req, err := http.NewRequest("GET", url, nil)
