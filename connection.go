@@ -113,6 +113,7 @@ type Connection struct {
 	url *url.URL
 }
 
+// NewConnection will parse solrUrl and return a connection object, solrUrl must be a absolute url or path
 func NewConnection(solrUrl string) (*Connection, error) {
 	u, err := url.ParseRequestURI(solrUrl)
 	if err != nil {
