@@ -4,12 +4,20 @@ import "testing"
 import "fmt"
 
 func TestConnection(t *testing.T) {
-	fmt.Println("Running TestConnection")
-	/*body,_ := HTTPGet("http://igeonote.com/api/geoip/country/66.249.66.20")
-
-	res,_ := bytes2Json(&body)
-	fmt.Println(fmt.Sprintf("%s", *res))
-	*/
+	_, err1 := NewConnection("fakedomain.tld")
+	if err1 == nil {
+		t.Errorf("It should be an error since the url is not valid")
+	}
+	
+	_, err2 := NewConnection("http://www.fakedomain.tld")
+	if err2 != nil {
+		t.Errorf("It should not be an error since the url is  valid but got '%s'", err2.Error())
+	}
+	
+	_, err3 := NewConnection("http://www.fakedomain.tld/select/")
+	if err3 != nil {
+		t.Errorf("It should not be an error since the url is  valid but got '%s'", err3.Error())
+	}
 }
 
 func TestBytes2Json(t *testing.T) {

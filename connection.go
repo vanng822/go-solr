@@ -114,7 +114,7 @@ type Connection struct {
 }
 
 func NewConnection(solrUrl string) (*Connection, error) {
-	u, err := url.Parse(solrUrl)
+	u, err := url.ParseRequestURI(solrUrl)
 	if err != nil {
 		return nil, err
 	}
