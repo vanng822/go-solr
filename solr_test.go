@@ -228,3 +228,43 @@ func TestSolrHighlightSelect(t *testing.T) {
 		return
 	}
 }
+
+
+func TestSolrResultLoopSelect(t *testing.T) {
+	si, err := NewSolrInterface("http://127.0.0.1:12345/facet_counts")
+	if err != nil {
+		t.Errorf("Can not instance a new solr interface, err: %s", err)
+	}
+	q := NewQuery()
+	q.AddParam("q", "*:*")
+	q.AddParam("facet", "true")
+	q.AddParam("facet.field", "id")
+	s := si.Search(q)
+	res, err := s.Result(nil)
+	
+	if err != nil {
+		t.Errorf("Should not have an error here, skip assertions below. Please fix!")
+		return
+	}
+	
+	if cap(res.results.docs) != 4 {
+		t.Errorf("Capacity expected to be 4 but got '%d'", cap(res.results.docs))
+	}
+	
+	if len(res.results.docs) != 4 {
+		t.Errorf("len of .docs should be 4 but got %d", len(res.results.docs))
+	}
+	
+	for i, doc := range res.results.docs {
+		if doc.Has("id") == false {
+			t.Errorf("Document %d doesn't contain id", i)
+		}
+	}
+	
+	for i := 0; i < len(res.results.docs); i++ {
+		if res.results.docs[i].Has("id") == false {
+			t.Errorf("Document %d doesn't contain id", i)
+		}
+	}
+	
+}

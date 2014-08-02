@@ -37,8 +37,10 @@ func (parser *StandardResultParser) ParseResponse(response *SelectResponse, sr *
 		sr.results.numFound = int(resp["numFound"].(float64))
 		sr.results.start = int(resp["start"].(float64))
 		if docs, ok := resp["docs"].([]interface{}); ok {
-			for _, v := range docs {
-				sr.results.docs = append(sr.results.docs, Document(v.(map[string]interface{})))
+			// could use numFound for capacity here but safer with length of docs
+			sr.results.docs = make([]Document, len(docs))
+			for i, v := range docs {
+				sr.results.docs[i] = Document(v.(map[string]interface{}))
 			}
 		}
 	} else {
