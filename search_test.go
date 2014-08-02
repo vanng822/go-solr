@@ -26,15 +26,29 @@ func TestSolrSearchMultipleValueQuery(t *testing.T) {
 	}
 }
 
-func TestSolrSearchMultipleQuery(t *testing.T) {
+func TestSolrSearchMultipleValueSearchQuery(t *testing.T) {
 	q := NewQuery()
 	q.AddParam("testing", "test")
 	s := NewSearch(nil, q)
-	q2 := NewQuery()
-	q2.AddParam("testing", "testing 2")
-	s.AddQuery(q2)
+	q.AddParam("testing", "testing 2")
 	if s.QueryString() != "wt=json&testing=test&testing=testing+2" {
 		t.Errorf("Expected to be: 'wt=json&testing=test&testing=testing+2'")
+	}
+}
+
+func TestSolrSearchSetQuery(t *testing.T) {
+	q := NewQuery()
+	q.AddParam("testing", "test")
+	s := NewSearch(nil, q)
+	if s.QueryString() != "wt=json&testing=test" {
+		t.Errorf("Expected to be: 'wt=json&testing=test'")
+	}
+	q2 := NewQuery()
+	q2.AddParam("testing", "test2")
+	s.SetQuery(q2)
+	
+	if s.QueryString() != "wt=json&testing=test2" {
+		t.Errorf("Expected to be: 'wt=json&testing=test2'")
 	}
 }
 

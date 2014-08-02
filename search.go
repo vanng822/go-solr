@@ -6,7 +6,6 @@ import (
 	"strings"
 )
 
-
 type Query struct {
 	params url.Values
 }
@@ -17,19 +16,19 @@ func NewQuery() *Query {
 	return q
 }
 
-func(q *Query) AddParam(k string, v string) {
+func (q *Query) AddParam(k string, v string) {
 	q.params.Add(k, v)
 }
 
-func(q *Query) RemoveParam(k string) {
+func (q *Query) RemoveParam(k string) {
 	q.params.Del(k)
 }
 
-func(q *Query) GetParam(k string) string {
+func (q *Query) GetParam(k string) string {
 	return q.params.Get(k)
 }
 
-func(q *Query) SetParam(k string, v string) {
+func (q *Query) SetParam(k string, v string) {
 	q.params.Set(k, v)
 }
 
@@ -38,18 +37,18 @@ func (q *Query) String() string {
 }
 
 type Search struct {
-	queries []*Query
-	conn    *Connection
-	start   int
-	rows    int
-	debug   string
+	query *Query
+	conn  *Connection
+	start int
+	rows  int
+	debug string
 }
 
 // NewSearch takes c and q as optional
-func NewSearch(c *Connection, q *Query) * Search {
+func NewSearch(c *Connection, q *Query) *Search {
 	s := new(Search)
 	if q != nil {
-		s.AddQuery(q)
+		s.SetQuery(q)
 	}
 	if c != nil {
 		s.conn = c
@@ -57,15 +56,9 @@ func NewSearch(c *Connection, q *Query) * Search {
 	return s
 }
 
-
-func (s *Search) Query() *Query {
-	q := NewQuery()
-	s.AddQuery(q)
-	return q
-}
-
-func (s *Search) AddQuery(q *Query) {
-	s.queries = append(s.queries, q)
+// SetQuery will replace old query with new query q
+func (s *Search) SetQuery(q *Query) {
+	s.query = q
 }
 
 // QueryString return a query string of all queries, including start, rows debug and wt=json.
@@ -73,7 +66,7 @@ func (s *Search) AddQuery(q *Query) {
 func (s *Search) QueryString() string {
 
 	query := []string{"wt=json"}
-	
+
 	if s.start > 0 {
 		query = append(query, fmt.Sprintf("start=%d", s.start))
 	}
@@ -86,10 +79,8 @@ func (s *Search) QueryString() string {
 		query = append(query, fmt.Sprintf("debug=%s&indent=true", s.debug))
 	}
 
-	if len(s.queries) > 0 {
-		for _, v := range s.queries {
-			query = append(query, v.String())
-		}
+	if s.query != nil {
+		query = append(query, s.query.String())
 	}
 
 	return strings.Join(query, "&")
