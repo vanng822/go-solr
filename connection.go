@@ -15,7 +15,7 @@ func HTTPPost(path string, data *[]byte, headers [][]string) ([]byte, error) {
 		req *http.Request
 		err error
 	)
-	
+
 	client := &http.Client{}
 	if data == nil {
 		req, err = http.NewRequest("POST", path, nil)
@@ -146,12 +146,24 @@ func (c *Connection) Select(selectQuery string) (*SelectResponse, error) {
 	return &result, nil
 }
 
-func (c *Connection) Update(data map[string]interface{}) (*UpdateResponse, error) {
+// Update take data of type map and optional commit flag
+func (c *Connection) Update(data map[string]interface{}, commit bool) (*UpdateResponse, error) {
+	var (
+		r []byte
+		err error
+	)
+	
 	b, err := json2bytes(data)
 	if err != nil {
 		return nil, err
 	}
-	r, err := HTTPPost(fmt.Sprintf("%s/update/", c.url.String()), b, nil)
+	
+	if commit == true {
+		r, err = HTTPPost(fmt.Sprintf("%s/update/?commit=true", c.url.String()), b, nil)
+	} else {
+		r, err = HTTPPost(fmt.Sprintf("%s/update/", c.url.String()), b, nil)
+	}
+	
 	if err != nil {
 		return nil, err
 	}

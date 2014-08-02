@@ -65,17 +65,19 @@ func (si *SolrInterface) Add(docs []Document) (*UpdateResponse, error) {
 	return nil, nil
 }
 
-func (si *SolrInterface) Delete(data map[string]interface{}) (*UpdateResponse, error) {
+// Delete take data of type map and optional commit flag
+func (si *SolrInterface) Delete(data map[string]interface{}, commit bool) (*UpdateResponse, error) {
 	// prepare delete message here
 	message := data
-	return si.conn.Update(message)
+	return si.conn.Update(message, commit)
 }
 
-func (si *SolrInterface) Update(data map[string]interface{}) (*UpdateResponse, error) {
+// Update take data of type map and optional commit flag
+func (si *SolrInterface) Update(data map[string]interface{}, commit bool) (*UpdateResponse, error) {
 	// prepare message
 	message := data
 
-	return si.conn.Update(message)
+	return si.conn.Update(message, commit)
 }
 
 func (si *SolrInterface) Commit() (*UpdateResponse, error) {
