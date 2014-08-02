@@ -159,9 +159,9 @@ func (c *Connection) Update(data map[string]interface{}, commit bool) (*UpdateRe
 	}
 	
 	if commit == true {
-		r, err = HTTPPost(fmt.Sprintf("%s/update/?commit=true", c.url.String()), b, nil)
+		r, err = HTTPPost(fmt.Sprintf("%s/update/?wt=json&commit=true", c.url.String()), b, nil)
 	} else {
-		r, err = HTTPPost(fmt.Sprintf("%s/update/", c.url.String()), b, nil)
+		r, err = HTTPPost(fmt.Sprintf("%s/update/?wt=json", c.url.String()), b, nil)
 	}
 	
 	if err != nil {
@@ -180,7 +180,7 @@ func (c *Connection) Update(data map[string]interface{}, commit bool) (*UpdateRe
 }
 
 func (c *Connection) Commit() (*UpdateResponse, error) {
-	r, err := HTTPPost(fmt.Sprintf("%s/update/?commit=true", c.url.String()), nil, nil)
+	r, err := HTTPPost(fmt.Sprintf("%s/update/?wt=json&commit=true", c.url.String()), nil, nil)
 	if err != nil {
 		return nil, err
 	}
