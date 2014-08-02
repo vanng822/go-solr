@@ -60,7 +60,7 @@ func (s *Search) AddQuery(q *Query) {
 	s.queries = append(s.queries, q)
 }
 
-// QueryString return a query string of all queries, including start, rows debug and wt=json
+// QueryString return a query string of all queries, including start, rows debug and wt=json.
 // wt is always json
 func (s *Search) QueryString() string {
 
@@ -87,8 +87,8 @@ func (s *Search) QueryString() string {
 	return strings.Join(query, "&")
 }
 
-// Result will create a StandardResultParser if no parser specified
-// parser must be an implement ResultParser interface
+// Result will create a StandardResultParser if no parser specified.
+// parser must be an implementation of ResultParser interface
 func (s *Search) Result(parser ResultParser) (*SolrResult, error) {
 	if s.conn == nil {
 		return nil, fmt.Errorf("No connection found for making request to solr")

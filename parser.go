@@ -30,8 +30,8 @@ func (parser *StandardResultParser) ParseError(response *SelectResponse, sr *Sol
 	}
 }
 
-// ParseResponse will assign result and build sr.docs if there is a response
-// if there is no response property in response it will panic
+// ParseResponse will assign result and build sr.docs if there is a response.
+// If there is no response property in response it will panic
 func (parser *StandardResultParser) ParseResponse(response *SelectResponse, sr *SolrResult) {
 	if resp, ok := response.response["response"].(map[string]interface{}); ok {
 		sr.results.numFound = int(resp["numFound"].(float64))
@@ -48,16 +48,16 @@ func (parser *StandardResultParser) ParseResponse(response *SelectResponse, sr *
 	}
 }
 
-// ParseFacetCounts will assign facet_counts to sr if there is one
-// no modification done here
+// ParseFacetCounts will assign facet_counts to sr if there is one.
+// No modification done here
 func (parser *StandardResultParser) ParseFacetCounts(response *SelectResponse, sr *SolrResult) {
 	if facetCounts, ok := response.response["facet_counts"]; ok {
 		sr.facet_counts = facetCounts.(map[string]interface{})
 	}
 }
 
-// ParseHighlighting will assign highlighting to sr if there is one
-// no modification done here
+// ParseHighlighting will assign highlighting to sr if there is one.
+// No modification done here
 func (parser *StandardResultParser) ParseHighlighting(response *SelectResponse, sr *SolrResult) {
 	if highlighting, ok := response.response["highlighting"]; ok {
 		sr.highlighting = highlighting.(map[string]interface{})
