@@ -113,11 +113,18 @@ func mockFailSelect(w http.ResponseWriter, req *http.Request) {
 		    "code":400}}`)
 }
 
+func mockSuccessStandaloneCommit(w http.ResponseWriter, req *http.Request) {
+	io.WriteString(w, `{"responseHeader":{"status":0,"QTime":5}}`)
+}
+
 func mockStartServer() {
 	http.HandleFunc("/success/select/", mockSuccessSelect)
 	http.HandleFunc("/fail/select/", mockFailSelect)
 	http.HandleFunc("/facet_counts/select/", mockSuccessSelectFacet)
 	http.HandleFunc("/highlight/select/", mockSuccessSelectHighlight)
+	
+	http.HandleFunc("/standalonecommit/update/", mockSuccessStandaloneCommit)
+	
 	
 	err := http.ListenAndServe(":12345", nil)
 	if err != nil {

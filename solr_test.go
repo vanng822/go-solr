@@ -93,8 +93,8 @@ func TestSolrFailSelect(t *testing.T) {
 	if ok != true {
 		t.Errorf("error expected to have a message")
 	}
-	
-	if  msg != expectedMsg {
+
+	if msg != expectedMsg {
 		t.Errorf("Error msg expected to be '%s' but got '%s'", expectedMsg, msg)
 	}
 
@@ -112,7 +112,6 @@ func TestSolrFailSelect(t *testing.T) {
 
 	fmt.Println(" ")
 }
-
 
 func TestSolrFacetSelect(t *testing.T) {
 	si, err := NewSolrInterface("http://127.0.0.1:12345/facet_counts")
@@ -177,7 +176,6 @@ func TestSolrFacetSelect(t *testing.T) {
 	}
 }
 
-
 func TestSolrHighlightSelect(t *testing.T) {
 	si, err := NewSolrInterface("http://127.0.0.1:12345/highlight")
 
@@ -220,15 +218,13 @@ func TestSolrHighlightSelect(t *testing.T) {
 		t.Errorf("id of third document expected to be 'change.me3' but got '%s'", third_doc.Get("id"))
 	}
 
-
-	_, ok:= res.highlighting["change.me"]
+	_, ok := res.highlighting["change.me"]
 
 	if ok == false {
 		t.Errorf("results.facet_counts.facet_fields.id expected")
 		return
 	}
 }
-
 
 func TestSolrResultLoopSelect(t *testing.T) {
 	si, err := NewSolrInterface("http://127.0.0.1:12345/facet_counts")
@@ -241,30 +237,49 @@ func TestSolrResultLoopSelect(t *testing.T) {
 	q.AddParam("facet.field", "id")
 	s := si.Search(q)
 	res, err := s.Result(nil)
-	
+
 	if err != nil {
 		t.Errorf("Should not have an error here, skip assertions below. Please fix!")
 		return
 	}
-	
+
 	if cap(res.results.docs) != 4 {
 		t.Errorf("Capacity expected to be 4 but got '%d'", cap(res.results.docs))
 	}
-	
+
 	if len(res.results.docs) != 4 {
 		t.Errorf("len of .docs should be 4 but got %d", len(res.results.docs))
 	}
-	
+
 	for i, doc := range res.results.docs {
 		if doc.Has("id") == false {
 			t.Errorf("Document %d doesn't contain id", i)
 		}
 	}
-	
+
 	for i := 0; i < len(res.results.docs); i++ {
 		if res.results.docs[i].Has("id") == false {
 			t.Errorf("Document %d doesn't contain id", i)
 		}
 	}
-	
+
+}
+
+func TestSolrSuccessStandaloneCommit(t *testing.T) {
+
+	si, err := NewSolrInterface("http://127.0.0.1:12345/standalonecommit")
+
+	if err != nil {
+		t.Errorf("Can not instance a new solr interface, err: %s", err)
+	}
+
+	res, err := si.Commit()
+
+	if err != nil {
+		t.Errorf("cannot commit %s", err)
+	}
+
+	if res.success != true {
+		t.Errorf("success expected to be true")
+	}
 }

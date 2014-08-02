@@ -11,8 +11,17 @@ import (
 
 // HTTPPost make a POST request to path which also includes domain, headers are optional
 func HTTPPost(path string, data *[]byte, headers [][]string) ([]byte, error) {
+	var (
+		req *http.Request
+		err error
+	)
+	
 	client := &http.Client{}
-	req, err := http.NewRequest("POST", path, bytes.NewReader(*data))
+	if data == nil {
+		req, err = http.NewRequest("POST", path, nil)
+	} else {
+		req, err = http.NewRequest("POST", path, bytes.NewReader(*data))
+	}
 	if len(headers) > 0 {
 		for i := range headers {
 			req.Header.Add(headers[i][0], headers[i][1])
@@ -108,7 +117,6 @@ type UpdateResponse struct {
 	result  map[string]interface{}
 }
 
-
 type Connection struct {
 	url *url.URL
 }
@@ -160,7 +168,19 @@ func (c *Connection) Update(data map[string]interface{}) (*UpdateResponse, error
 }
 
 func (c *Connection) Commit() (*UpdateResponse, error) {
-	return nil, nil
+	r, err := HTTPPost(fmt.Sprintf("%s/update/?commit=true", c.url.String()), nil, nil)
+	if err != nil {
+		return nil, err
+	}
+	resp, err := bytes2json(&r)
+	if err != nil {
+		return nil, err
+	}
+	// check error in resp
+	if hasError(resp) {
+		return &UpdateResponse{success: false, result: resp}, nil
+	}
+	return &UpdateResponse{success: true, result: resp}, nil
 }
 
 func (c *Connection) Optimize() (*UpdateResponse, error) {
