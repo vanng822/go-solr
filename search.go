@@ -25,6 +25,14 @@ func(q *Query) RemoveParam(k string) {
 	q.params.Del(k)
 }
 
+func(q *Query) GetParam(k string) string {
+	return q.params.Get(k)
+}
+
+func(q *Query) SetParam(k string, v string) {
+	q.params.Set(k, v)
+}
+
 func (q *Query) String() string {
 	return q.params.Encode()
 }
