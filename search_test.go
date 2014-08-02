@@ -16,6 +16,16 @@ func TestSolrQueryAddParam(t *testing.T) {
 	fmt.Println(q.String())
 }
 
+func TestSolrSearchMultipleValueQuery(t *testing.T) {
+	q := NewQuery()
+	q.AddParam("testing", "test")
+	q.AddParam("testing", "testing 2")
+	res := q.String()
+	if res != "testing=test&testing=testing+2" {
+		t.Errorf("Expected to be: 'testing=test&testing=testing+2' but got '%s'", res)
+	}
+}
+
 func TestSolrSearchMultipleQuery(t *testing.T) {
 	q := NewQuery()
 	q.AddParam("testing", "test")
