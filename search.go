@@ -61,7 +61,7 @@ func (s *Search) SetQuery(q *Query) {
 	s.query = q
 }
 
-// QueryString return a query string of all queries, including start, rows debug and wt=json.
+// QueryString return a query string of all queries, including start, rows, debug and wt=json.
 // wt is always json
 func (s *Search) QueryString() string {
 
