@@ -37,6 +37,7 @@ type Search struct {
 	debug   string
 }
 
+// NewSearch takes c and q as optional
 func NewSearch(c *Connection, q *Query) * Search {
 	s := new(Search)
 	if q != nil {
@@ -59,6 +60,8 @@ func (s *Search) AddQuery(q *Query) {
 	s.queries = append(s.queries, q)
 }
 
+// QueryString return a query string of all queries, including start, rows debug and wt=json
+// wt is always json
 func (s *Search) QueryString() string {
 
 	query := []string{"wt=json"}
@@ -84,6 +87,8 @@ func (s *Search) QueryString() string {
 	return strings.Join(query, "&")
 }
 
+// Result will create a StandardResultParser if no parser specified
+// parser must be an implement ResultParser interface
 func (s *Search) Result(parser ResultParser) (*SolrResult, error) {
 	if s.conn == nil {
 		return nil, fmt.Errorf("No connection found for making request to solr")
