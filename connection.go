@@ -83,7 +83,7 @@ func bytes2json(data *[]byte) (map[string]interface{}, error) {
 	return container.(map[string]interface{}), nil
 }
 
-func json2bytes(data map[string]interface{}) (*[]byte, error) {
+func json2bytes(data interface{}) (*[]byte, error) {
 	b, err := json.Marshal(data)
 	if err != nil {
 		return nil, err
@@ -146,7 +146,7 @@ func (c *Connection) Select(selectQuery string) (*SelectResponse, error) {
 	return &result, nil
 }
 
-// Update take data of type map and optional params which can use to specify addition parameters such as commit=true
+// Update take optional params which can use to specify addition parameters such as commit=true
 func (c *Connection) Update(data map[string]interface{}, params *url.Values) (*UpdateResponse, error) {
 	var (
 		r []byte
@@ -154,6 +154,7 @@ func (c *Connection) Update(data map[string]interface{}, params *url.Values) (*U
 	)
 	
 	b, err := json2bytes(data)
+	
 	if err != nil {
 		return nil, err
 	}
@@ -164,7 +165,7 @@ func (c *Connection) Update(data map[string]interface{}, params *url.Values) (*U
 	
 	params.Set("wt", "json")
 	
-	r, err = HTTPPost(fmt.Sprintf("%s/update/?%s", c.url.String(), params.Encode()), b, nil)
+	r, err = HTTPPost(fmt.Sprintf("%s/update/?%s", c.url.String(), params.Encode()), b, [][]string{{"Content-Type", "application/json"}})
 	
 	if err != nil {
 		return nil, err
@@ -182,19 +183,9 @@ func (c *Connection) Update(data map[string]interface{}, params *url.Values) (*U
 }
 
 func (c *Connection) Commit() (*UpdateResponse, error) {
-	r, err := HTTPPost(fmt.Sprintf("%s/update/?wt=json&commit=true", c.url.String()), nil, nil)
-	if err != nil {
-		return nil, err
-	}
-	resp, err := bytes2json(&r)
-	if err != nil {
-		return nil, err
-	}
-	// check error in resp
-	if hasError(resp) {
-		return &UpdateResponse{success: false, result: resp}, nil
-	}
-	return &UpdateResponse{success: true, result: resp}, nil
+	params := &url.Values{}
+	params.Add("commit", "true")
+	return c.Update(map[string]interface{}{}, params)
 }
 
 func (c *Connection) Optimize() (*UpdateResponse, error) {
