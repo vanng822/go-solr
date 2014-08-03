@@ -146,8 +146,8 @@ func (c *Connection) Select(selectQuery string) (*SelectResponse, error) {
 	return &result, nil
 }
 
-// Update take data of type map and optional commit flag
-func (c *Connection) Update(data map[string]interface{}, commit bool) (*UpdateResponse, error) {
+// Update take data of type map and optional params which can use to specify addition parameters such as commit=true
+func (c *Connection) Update(data map[string]interface{}, params *url.Values) (*UpdateResponse, error) {
 	var (
 		r []byte
 		err error
@@ -158,11 +158,13 @@ func (c *Connection) Update(data map[string]interface{}, commit bool) (*UpdateRe
 		return nil, err
 	}
 	
-	if commit == true {
-		r, err = HTTPPost(fmt.Sprintf("%s/update/?wt=json&commit=true", c.url.String()), b, nil)
-	} else {
-		r, err = HTTPPost(fmt.Sprintf("%s/update/?wt=json", c.url.String()), b, nil)
+	if params == nil {
+		params = &url.Values{}
 	}
+	
+	params.Set("wt", "json")
+	
+	r, err = HTTPPost(fmt.Sprintf("%s/update/?%s", c.url.String(), params.Encode()), b, nil)
 	
 	if err != nil {
 		return nil, err

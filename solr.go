@@ -2,6 +2,7 @@ package solr
 
 import (
 	"fmt"
+	"net/url"
 )
 
 type Document map[string]interface{}
@@ -61,23 +62,24 @@ func (si *SolrInterface) Search(q *Query) *Search {
 	return s
 }
 
-func (si *SolrInterface) Add(docs []Document) (*UpdateResponse, error) {
+func (si *SolrInterface) Add(docs []Document, chunk int, params *url.Values) (*UpdateResponse, error) {
+	
 	return nil, nil
 }
 
-// Delete take data of type map and optional commit flag
-func (si *SolrInterface) Delete(data map[string]interface{}, commit bool) (*UpdateResponse, error) {
+// Delete take data of type map and optional params which can use to specify addition parameters such as commit=true
+func (si *SolrInterface) Delete(data map[string]interface{}, params *url.Values) (*UpdateResponse, error) {
 	// prepare delete message here
 	message := data
-	return si.conn.Update(message, commit)
+	return si.conn.Update(message, params)
 }
 
-// Update take data of type map and optional commit flag
-func (si *SolrInterface) Update(data map[string]interface{}, commit bool) (*UpdateResponse, error) {
+// Update take data of type map and optional params which can use to specify addition parameters such as commit=true
+func (si *SolrInterface) Update(data map[string]interface{}, params *url.Values) (*UpdateResponse, error) {
 	// prepare message
 	message := data
 
-	return si.conn.Update(message, commit)
+	return si.conn.Update(message, params)
 }
 
 func (si *SolrInterface) Commit() (*UpdateResponse, error) {
