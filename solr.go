@@ -2,6 +2,7 @@ package solr
 
 import (
 	"fmt"
+	"math"
 	"net/url"
 )
 
@@ -62,9 +63,46 @@ func (si *SolrInterface) Search(q *Query) *Search {
 	return s
 }
 
+func makeAddChunks(docs []Document, chunk int) []map[string]interface{} {
+	if chunk < 1 {
+		chunk = 100
+	}
+	docs_len := len(docs)
+	num_chunk := int(math.Ceil(float64(docs_len) / float64(chunk)))
+	doc_counter := 0
+	result := make([]map[string]interface{}, num_chunk)
+	for i := 0; i < num_chunk; i++ {
+		add := make([]Document, 0, chunk)
+		for j := 0; j < chunk; j++ {
+			if doc_counter >= docs_len {
+				break
+			}
+			add = append(add, docs[doc_counter])
+			doc_counter++
+		}
+		result[i] = map[string]interface{}{"add": add}
+	}
+	return result
+}
+
 func (si *SolrInterface) Add(docs []Document, chunk int, params *url.Values) (*UpdateResponse, error) {
-	
-	return nil, nil
+	result := &UpdateResponse{success: true}
+	responses := map[string]interface{}{}
+	chunks := makeAddChunks(docs, chunk)
+
+	for i := 0; i < len(chunks); i++ {
+		res, err := si.Update(chunks[i], params)
+		if err != nil {
+			return nil, err
+		}
+		result.success = result.success && res.success
+		responses[fmt.Sprintf("chunk_%d", i+1)] = map[string]interface{}{
+			"result":  res.result,
+			"success": res.success,
+			"total":   len(chunks[i]["add"].([]Document))}
+	}
+	result.result = responses
+	return result, nil
 }
 
 // Delete take data of type map and optional params which can use to specify addition parameters such as commit=true

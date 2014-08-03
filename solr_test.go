@@ -283,3 +283,69 @@ func TestSolrSuccessStandaloneCommit(t *testing.T) {
 		t.Errorf("success expected to be true")
 	}
 }
+
+func TestMakeAddChunks(t *testing.T) {
+	docs := make([]Document, 0, 100)
+	for i := 0; i < 500; i++ {
+		docs = append(docs, Document{"id": fmt.Sprintf("test_id_%d", i), "title": fmt.Sprintf("add sucess %d", i)})
+	}
+	chunks := makeAddChunks(docs, 100)
+	expected_len := 5
+	if len(chunks) != expected_len {
+		t.Errorf("Chunks length expected to be '%d' but got '%d'", expected_len, len(chunks))
+	}
+
+	d := chunks[0]["add"].([]Document)[0]
+
+	if d.Get("id") != "test_id_0" {
+		t.Errorf("First element in first chunk should have id test_id_0 ")
+	}
+
+	d = chunks[1]["add"].([]Document)[0]
+
+	if d.Get("id") != "test_id_100" {
+		t.Errorf("First element in second chunk should have id test_id_100 ")
+	}
+
+	chunks = makeAddChunks(docs, 50)
+	expected_len = 10
+	if len(chunks) != expected_len {
+		t.Errorf("Chunks length expected to be '%d' but got '%d'", expected_len, len(chunks))
+	}
+
+	chunks = makeAddChunks(docs, 301)
+	expected_len = 2
+	if len(chunks) != expected_len {
+		t.Errorf("Chunks length expected to be '%d' but got '%d'", expected_len, len(chunks))
+	}
+
+	d = chunks[1]["add"].([]Document)[0]
+
+	if d.Get("id") != "test_id_301" {
+		t.Errorf("First element in second chunk should have id test_id_301 ")
+	}
+
+	if len(chunks[1]["add"].([]Document)) != 199 {
+		t.Errorf("Last chunk should have length of 199 documents")
+	}
+}
+
+/*
+func TestReal(t *testing.T) {
+	fmt.Println("test_real")
+	si, err := NewSolrInterface("http://localhost:8983/solr/collection1")
+	if err != nil {
+		t.Errorf(err.Error())
+	}
+
+	docs := make([]Document,0,300)
+	for i := 1500; i < 1600; i++ {
+		docs = append(docs, Document{"id": fmt.Sprintf("test_id_%d", i), "title": fmt.Sprintf("add sucess %d", i)})
+	}
+	res, _ := si.Add(docs, 0, nil)
+	res2, _ := si.Commit()
+
+	fmt.Println(res.result)
+	fmt.Println(res2.result)
+}
+*/
