@@ -148,10 +148,6 @@ func (c *Connection) Select(selectQuery string) (*SelectResponse, error) {
 
 // Update take optional params which can use to specify addition parameters such as commit=true
 func (c *Connection) Update(data map[string]interface{}, params *url.Values) (*UpdateResponse, error) {
-	var (
-		r []byte
-		err error
-	)
 	
 	b, err := json2bytes(data)
 	
@@ -165,7 +161,7 @@ func (c *Connection) Update(data map[string]interface{}, params *url.Values) (*U
 	
 	params.Set("wt", "json")
 	
-	r, err = HTTPPost(fmt.Sprintf("%s/update/?%s", c.url.String(), params.Encode()), b, [][]string{{"Content-Type", "application/json"}})
+	r, err := HTTPPost(fmt.Sprintf("%s/update/?%s", c.url.String(), params.Encode()), b, [][]string{{"Content-Type", "application/json"}})
 	
 	if err != nil {
 		return nil, err
