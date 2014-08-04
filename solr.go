@@ -63,6 +63,7 @@ func (si *SolrInterface) Search(q *Query) *Search {
 	return s
 }
 
+// makeAddChunks splits the documents into chunks. If chunk is less than one it will be default to 100
 func makeAddChunks(docs []Document, chunk int) []map[string]interface{} {
 	if chunk < 1 {
 		chunk = 100
@@ -70,7 +71,7 @@ func makeAddChunks(docs []Document, chunk int) []map[string]interface{} {
 	docs_len := len(docs)
 	num_chunk := int(math.Ceil(float64(docs_len) / float64(chunk)))
 	doc_counter := 0
-	result := make([]map[string]interface{}, num_chunk)
+	chunks := make([]map[string]interface{}, num_chunk)
 	for i := 0; i < num_chunk; i++ {
 		add := make([]Document, 0, chunk)
 		for j := 0; j < chunk; j++ {
@@ -80,9 +81,9 @@ func makeAddChunks(docs []Document, chunk int) []map[string]interface{} {
 			add = append(add, docs[doc_counter])
 			doc_counter++
 		}
-		result[i] = map[string]interface{}{"add": add}
+		chunks[i] = map[string]interface{}{"add": add}
 	}
-	return result
+	return chunks
 }
 
 func (si *SolrInterface) Add(docs []Document, chunk int, params *url.Values) (*UpdateResponse, error) {
