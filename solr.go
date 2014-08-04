@@ -62,18 +62,18 @@ func (si *SolrInterface) Search(q *Query) *Search {
 	return s
 }
 
-// makeAddChunks splits the documents into chunks. If chunk is less than one it will be default to 100
-func makeAddChunks(docs []Document, chunk int) []map[string]interface{} {
-	if chunk < 1 {
-		chunk = 100
+// makeAddChunks splits the documents into chunks. If chunk_size is less than one it will be default to 100
+func makeAddChunks(docs []Document, chunk_size int) []map[string]interface{} {
+	if chunk_size < 1 {
+		chunk_size = 100
 	}
 	docs_len := len(docs)
-	num_chunk := int(math.Ceil(float64(docs_len) / float64(chunk)))
+	num_chunk := int(math.Ceil(float64(docs_len) / float64(chunk_size)))
 	doc_counter := 0
 	chunks := make([]map[string]interface{}, num_chunk)
 	for i := 0; i < num_chunk; i++ {
-		add := make([]Document, 0, chunk)
-		for j := 0; j < chunk; j++ {
+		add := make([]Document, 0, chunk_size)
+		for j := 0; j < chunk_size; j++ {
 			if doc_counter >= docs_len {
 				break
 			}
@@ -85,10 +85,13 @@ func makeAddChunks(docs []Document, chunk int) []map[string]interface{} {
 	return chunks
 }
 
-func (si *SolrInterface) Add(docs []Document, chunk int, params *url.Values) (*UpdateResponse, error) {
+// Add will insert documents in batch of chunk_size. success is false as long as one chunk failed. 
+// The result in UpdateResponse is summery of response from all chunks
+// with key chunk_%d
+func (si *SolrInterface) Add(docs []Document, chunk_size int, params *url.Values) (*UpdateResponse, error) {
 	result := &UpdateResponse{success: true}
 	responses := map[string]interface{}{}
-	chunks := makeAddChunks(docs, chunk)
+	chunks := makeAddChunks(docs, chunk_size)
 
 	for i := 0; i < len(chunks); i++ {
 		res, err := si.Update(chunks[i], params)
