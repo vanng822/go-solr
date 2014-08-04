@@ -108,6 +108,9 @@ func (si *SolrInterface) Add(docs []Document, chunk int, params *url.Values) (*U
 
 // Delete take data of type map and optional params which can use to specify addition parameters such as commit=true
 func (si *SolrInterface) Delete(data map[string]interface{}, params *url.Values) (*UpdateResponse, error) {
+	if si.conn == nil {
+		return nil, fmt.Errorf("No connection found for making request to solr")
+	}
 	// prepare delete message here
 	message := data
 	return si.conn.Update(message, params)
@@ -122,13 +125,22 @@ func (si *SolrInterface) Update(data map[string]interface{}, params *url.Values)
 }
 
 func (si *SolrInterface) Commit() (*UpdateResponse, error) {
+	if si.conn == nil {
+		return nil, fmt.Errorf("No connection found for making request to solr")
+	}
 	return si.conn.Commit()
 }
 
 func (si *SolrInterface) Optimize() (*UpdateResponse, error) {
+	if si.conn == nil {
+		return nil, fmt.Errorf("No connection found for making request to solr")
+	}
 	return si.conn.Optimize()
 }
 
 func (si *SolrInterface) Rollback() (*UpdateResponse, error) {
+	if si.conn == nil {
+		return nil, fmt.Errorf("No connection found for making request to solr")
+	}
 	return si.conn.Rollback()
 }
