@@ -2,11 +2,22 @@ package solr
 
 import (
 	"io"
+	"io/ioutil"
 	"log"
 	"net/http"
 )
 
+func logRequest(req *http.Request) {
+	log.Printf("RequestURI: %s", req.RequestURI)
+	body, err := ioutil.ReadAll(req.Body)
+	if err != nil {
+		panic(err.Error())
+	}
+	log.Println(string(body))
+}
+
 func mockSuccessSelect(w http.ResponseWriter, req *http.Request) {
+	logRequest(req)
 	io.WriteString(w, `{
 		  "responseHeader":{
 		    "status":0,
@@ -24,6 +35,7 @@ func mockSuccessSelect(w http.ResponseWriter, req *http.Request) {
 }
 
 func mockSuccessSelectFacet(w http.ResponseWriter, req *http.Request) {
+	logRequest(req)
 	io.WriteString(w, `{
 				  "responseHeader":{
 				    "status":0,
@@ -64,6 +76,7 @@ func mockSuccessSelectFacet(w http.ResponseWriter, req *http.Request) {
 }
 
 func mockSuccessSelectHighlight(w http.ResponseWriter, req *http.Request) {
+	logRequest(req)
 	io.WriteString(w, `{
 					  "responseHeader":{
 					    "status":0,
@@ -99,6 +112,7 @@ func mockSuccessSelectHighlight(w http.ResponseWriter, req *http.Request) {
 }
 
 func mockFailSelect(w http.ResponseWriter, req *http.Request) {
+	logRequest(req)
 	w.WriteHeader(400)
 	io.WriteString(w, `{
 		  "responseHeader":{
@@ -114,6 +128,12 @@ func mockFailSelect(w http.ResponseWriter, req *http.Request) {
 }
 
 func mockSuccessStandaloneCommit(w http.ResponseWriter, req *http.Request) {
+	logRequest(req)
+	io.WriteString(w, `{"responseHeader":{"status":0,"QTime":5}}`)
+}
+
+func mockSuccessAdd(w http.ResponseWriter, req *http.Request) {
+	logRequest(req)
 	io.WriteString(w, `{"responseHeader":{"status":0,"QTime":5}}`)
 }
 
@@ -122,10 +142,10 @@ func mockStartServer() {
 	http.HandleFunc("/fail/select/", mockFailSelect)
 	http.HandleFunc("/facet_counts/select/", mockSuccessSelectFacet)
 	http.HandleFunc("/highlight/select/", mockSuccessSelectHighlight)
-	
+
 	http.HandleFunc("/standalonecommit/update/", mockSuccessStandaloneCommit)
-	
-	
+	http.HandleFunc("/add/update/", mockSuccessAdd)
+
 	err := http.ListenAndServe(":12345", nil)
 	if err != nil {
 		log.Fatal("ListenAndServe: ", err)
