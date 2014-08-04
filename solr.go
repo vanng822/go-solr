@@ -45,7 +45,6 @@ type SolrResult struct {
 }
 
 type SolrInterface struct {
-	format string
 	conn   *Connection
 }
 
@@ -54,7 +53,7 @@ func NewSolrInterface(solrUrl string) (*SolrInterface, error) {
 	if err != nil {
 		return nil, err
 	}
-	return &SolrInterface{conn: c, format: "json"}, nil
+	return &SolrInterface{conn: c}, nil
 }
 
 func (si *SolrInterface) Search(q *Query) *Search {
