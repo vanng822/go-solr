@@ -45,7 +45,7 @@ type SolrResult struct {
 }
 
 type SolrInterface struct {
-	conn   *Connection
+	conn *Connection
 }
 
 func NewSolrInterface(solrUrl string) (*SolrInterface, error) {
@@ -109,13 +109,22 @@ func (si *SolrInterface) Add(docs []Document, chunk_size int, params *url.Values
 }
 
 // Delete take data of type map and optional params which can use to specify addition parameters such as commit=true
+// Only one delete statement is supported, ie data can be { "id":"ID" }
+// If you want to delete more docs use { "query":"QUERY" }
+// Extra params can specify in params or in data such as { "query":"QUERY", "commitWithin":"500" }
 func (si *SolrInterface) Delete(data map[string]interface{}, params *url.Values) (*UpdateResponse, error) {
 	if si.conn == nil {
 		return nil, fmt.Errorf("No connection found for making request to solr")
 	}
-	// prepare delete message here
-	message := data
+	message := map[string]interface{}{"delete": data}
 	return si.conn.Update(message, params)
+}
+
+// DeleteAll will remove all documents and commit
+func (si *SolrInterface) DeleteAll() (*UpdateResponse, error) {
+	params := &url.Values{}
+	params.Add("commit", "true")
+	return si.Delete(map[string]interface{}{"query": "*:*"}, params)
 }
 
 // Update take data of type map and optional params which can use to specify addition parameters such as commit=true

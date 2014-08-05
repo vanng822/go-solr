@@ -3,6 +3,7 @@ package solr
 import (
 	"fmt"
 	"testing"
+	"net/url"
 )
 
 func TestSolrDocument(t *testing.T) {
@@ -329,17 +330,65 @@ func TestMakeAddChunks(t *testing.T) {
 		t.Errorf("Last chunk should have length of 199 documents")
 	}
 }
+func TestAdd(t *testing.T) {
+	fmt.Println("test_real")
+	si, err := NewSolrInterface("http://127.0.0.1:12345/add")
+	if err != nil {
+		t.Errorf(err.Error())
+	}
+
+	docs := make([]Document,0,5)
+	for i := 0; i < 5; i++ {
+		docs = append(docs, Document{"id": fmt.Sprintf("test_id_%d", i), "title": fmt.Sprintf("add sucess %d", i)})
+	}
+	res, _ := si.Add(docs, 0, nil)
+	res2, _ := si.Commit()
+	// not sure what we can test here but at least run and see thing flows
+	if res == nil {
+		t.Errorf("Add response should not be nil")
+	}
+	
+	if res2 == nil {
+		t.Errorf("Commit response should not be nil")
+	}
+}
+
+func TestDelete(t *testing.T) {
+	fmt.Println("test_real")
+	si, err := NewSolrInterface("http://127.0.0.1:12345/delete")
+	if err != nil {
+		t.Errorf(err.Error())
+	}
+
+	res, _ := si.Delete(map[string]interface{}{ "query":"id:test_id_1 OR id:test_id_2", "commitWithin":"500" }, nil)
+	
+	// not sure what we can test here but at least run and see thing flows
+	if res == nil {
+		t.Errorf("Delete response should not be nil")
+	}
+	
+	params := &url.Values{}
+	params.Add("commitWithin", "500")
+	
+	res2, _ := si.Delete(map[string]interface{}{ "query":"*:*"}, params)
+	
+	// not sure what we can test here but at least run and see thing flows
+	if res2 == nil {
+		t.Errorf("Delete response should not be nil")
+	}
+}
+
 
 /*
-func TestReal(t *testing.T) {
+func TestRealAdd(t *testing.T) {
 	fmt.Println("test_real")
 	si, err := NewSolrInterface("http://localhost:8983/solr/collection1")
 	if err != nil {
 		t.Errorf(err.Error())
 	}
 
-	docs := make([]Document,0,300)
-	for i := 1500; i < 1600; i++ {
+	docs := make([]Document,0,100)
+	for i := 0; i < 100; i++ {
 		docs = append(docs, Document{"id": fmt.Sprintf("test_id_%d", i), "title": fmt.Sprintf("add sucess %d", i)})
 	}
 	res, _ := si.Add(docs, 0, nil)
@@ -347,5 +396,33 @@ func TestReal(t *testing.T) {
 
 	fmt.Println(res.result)
 	fmt.Println(res2.result)
+}
+*/
+
+/*
+func TestRealDelete(t *testing.T) {
+	fmt.Println("test_real")
+	si, err := NewSolrInterface("http://localhost:8983/solr/collection1")
+	if err != nil {
+		t.Errorf(err.Error())
+	}
+	params := &url.Values{}
+	params.Add("commitWithin", "500")
+	res, _ := si.Delete(map[string]interface{}{ "query":"id:test_id_0 OR id:test_id_1"}, params)
+	
+	fmt.Println(res.result)
+}
+*/
+/*
+func TestRealDeleteAll(t *testing.T) {
+	fmt.Println("test_real")
+	si, err := NewSolrInterface("http://localhost:8983/solr/collection1")
+	if err != nil {
+		t.Errorf(err.Error())
+	}
+	
+	res, _ := si.DeleteAll()
+	
+	fmt.Println(res.result)
 }
 */
