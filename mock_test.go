@@ -142,6 +142,12 @@ func mockSuccessDelete(w http.ResponseWriter, req *http.Request) {
 	io.WriteString(w, `{"responseHeader":{"status":0,"QTime":5}}`)
 }
 
+// For commands that no need of specific response
+func mockSuccessCommand(w http.ResponseWriter, req *http.Request) {
+	logRequest(req)
+	io.WriteString(w, `{"responseHeader":{"status":0,"QTime":5}}`)
+}
+
 func mockStartServer() {
 	http.HandleFunc("/success/select/", mockSuccessSelect)
 	http.HandleFunc("/fail/select/", mockFailSelect)
@@ -151,6 +157,8 @@ func mockStartServer() {
 	http.HandleFunc("/standalonecommit/update/", mockSuccessStandaloneCommit)
 	http.HandleFunc("/add/update/", mockSuccessAdd)
 	http.HandleFunc("/delete/update/", mockSuccessDelete)
+	
+	http.HandleFunc("/command/update/", mockSuccessCommand)
 	
 	err := http.ListenAndServe(":12345", nil)
 	if err != nil {

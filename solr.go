@@ -149,9 +149,12 @@ func (si *SolrInterface) Optimize() (*UpdateResponse, error) {
 	return si.conn.Optimize()
 }
 
+// Rollback rollbacks all add/deletes made to the index since the last commit
+// This should use with caution
+// See https://wiki.apache.org/solr/UpdateXmlMessages#A.22rollback.22
 func (si *SolrInterface) Rollback() (*UpdateResponse, error) {
 	if si.conn == nil {
 		return nil, fmt.Errorf("No connection found for making request to solr")
 	}
-	return si.conn.Rollback()
+	return si.conn.Update(map[string]interface{}{"rollback": map[string]interface{}{}}, nil)
 }

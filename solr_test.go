@@ -379,6 +379,21 @@ func TestDelete(t *testing.T) {
 }
 
 
+func TestRollback(t *testing.T) {
+	fmt.Println("test_real")
+	si, err := NewSolrInterface("http://127.0.0.1:12345/command")
+	if err != nil {
+		t.Errorf(err.Error())
+	}
+
+	res, _ := si.Rollback()
+	
+	// not sure what we can test here but at least run and see thing flows
+	if res == nil {
+		t.Errorf("Delete response should not be nil")
+	}
+}
+
 /*
 func TestRealAdd(t *testing.T) {
 	fmt.Println("test_real")
@@ -392,13 +407,16 @@ func TestRealAdd(t *testing.T) {
 		docs = append(docs, Document{"id": fmt.Sprintf("test_id_%d", i), "title": fmt.Sprintf("add sucess %d", i)})
 	}
 	res, _ := si.Add(docs, 0, nil)
+	
 	res2, _ := si.Commit()
-
+	si.Delete(map[string]interface{}{"query":"*:*"}, nil)
+	//si.DeleteAll()
+	si.Rollback()
+	
 	fmt.Println(res.result)
 	fmt.Println(res2.result)
 }
 */
-
 /*
 func TestRealDelete(t *testing.T) {
 	fmt.Println("test_real")
