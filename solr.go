@@ -113,11 +113,8 @@ func (si *SolrInterface) Add(docs []Document, chunk_size int, params *url.Values
 // If you want to delete more docs use { "query":"QUERY" }
 // Extra params can specify in params or in data such as { "query":"QUERY", "commitWithin":"500" }
 func (si *SolrInterface) Delete(data map[string]interface{}, params *url.Values) (*UpdateResponse, error) {
-	if si.conn == nil {
-		return nil, fmt.Errorf("No connection found for making request to solr")
-	}
 	message := map[string]interface{}{"delete": data}
-	return si.conn.Update(message, params)
+	return si.Update(message, params)
 }
 
 // DeleteAll will remove all documents and commit
@@ -136,10 +133,9 @@ func (si *SolrInterface) Update(data map[string]interface{}, params *url.Values)
 }
 
 func (si *SolrInterface) Commit() (*UpdateResponse, error) {
-	if si.conn == nil {
-		return nil, fmt.Errorf("No connection found for making request to solr")
-	}
-	return si.conn.Commit()
+	params := &url.Values{}
+	params.Add("commit", "true")
+	return si.Update(map[string]interface{}{}, params)
 }
 
 func (si *SolrInterface) Optimize(params *url.Values) (*UpdateResponse, error) {
@@ -154,8 +150,5 @@ func (si *SolrInterface) Optimize(params *url.Values) (*UpdateResponse, error) {
 // This should use with caution
 // See https://wiki.apache.org/solr/UpdateXmlMessages#A.22rollback.22
 func (si *SolrInterface) Rollback() (*UpdateResponse, error) {
-	if si.conn == nil {
-		return nil, fmt.Errorf("No connection found for making request to solr")
-	}
-	return si.conn.Update(map[string]interface{}{"rollback": map[string]interface{}{}}, nil)
+	return si.Update(map[string]interface{}{"rollback": map[string]interface{}{}}, nil)
 }
