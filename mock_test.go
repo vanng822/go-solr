@@ -148,6 +148,16 @@ func mockSuccessCommand(w http.ResponseWriter, req *http.Request) {
 	io.WriteString(w, `{"responseHeader":{"status":0,"QTime":5}}`)
 }
 
+func mockSuccessXML(w http.ResponseWriter, req *http.Request) {
+	logRequest(req)
+	io.WriteString(w, `<response>
+						<lst name="responseHeader">
+						<int name="status">0</int>
+						<int name="QTime">8</int>
+						</lst>
+						</response>`)
+}
+
 func mockStartServer() {
 	http.HandleFunc("/success/select/", mockSuccessSelect)
 	http.HandleFunc("/fail/select/", mockFailSelect)
@@ -159,6 +169,7 @@ func mockStartServer() {
 	http.HandleFunc("/delete/update/", mockSuccessDelete)
 	
 	http.HandleFunc("/command/update/", mockSuccessCommand)
+	http.HandleFunc("/xml/update/", mockSuccessXML)
 	
 	err := http.ListenAndServe(":12345", nil)
 	if err != nil {

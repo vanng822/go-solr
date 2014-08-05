@@ -379,6 +379,28 @@ func TestDelete(t *testing.T) {
 }
 
 
+func TestXMLResponse(t *testing.T) {
+	fmt.Println("test_real")
+	si, err := NewSolrInterface("http://127.0.0.1:12345/xml")
+	if err != nil {
+		t.Errorf(err.Error())
+	}
+
+	res, err := si.DeleteAll()
+	
+	if err == nil {
+		t.Errorf("Error should be not nil since response is not json format")
+	}
+	
+	if err.Error() != "invalid character '<' looking for beginning of value" {
+		t.Errorf("Expected error message 'invalid character '<' looking for beginning of value' but got '%s'", err.Error())
+	}
+	
+	if res != nil {
+		t.Errorf("Response should be nil since response is not json format")
+	}
+}
+
 func TestRollback(t *testing.T) {
 	fmt.Println("test_real")
 	si, err := NewSolrInterface("http://127.0.0.1:12345/command")
