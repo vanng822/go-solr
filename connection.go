@@ -177,17 +177,3 @@ func (c *Connection) Update(data map[string]interface{}, params *url.Values) (*U
 
 	return &UpdateResponse{success: true, result: resp}, nil
 }
-
-func (c *Connection) Commit() (*UpdateResponse, error) {
-	params := &url.Values{}
-	params.Add("commit", "true")
-	return c.Update(map[string]interface{}{}, params)
-}
-
-func (c *Connection) Optimize() (*UpdateResponse, error) {
-	return nil, nil
-}
-
-func (c *Connection) Rollback() (*UpdateResponse, error) {
-	return nil, nil
-}
