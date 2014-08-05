@@ -8,15 +8,26 @@ func TestConnection(t *testing.T) {
 	if err1 == nil {
 		t.Errorf("It should be an error since the url is not valid")
 	}
-	
+
 	_, err2 := NewConnection("http://www.fakedomain.tld")
 	if err2 != nil {
 		t.Errorf("It should not be an error since the url is  valid but got '%s'", err2.Error())
 	}
-	
+
 	_, err3 := NewConnection("http://www.fakedomain.tld/select/")
 	if err3 != nil {
 		t.Errorf("It should not be an error since the url is  valid but got '%s'", err3.Error())
+	}
+}
+
+func TestBytes2JsonWrongJson(t *testing.T) {
+	data := []byte(`<xml><x>y</x><yy>boo</yy></xml>`)
+	d, err := bytes2json(&data)
+	if err == nil {
+		t.Errorf("It should a error when parsing non json format")
+	}
+	if d != nil {
+		t.Errorf("It should a error when parsing non json format")
 	}
 }
 
