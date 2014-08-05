@@ -142,11 +142,12 @@ func (si *SolrInterface) Commit() (*UpdateResponse, error) {
 	return si.conn.Commit()
 }
 
-func (si *SolrInterface) Optimize() (*UpdateResponse, error) {
-	if si.conn == nil {
-		return nil, fmt.Errorf("No connection found for making request to solr")
+func (si *SolrInterface) Optimize(params *url.Values) (*UpdateResponse, error) {
+	if params == nil {
+		params = &url.Values{}
 	}
-	return si.conn.Optimize()
+	params.Set("optimize", "true")
+	return si.Update(map[string]interface{}{}, params)
 }
 
 // Rollback rollbacks all add/deletes made to the index since the last commit

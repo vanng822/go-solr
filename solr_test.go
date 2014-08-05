@@ -390,7 +390,31 @@ func TestRollback(t *testing.T) {
 	
 	// not sure what we can test here but at least run and see thing flows
 	if res == nil {
-		t.Errorf("Delete response should not be nil")
+		t.Errorf("Rollback response should not be nil")
+	}
+}
+
+func TestOptimize(t *testing.T) {
+	fmt.Println("test_real")
+	si, err := NewSolrInterface("http://127.0.0.1:12345/command")
+	if err != nil {
+		t.Errorf(err.Error())
+	}
+
+	res, _ := si.Optimize(nil)
+	
+	// not sure what we can test here but at least run and see thing flows
+	if res == nil {
+		t.Errorf("Optimize response should not be nil")
+	}
+	params := &url.Values{}
+	params.Add("maxSegments", "10")
+	params.Add("waitFlush", "false")
+	res2, _ := si.Optimize(params)
+	
+	// not sure what we can test here but at least run and see thing flows
+	if res2 == nil {
+		t.Errorf("Optimize response should not be nil")
 	}
 }
 
@@ -412,7 +436,11 @@ func TestRealAdd(t *testing.T) {
 	si.Delete(map[string]interface{}{"query":"*:*"}, nil)
 	//si.DeleteAll()
 	si.Rollback()
-	
+	//si.Optimize(nil)
+	params := &url.Values{}
+	params.Add("maxSegments", "10")
+	params.Add("waitFlush", "false")
+	si.Optimize(params)
 	fmt.Println(res.result)
 	fmt.Println(res2.result)
 }
