@@ -108,9 +108,9 @@ func (si *SolrInterface) Add(docs []Document, chunk_size int, params *url.Values
 	return result, nil
 }
 
-// Delete take data of type map and optional params which can use to specify addition parameters such as commit=true
-// Only one delete statement is supported, ie data can be { "id":"ID" }
-// If you want to delete more docs use { "query":"QUERY" }
+// Delete take data of type map and optional params which can use to specify addition parameters such as commit=true .
+// Only one delete statement is supported, ie data can be { "id":"ID" } .
+// If you want to delete more docs use { "query":"QUERY" } .
 // Extra params can specify in params or in data such as { "query":"QUERY", "commitWithin":"500" }
 func (si *SolrInterface) Delete(data map[string]interface{}, params *url.Values) (*UpdateResponse, error) {
 	message := map[string]interface{}{"delete": data}
@@ -146,8 +146,8 @@ func (si *SolrInterface) Optimize(params *url.Values) (*UpdateResponse, error) {
 	return si.Update(map[string]interface{}{}, params)
 }
 
-// Rollback rollbacks all add/deletes made to the index since the last commit
-// This should use with caution
+// Rollback rollbacks all add/deletes made to the index since the last commit. 
+// This should use with caution. 
 // See https://wiki.apache.org/solr/UpdateXmlMessages#A.22rollback.22
 func (si *SolrInterface) Rollback() (*UpdateResponse, error) {
 	return si.Update(map[string]interface{}{"rollback": map[string]interface{}{}}, nil)

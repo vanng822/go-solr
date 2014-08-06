@@ -1,7 +1,7 @@
 package solr
 
-// ResultParser is interface for parsing result from response
-// The idea here is that application have possibility to parse
+// ResultParser is interface for parsing result from response.
+// The idea here is that application have possibility to parse.
 // Or defined own parser with internal data structure to suite
 // application's need
 type ResultParser interface {
