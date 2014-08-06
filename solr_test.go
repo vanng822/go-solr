@@ -465,8 +465,17 @@ func TestRealAdd(t *testing.T) {
 	si.Optimize(params)
 	fmt.Println(res.result)
 	fmt.Println(res2.result)
+	
+	s := si.Search(nil)
+	query := NewQuery()
+	query.AddParam("q", "title:add sucess 1")
+	s.SetQuery(query)
+	r, err := s.Result(nil)
+	
+	fmt.Println(r.results)
 }
 */
+
 /*
 func TestRealDelete(t *testing.T) {
 	fmt.Println("test_real")
