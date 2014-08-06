@@ -13,10 +13,10 @@ type StandardResultParser struct {
 
 func (parser *StandardResultParser) Parse(response *SelectResponse) (*SolrResult, error) {
 	sr := &SolrResult{}
-	sr.results = new(Collection)
-	sr.status = response.status
+	sr.Results = new(Collection)
+	sr.Status = response.Status
 
-	if response.status == 0 {
+	if response.Status == 0 {
 		parser.ParseResponse(response, sr)
 		parser.ParseFacetCounts(response, sr)
 		parser.ParseHighlighting(response, sr)
@@ -28,21 +28,21 @@ func (parser *StandardResultParser) Parse(response *SelectResponse) (*SolrResult
 }
 
 func (parser *StandardResultParser) ParseError(response *SelectResponse, sr *SolrResult) {
-	if error, ok := response.response["error"]; ok {
-		sr.error = error.(map[string]interface{})
+	if error, ok := response.Response["error"]; ok {
+		sr.Error = error.(map[string]interface{})
 	}
 }
 
 // ParseResponse will assign result and build sr.docs if there is a response.
 // If there is no response property in response it will panic
 func (parser *StandardResultParser) ParseResponse(response *SelectResponse, sr *SolrResult) {
-	if resp, ok := response.response["response"].(map[string]interface{}); ok {
-		sr.results.numFound = int(resp["numFound"].(float64))
-		sr.results.start = int(resp["start"].(float64))
+	if resp, ok := response.Response["response"].(map[string]interface{}); ok {
+		sr.Results.NumFound = int(resp["numFound"].(float64))
+		sr.Results.Start = int(resp["start"].(float64))
 		if docs, ok := resp["docs"].([]interface{}); ok {
-			sr.results.docs = make([]Document, len(docs))
+			sr.Results.Docs = make([]Document, len(docs))
 			for i, v := range docs {
-				sr.results.docs[i] = Document(v.(map[string]interface{}))
+				sr.Results.Docs[i] = Document(v.(map[string]interface{}))
 			}
 		}
 	} else {
@@ -55,15 +55,15 @@ func (parser *StandardResultParser) ParseResponse(response *SelectResponse, sr *
 // ParseFacetCounts will assign facet_counts to sr if there is one.
 // No modification done here
 func (parser *StandardResultParser) ParseFacetCounts(response *SelectResponse, sr *SolrResult) {
-	if facetCounts, ok := response.response["facet_counts"]; ok {
-		sr.facet_counts = facetCounts.(map[string]interface{})
+	if facetCounts, ok := response.Response["facet_counts"]; ok {
+		sr.Facet_counts = facetCounts.(map[string]interface{})
 	}
 }
 
 // ParseHighlighting will assign highlighting to sr if there is one.
 // No modification done here
 func (parser *StandardResultParser) ParseHighlighting(response *SelectResponse, sr *SolrResult) {
-	if highlighting, ok := response.response["highlighting"]; ok {
-		sr.highlighting = highlighting.(map[string]interface{})
+	if highlighting, ok := response.Response["highlighting"]; ok {
+		sr.Highlighting = highlighting.(map[string]interface{})
 	}
 }

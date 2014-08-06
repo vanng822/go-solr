@@ -107,14 +107,14 @@ type SelectResponse struct {
 	debug          map[string]interface{}
 	error          map[string]interface{}
 	*/
-	response map[string]interface{}
+	Response map[string]interface{}
 	// status quick access to status
-	status int
+	Status int
 }
 
 type UpdateResponse struct {
-	success bool
-	result  map[string]interface{}
+	Success bool
+	Result  map[string]interface{}
 }
 
 type Connection struct {
@@ -141,8 +141,8 @@ func (c *Connection) Select(selectQuery string) (*SelectResponse, error) {
 		return nil, err
 	}
 
-	result := SelectResponse{response: resp}
-	result.status = int(resp["responseHeader"].(map[string]interface{})["status"].(float64))
+	result := SelectResponse{Response: resp}
+	result.Status = int(resp["responseHeader"].(map[string]interface{})["status"].(float64))
 	return &result, nil
 }
 
@@ -172,8 +172,8 @@ func (c *Connection) Update(data map[string]interface{}, params *url.Values) (*U
 	}
 	// check error in resp
 	if hasError(resp) {
-		return &UpdateResponse{success: false, result: resp}, nil
+		return &UpdateResponse{Success: false, Result: resp}, nil
 	}
 
-	return &UpdateResponse{success: true, result: resp}, nil
+	return &UpdateResponse{Success: true, Result: resp}, nil
 }

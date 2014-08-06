@@ -28,20 +28,20 @@ func (d Document) Set(k string, v interface{}) {
 }
 
 type Collection struct {
-	docs     []Document
-	start    int
-	numFound int
+	Docs     []Document
+	Start    int
+	NumFound int
 }
 
 type SolrResult struct {
-	status       int         // status quick access to status
-	results      *Collection // results parsed documents, basically response object
-	facet_counts map[string]interface{}
-	highlighting map[string]interface{}
-	error        map[string]interface{}
+	Status       int         // status quick access to status
+	Results      *Collection // results parsed documents, basically response object
+	Facet_counts map[string]interface{}
+	Highlighting map[string]interface{}
+	Error        map[string]interface{}
 
 	// grouped for grouping result, not supported for now
-	grouped map[string]interface{}
+	Grouped map[string]interface{}
 }
 
 type SolrInterface struct {
@@ -89,7 +89,7 @@ func makeAddChunks(docs []Document, chunk_size int) []map[string]interface{} {
 // The result in UpdateResponse is summery of response from all chunks
 // with key chunk_%d
 func (si *SolrInterface) Add(docs []Document, chunk_size int, params *url.Values) (*UpdateResponse, error) {
-	result := &UpdateResponse{success: true}
+	result := &UpdateResponse{Success: true}
 	responses := map[string]interface{}{}
 	chunks := makeAddChunks(docs, chunk_size)
 
@@ -98,13 +98,13 @@ func (si *SolrInterface) Add(docs []Document, chunk_size int, params *url.Values
 		if err != nil {
 			return nil, err
 		}
-		result.success = result.success && res.success
+		result.Success = result.Success && res.Success
 		responses[fmt.Sprintf("chunk_%d", i+1)] = map[string]interface{}{
-			"result":  res.result,
-			"success": res.success,
+			"result":  res.Result,
+			"success": res.Success,
 			"total":   len(chunks[i]["add"].([]Document))}
 	}
-	result.result = responses
+	result.Result = responses
 	return result, nil
 }
 

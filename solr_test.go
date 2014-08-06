@@ -2,8 +2,8 @@ package solr
 
 import (
 	"fmt"
-	"testing"
 	"net/url"
+	"testing"
 )
 
 func TestSolrDocument(t *testing.T) {
@@ -45,23 +45,23 @@ func TestSolrSuccessSelect(t *testing.T) {
 		t.Errorf("cannot seach %s", err)
 	}
 
-	if res.status != 0 {
+	if res.Status != 0 {
 		t.Errorf("Status expected to be 0")
 	}
 
-	if res.results.numFound != 1 {
+	if res.Results.NumFound != 1 {
 		t.Errorf("results.numFound expected to be 1")
 	}
 
-	if res.results.start != 0 {
+	if res.Results.Start != 0 {
 		t.Errorf("results.start expected to be 0")
 	}
 
-	if len(res.results.docs) != 1 {
+	if len(res.Results.Docs) != 1 {
 		t.Errorf("len of .docs should be 1")
 	}
 
-	if res.results.docs[0].Get("id").(string) != "change.me" {
+	if res.Results.Docs[0].Get("id").(string) != "change.me" {
 		t.Errorf("id of first document should be change.me")
 	}
 
@@ -86,11 +86,11 @@ func TestSolrFailSelect(t *testing.T) {
 		t.Errorf("cannot seach %s", err)
 	}
 
-	if res.status != 400 {
+	if res.Status != 400 {
 		t.Errorf("Status expected to be 400")
 	}
 	expectedMsg := "no field name specified in query and no default specified via 'df' param"
-	msg, ok := res.error["msg"].(string)
+	msg, ok := res.Error["msg"].(string)
 	if ok != true {
 		t.Errorf("error expected to have a message")
 	}
@@ -99,15 +99,15 @@ func TestSolrFailSelect(t *testing.T) {
 		t.Errorf("Error msg expected to be '%s' but got '%s'", expectedMsg, msg)
 	}
 
-	if res.results.numFound != 0 {
+	if res.Results.NumFound != 0 {
 		t.Errorf("results.numFound expected to be 0")
 	}
 
-	if res.results.start != 0 {
+	if res.Results.Start != 0 {
 		t.Errorf("results.start expected to be 0")
 	}
 
-	if len(res.results.docs) != 0 {
+	if len(res.Results.Docs) != 0 {
 		t.Errorf("len of .docs should be 0")
 	}
 
@@ -135,34 +135,34 @@ func TestSolrFacetSelect(t *testing.T) {
 		t.Errorf("cannot seach %s", err)
 	}
 
-	if res.status != 0 {
-		t.Errorf("Status expected to be 0 but got %d", res.status)
+	if res.Status != 0 {
+		t.Errorf("Status expected to be 0 but got %d", res.Status)
 	}
 
-	if res.results.numFound != 4 {
-		t.Errorf("results.numFound expected to be 4 but got %d", res.results.numFound)
+	if res.Results.NumFound != 4 {
+		t.Errorf("results.numFound expected to be 4 but got %d", res.Results.NumFound)
 	}
 
-	if res.results.start != 0 {
-		t.Errorf("results.start expected to be 0 but got %d", res.results.start)
+	if res.Results.Start != 0 {
+		t.Errorf("results.start expected to be 0 but got %d", res.Results.Start)
 	}
 
-	if len(res.results.docs) != 4 {
-		t.Errorf("len of .docs should be 4 but got %d", len(res.results.docs))
+	if len(res.Results.Docs) != 4 {
+		t.Errorf("len of .docs should be 4 but got %d", len(res.Results.Docs))
 	}
 
-	third_doc := res.results.docs[2]
+	third_doc := res.Results.Docs[2]
 
 	if third_doc.Get("id") != "change.me3" {
 		t.Errorf("id of third document expected to be 'change.me3' but got '%s'", third_doc.Get("id"))
 	}
 
-	if _, ok := res.facet_counts["facet_fields"]; ok == false {
+	if _, ok := res.Facet_counts["facet_fields"]; ok == false {
 		t.Errorf("results.facet_counts.facet_fields expected")
 		return
 	}
 
-	facet_fields := res.facet_counts["facet_fields"].(map[string]interface{})
+	facet_fields := res.Facet_counts["facet_fields"].(map[string]interface{})
 	id, ok := facet_fields["id"]
 
 	if ok == false {
@@ -197,29 +197,29 @@ func TestSolrHighlightSelect(t *testing.T) {
 		t.Errorf("cannot seach %s", err)
 	}
 
-	if res.status != 0 {
-		t.Errorf("Status expected to be 0 but got %d", res.status)
+	if res.Status != 0 {
+		t.Errorf("Status expected to be 0 but got %d", res.Status)
 	}
 
-	if res.results.numFound != 4 {
-		t.Errorf("results.numFound expected to be 4 but got %d", res.results.numFound)
+	if res.Results.NumFound != 4 {
+		t.Errorf("results.numFound expected to be 4 but got %d", res.Results.NumFound)
 	}
 
-	if res.results.start != 0 {
-		t.Errorf("results.start expected to be 0 but got %d", res.results.start)
+	if res.Results.Start != 0 {
+		t.Errorf("results.start expected to be 0 but got %d", res.Results.Start)
 	}
 
-	if len(res.results.docs) != 4 {
-		t.Errorf("len of .docs should be 4 but got %d", len(res.results.docs))
+	if len(res.Results.Docs) != 4 {
+		t.Errorf("len of .docs should be 4 but got %d", len(res.Results.Docs))
 	}
 
-	third_doc := res.results.docs[2]
+	third_doc := res.Results.Docs[2]
 
 	if third_doc.Get("id") != "change.me3" {
 		t.Errorf("id of third document expected to be 'change.me3' but got '%s'", third_doc.Get("id"))
 	}
 
-	_, ok := res.highlighting["change.me"]
+	_, ok := res.Highlighting["change.me"]
 
 	if ok == false {
 		t.Errorf("results.facet_counts.facet_fields.id expected")
@@ -244,22 +244,22 @@ func TestSolrResultLoopSelect(t *testing.T) {
 		return
 	}
 
-	if cap(res.results.docs) != 4 {
-		t.Errorf("Capacity expected to be 4 but got '%d'", cap(res.results.docs))
+	if cap(res.Results.Docs) != 4 {
+		t.Errorf("Capacity expected to be 4 but got '%d'", cap(res.Results.Docs))
 	}
 
-	if len(res.results.docs) != 4 {
-		t.Errorf("len of .docs should be 4 but got %d", len(res.results.docs))
+	if len(res.Results.Docs) != 4 {
+		t.Errorf("len of .docs should be 4 but got %d", len(res.Results.Docs))
 	}
 
-	for i, doc := range res.results.docs {
+	for i, doc := range res.Results.Docs {
 		if doc.Has("id") == false {
 			t.Errorf("Document %d doesn't contain id", i)
 		}
 	}
 
-	for i := 0; i < len(res.results.docs); i++ {
-		if res.results.docs[i].Has("id") == false {
+	for i := 0; i < len(res.Results.Docs); i++ {
+		if res.Results.Docs[i].Has("id") == false {
 			t.Errorf("Document %d doesn't contain id", i)
 		}
 	}
@@ -280,7 +280,7 @@ func TestSolrSuccessStandaloneCommit(t *testing.T) {
 		t.Errorf("cannot commit %s", err)
 	}
 
-	if res.success != true {
+	if res.Success != true {
 		t.Errorf("success expected to be true")
 	}
 }
@@ -337,7 +337,7 @@ func TestAdd(t *testing.T) {
 		t.Errorf(err.Error())
 	}
 
-	docs := make([]Document,0,5)
+	docs := make([]Document, 0, 5)
 	for i := 0; i < 5; i++ {
 		docs = append(docs, Document{"id": fmt.Sprintf("test_id_%d", i), "title": fmt.Sprintf("add sucess %d", i)})
 	}
@@ -347,7 +347,7 @@ func TestAdd(t *testing.T) {
 	if res == nil {
 		t.Errorf("Add response should not be nil")
 	}
-	
+
 	if res2 == nil {
 		t.Errorf("Commit response should not be nil")
 	}
@@ -360,24 +360,23 @@ func TestDelete(t *testing.T) {
 		t.Errorf(err.Error())
 	}
 
-	res, _ := si.Delete(map[string]interface{}{ "query":"id:test_id_1 OR id:test_id_2", "commitWithin":"500" }, nil)
-	
+	res, _ := si.Delete(map[string]interface{}{"query": "id:test_id_1 OR id:test_id_2", "commitWithin": "500"}, nil)
+
 	// not sure what we can test here but at least run and see thing flows
 	if res == nil {
 		t.Errorf("Delete response should not be nil")
 	}
-	
+
 	params := &url.Values{}
 	params.Add("commitWithin", "500")
-	
-	res2, _ := si.Delete(map[string]interface{}{ "query":"*:*"}, params)
-	
+
+	res2, _ := si.Delete(map[string]interface{}{"query": "*:*"}, params)
+
 	// not sure what we can test here but at least run and see thing flows
 	if res2 == nil {
 		t.Errorf("Delete response should not be nil")
 	}
 }
-
 
 func TestXMLResponse(t *testing.T) {
 	fmt.Println("test_real")
@@ -387,15 +386,15 @@ func TestXMLResponse(t *testing.T) {
 	}
 
 	res, err := si.DeleteAll()
-	
+
 	if err == nil {
 		t.Errorf("Error should be not nil since response is not json format")
 	}
-	
+
 	if err.Error() != "invalid character '<' looking for beginning of value" {
 		t.Errorf("Expected error message 'invalid character '<' looking for beginning of value' but got '%s'", err.Error())
 	}
-	
+
 	if res != nil {
 		t.Errorf("Response should be nil since response is not json format")
 	}
@@ -409,7 +408,7 @@ func TestRollback(t *testing.T) {
 	}
 
 	res, _ := si.Rollback()
-	
+
 	// not sure what we can test here but at least run and see thing flows
 	if res == nil {
 		t.Errorf("Rollback response should not be nil")
@@ -424,7 +423,7 @@ func TestOptimize(t *testing.T) {
 	}
 
 	res, _ := si.Optimize(nil)
-	
+
 	// not sure what we can test here but at least run and see thing flows
 	if res == nil {
 		t.Errorf("Optimize response should not be nil")
@@ -433,7 +432,7 @@ func TestOptimize(t *testing.T) {
 	params.Add("maxSegments", "10")
 	params.Add("waitFlush", "false")
 	res2, _ := si.Optimize(params)
-	
+
 	// not sure what we can test here but at least run and see thing flows
 	if res2 == nil {
 		t.Errorf("Optimize response should not be nil")
@@ -453,7 +452,7 @@ func TestRealAdd(t *testing.T) {
 		docs = append(docs, Document{"id": fmt.Sprintf("test_id_%d", i), "title": fmt.Sprintf("add sucess %d", i)})
 	}
 	res, _ := si.Add(docs, 0, nil)
-	
+
 	res2, _ := si.Commit()
 	si.Delete(map[string]interface{}{"query":"*:*"}, nil)
 	//si.DeleteAll()
@@ -463,16 +462,16 @@ func TestRealAdd(t *testing.T) {
 	params.Add("maxSegments", "10")
 	params.Add("waitFlush", "false")
 	si.Optimize(params)
-	fmt.Println(res.result)
+	fmt.Println(res.Result)
 	fmt.Println(res2.result)
-	
+
 	s := si.Search(nil)
 	query := NewQuery()
 	query.AddParam("q", "title:add sucess 1")
 	s.SetQuery(query)
 	r, err := s.Result(nil)
-	
-	fmt.Println(r.results)
+
+	fmt.Println(r.Results)
 }
 */
 
@@ -486,8 +485,8 @@ func TestRealDelete(t *testing.T) {
 	params := &url.Values{}
 	params.Add("commitWithin", "500")
 	res, _ := si.Delete(map[string]interface{}{ "query":"id:test_id_0 OR id:test_id_1"}, params)
-	
-	fmt.Println(res.result)
+
+	fmt.Println(res.Result)
 }
 */
 /*
@@ -497,9 +496,9 @@ func TestRealDeleteAll(t *testing.T) {
 	if err != nil {
 		t.Errorf(err.Error())
 	}
-	
+
 	res, _ := si.DeleteAll()
-	
-	fmt.Println(res.result)
+
+	fmt.Println(res.Result)
 }
 */

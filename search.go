@@ -39,9 +39,9 @@ func (q *Query) String() string {
 type Search struct {
 	query *Query
 	conn  *Connection
-	start int
-	rows  int
-	debug string
+	Start int
+	Rows  int
+	Debug string
 }
 
 // NewSearch takes c and q as optional
@@ -67,16 +67,16 @@ func (s *Search) QueryString() string {
 
 	query := []string{"wt=json"}
 
-	if s.start > 0 {
-		query = append(query, fmt.Sprintf("start=%d", s.start))
+	if s.Start > 0 {
+		query = append(query, fmt.Sprintf("start=%d", s.Start))
 	}
 
-	if s.rows > 0 {
-		query = append(query, fmt.Sprintf("rows=%d", s.rows))
+	if s.Rows > 0 {
+		query = append(query, fmt.Sprintf("rows=%d", s.Rows))
 	}
 
-	if s.debug != "" {
-		query = append(query, fmt.Sprintf("debug=%s&indent=true", s.debug))
+	if s.Debug != "" {
+		query = append(query, fmt.Sprintf("debug=%s&indent=true", s.Debug))
 	}
 
 	if s.query != nil {
