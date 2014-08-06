@@ -32,3 +32,6 @@ go get github.com/vanng822/go-solr
       r, _ := s.Result(nil)
       fmt.Println(r.Results.Docs)
     }
+
+## License
+MIT
