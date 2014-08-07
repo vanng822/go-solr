@@ -65,9 +65,9 @@ func (s *Search) SetQuery(q *Query) {
 // wt is always json
 func (s *Search) QueryString() string {
 
-	query := make([]string, 0, 5)
+	query := make([]string, 1, 5)
 	
-	query = append(query, "wt=json")
+	query[0] = "wt=json"
 
 	if s.Start > 0 {
 		query = append(query, fmt.Sprintf("start=%d", s.Start))
