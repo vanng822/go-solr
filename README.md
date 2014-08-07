@@ -11,7 +11,9 @@ Json only
 
 No schema checking
 
-Features: Search, Add, Update, Delete, Commit, Rollback, Optimize
+## Features
+
+Search, Add, Update, Delete, Commit, Rollback, Optimize
 
 
 ## Install
