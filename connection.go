@@ -9,6 +9,8 @@ import (
 	"net/url"
 )
 
+var userAgent = fmt.Sprintf("Go-solr/%s(+https://github.com/vanng822/go-solr)", VERSION)
+
 // HTTPPost make a POST request to path which also includes domain, headers are optional
 func HTTPPost(path string, data *[]byte, headers [][]string) ([]byte, error) {
 	var (
@@ -27,7 +29,8 @@ func HTTPPost(path string, data *[]byte, headers [][]string) ([]byte, error) {
 			req.Header.Add(headers[i][0], headers[i][1])
 		}
 	}
-
+	req.Header.Set("User-Agent", userAgent)
+	
 	resp, err := client.Do(req)
 
 	if err != nil {
@@ -54,6 +57,7 @@ func HTTPGet(url string, headers [][]string) ([]byte, error) {
 			req.Header.Add(headers[i][0], headers[i][1])
 		}
 	}
+	req.Header.Set("User-Agent", userAgent)
 
 	resp, err := client.Do(req)
 
@@ -148,21 +152,21 @@ func (c *Connection) Select(selectQuery string) (*SelectResponse, error) {
 
 // Update take optional params which can use to specify addition parameters such as commit=true
 func (c *Connection) Update(data map[string]interface{}, params *url.Values) (*UpdateResponse, error) {
-	
+
 	b, err := json2bytes(data)
-	
+
 	if err != nil {
 		return nil, err
 	}
-	
+
 	if params == nil {
 		params = &url.Values{}
 	}
-	
+
 	params.Set("wt", "json")
-	
+
 	r, err := HTTPPost(fmt.Sprintf("%s/update/?%s", c.url.String(), params.Encode()), b, [][]string{{"Content-Type", "application/json"}})
-	
+
 	if err != nil {
 		return nil, err
 	}

@@ -14,6 +14,7 @@ func logRequest(req *http.Request) {
 		panic(err.Error())
 	}
 	log.Println(string(body))
+	log.Println(req.Header)
 }
 
 func mockSuccessSelect(w http.ResponseWriter, req *http.Request) {
