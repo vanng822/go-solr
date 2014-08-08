@@ -9,7 +9,7 @@ import (
 	"net/url"
 )
 
-var userAgent = fmt.Sprintf("Go-solr/%s(+https://github.com/vanng822/go-solr)", VERSION)
+var userAgent = fmt.Sprintf("Go-solr/%s (+https://github.com/vanng822/go-solr)", VERSION)
 
 // HTTPPost make a POST request to path which also includes domain, headers are optional
 func HTTPPost(path string, data *[]byte, headers [][]string) ([]byte, error) {
