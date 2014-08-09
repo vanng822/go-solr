@@ -58,7 +58,7 @@ func (parser *StandardResultParser) ParseResponse(response *SelectResponse, sr *
 // No modification done here
 func (parser *StandardResultParser) ParseFacetCounts(response *SelectResponse, sr *SolrResult) {
 	if facetCounts, ok := response.Response["facet_counts"]; ok {
-		sr.Facet_counts = facetCounts.(map[string]interface{})
+		sr.FacetCounts = facetCounts.(map[string]interface{})
 	}
 }
 

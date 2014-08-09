@@ -157,12 +157,12 @@ func TestSolrFacetSelect(t *testing.T) {
 		t.Errorf("id of third document expected to be 'change.me3' but got '%s'", third_doc.Get("id"))
 	}
 
-	if _, ok := res.Facet_counts["facet_fields"]; ok == false {
+	if _, ok := res.FacetCounts["facet_fields"]; ok == false {
 		t.Errorf("results.facet_counts.facet_fields expected")
 		return
 	}
 
-	facet_fields := res.Facet_counts["facet_fields"].(map[string]interface{})
+	facet_fields := res.FacetCounts["facet_fields"].(map[string]interface{})
 	id, ok := facet_fields["id"]
 
 	if ok == false {
