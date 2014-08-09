@@ -32,6 +32,55 @@ func (q *Query) SetParam(k string, v string) {
 	q.params.Set(k, v)
 }
 
+// q parameter http://wiki.apache.org/solr/CommonQueryParameters
+func (qq *Query) Q(q string) {
+	qq.params.Add("q", q)
+}
+
+// sort parameter http://wiki.apache.org/solr/CommonQueryParameters
+// geodist() asc
+func (q *Query) Sort(sort string) {
+	q.params.Add("sort", sort)
+}
+
+// fq (Filter Query) http://wiki.apache.org/solr/CommonQueryParameters
+// popularity:[10 TO *]
+func (q *Query) FilterQuery(fq string) {
+	q.params.Add("fq", fq)
+}
+
+// fl (Field List ) parameter http://wiki.apache.org/solr/CommonQueryParameters
+// id,name,decsription
+func (q *Query) FieldList(fl string) {
+	q.params.Add("fl", fl)
+}
+
+// geofilt - The distance filter http://wiki.apache.org/solr/SpatialSearch
+// output example: fq={!geofilt+pt=45.15,-93.850000021001+sfield=store+d=5}
+func (q *Query) Geofilt(latitude float64, longitude float64, sfield string, distance float64) {
+	q.params.Add("fq", fmt.Sprintf("{!geofilt pt=%#v,%#v sfield=%s d=%#v}", latitude, longitude, sfield, distance))
+}
+
+// defType http://wiki.apache.org/solr/CommonQueryParameters
+func (q *Query) DefType(defType string) {
+	q.params.Add("defType", defType)
+}
+
+// bf (Boost Functions) parameter http://wiki.apache.org/solr/DisMaxQParserPlugin
+func (q *Query) BoostFunctions(bf string) {
+	q.params.Add("bf", bf)
+}
+
+// bq (Boost Query) parameter http://wiki.apache.org/solr/DisMaxQParserPlugin
+func (q *Query) BoostQuery(bq string) {
+	q.params.Add("bq", bq)
+}
+
+// bf (Query Fields) parameter http://wiki.apache.org/solr/DisMaxQParserPlugin
+func (q *Query) QueryFields(qf string) {
+	q.params.Add("qf", qf)
+}
+
 func (q *Query) String() string {
 	return q.params.Encode()
 }
@@ -66,7 +115,7 @@ func (s *Search) SetQuery(q *Query) {
 func (s *Search) QueryString() string {
 
 	query := make([]string, 1, 5)
-	
+
 	query[0] = "wt=json"
 
 	if s.Start > 0 {

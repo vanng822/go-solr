@@ -5,14 +5,14 @@ import "testing"
 import "fmt"
 
 func TestSolrQueryAddParam(t *testing.T) {
-	
+
 	q := NewQuery()
 	q.AddParam("qf", "some qf")
-		
+
 	if q.String() != "qf=some+qf" {
 		t.Errorf("Expected to be: 'some qf'")
 	}
-	
+
 	fmt.Println(q.String())
 }
 
@@ -46,7 +46,7 @@ func TestSolrSearchSetQuery(t *testing.T) {
 	q2 := NewQuery()
 	q2.AddParam("testing", "test2")
 	s.SetQuery(q2)
-	
+
 	if s.QueryString() != "wt=json&testing=test2" {
 		t.Errorf("Expected to be: 'wt=json&testing=test2'")
 	}
@@ -67,7 +67,7 @@ func TestSolrSearchWithoutConnection(t *testing.T) {
 	q := NewQuery()
 	q.AddParam("testing", "test")
 	s := NewSearch(nil, q)
-	
+
 	resp, err := s.Result(&StandardResultParser{})
 	if resp != nil {
 		t.Errorf("resp expected to be nil due to no connection is set")
@@ -76,7 +76,7 @@ func TestSolrSearchWithoutConnection(t *testing.T) {
 		t.Errorf("err expected to be not empty due to no connection is set")
 	}
 	expectedErrorMessage := "No connection found for making request to solr"
-	
+
 	if err.Error() != expectedErrorMessage {
 		t.Errorf("The error message expecte to be '%s' but got '%s'", expectedErrorMessage, err.Error())
 	}
@@ -94,5 +94,95 @@ func TestSolrQueryRemoveParam(t *testing.T) {
 	q.RemoveParam("testing2")
 	if q.String() != "testing=test" {
 		t.Errorf("Expected to be: 'testing=test'")
+	}
+}
+
+func TestQueryQ(t *testing.T) {
+	q := NewQuery()
+	q.Q("id:100")
+	expected := "q=id%3A100"
+	result := q.String()
+	if result != expected {
+		t.Errorf("expected '%s' but got '%s'", expected, result)
+	}
+}
+
+func TestQuerySort(t *testing.T) {
+	q := NewQuery()
+	q.Sort("geodist() desc")
+	expected := "sort=geodist()+desc"
+	result := q.String()
+	if result != expected {
+		t.Errorf("expected '%s' but got '%s'", expected, result)
+	}
+}
+
+func TestQueryFilterQuery(t *testing.T) {
+	q := NewQuery()
+	q.FilterQuery("popularity:[10 TO *]")
+	expected := "fq=popularity%3A%5B10+TO+*%5D"
+	result := q.String()
+	if result != expected {
+		t.Errorf("expected '%s' but got '%s'", expected, result)
+	}
+}
+
+func TestQueryFieldList(t *testing.T) {
+	q := NewQuery()
+	q.FieldList("id,name,decsription")
+	expected := "fl=id%2Cname%2Cdecsription"
+	result := q.String()
+	if result != expected {
+		t.Errorf("expected '%s' but got '%s'", expected, result)
+	}
+}
+
+func TestQueryGeofilt(t *testing.T) {
+	q := NewQuery()
+	q.Geofilt(45.15, -93.85, "store", 5)
+	expected := "fq=%7B!geofilt+pt%3D45.15%2C-93.85+sfield%3Dstore+d%3D5%7D"
+	result := q.String()
+	if result != expected {
+		t.Errorf("expected '%s' but got '%s'", expected, result)
+	}
+}
+
+func TestQueryDefType(t *testing.T) {
+	q := NewQuery()
+	q.DefType("func")
+	expected := "defType=func"
+	result := q.String()
+	if result != expected {
+		t.Errorf("expected '%s' but got '%s'", expected, result)
+	}
+}
+
+func TestQueryBoostFunctions(t *testing.T) {
+	q := NewQuery()
+	q.BoostFunctions("recip(rord(myfield),1,2,3)")
+	expected := "bf=recip(rord(myfield)%2C1%2C2%2C3)"
+	result := q.String()
+	if result != expected {
+		t.Errorf("expected '%s' but got '%s'", expected, result)
+	}
+}
+
+func TestQueryBoostQuery(t *testing.T) {
+	q := NewQuery()
+	q.BoostQuery("cat:electronics^5.0")
+	expected := "bq=cat%3Aelectronics%5E5.0"
+	result := q.String()
+	if result != expected {
+		t.Errorf("expected '%s' but got '%s'", expected, result)
+	}
+}
+
+func TestQueryQueryField(t *testing.T) {
+	q := NewQuery()
+	q.QueryFields("features^20.0+text^0.3")
+	expected := "qf=features%5E20.0%2Btext%5E0.3"
+	result := q.String()
+	if result != expected {
+		t.Errorf("expected '%s' but got '%s'", expected, result)
 	}
 }
