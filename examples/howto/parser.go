@@ -76,17 +76,11 @@ type InheritResultParser struct {
 
 
 func (parser *InheritResultParser) Parse(response *solr.SelectResponse) (*solr.SolrResult, error) {
-	sr := &solr.SolrResult{}
-	sr.Results = new(solr.Collection)
-	sr.Status = response.Status
-
-	if response.Status == 0 {
-		parser.ParseResponse(response, sr)
-	} else {
-		parser.ParseError(response, sr)
+	sr, err := parser.StandardResultParser.Parse(response)
+	if err != nil {
+		return nil, err
 	}
 	parser.original_response = response.Response
-	
 	return sr, nil
 }
 
