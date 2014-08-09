@@ -110,7 +110,7 @@ func TestQueryQ(t *testing.T) {
 func TestQuerySort(t *testing.T) {
 	q := NewQuery()
 	q.Sort("geodist() desc")
-	expected := "sort=geodist()+desc"
+	expected := "sort=geodist%28%29+desc"
 	result := q.String()
 	if result != expected {
 		t.Errorf("expected '%s' but got '%s'", expected, result)
@@ -120,7 +120,7 @@ func TestQuerySort(t *testing.T) {
 func TestQueryFilterQuery(t *testing.T) {
 	q := NewQuery()
 	q.FilterQuery("popularity:[10 TO *]")
-	expected := "fq=popularity%3A%5B10+TO+*%5D"
+	expected := "fq=popularity%3A%5B10+TO+%2A%5D"
 	result := q.String()
 	if result != expected {
 		t.Errorf("expected '%s' but got '%s'", expected, result)
@@ -140,7 +140,7 @@ func TestQueryFieldList(t *testing.T) {
 func TestQueryGeofilt(t *testing.T) {
 	q := NewQuery()
 	q.Geofilt(45.15, -93.85, "store", 5)
-	expected := "fq=%7B!geofilt+pt%3D45.15%2C-93.85+sfield%3Dstore+d%3D5%7D"
+	expected := "fq=%7B%21geofilt+pt%3D45.15%2C-93.85+sfield%3Dstore+d%3D5%7D"
 	result := q.String()
 	if result != expected {
 		t.Errorf("expected '%s' but got '%s'", expected, result)
@@ -160,7 +160,7 @@ func TestQueryDefType(t *testing.T) {
 func TestQueryBoostFunctions(t *testing.T) {
 	q := NewQuery()
 	q.BoostFunctions("recip(rord(myfield),1,2,3)")
-	expected := "bf=recip(rord(myfield)%2C1%2C2%2C3)"
+	expected := "bf=recip%28rord%28myfield%29%2C1%2C2%2C3%29"
 	result := q.String()
 	if result != expected {
 		t.Errorf("expected '%s' but got '%s'", expected, result)
