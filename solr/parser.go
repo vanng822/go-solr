@@ -15,7 +15,9 @@ func (parser *StandardResultParser) Parse(response *SelectResponse) (*SolrResult
 	sr := &SolrResult{}
 	sr.Results = new(Collection)
 	sr.Status = response.Status
-
+	
+	parser.ParseResponseHeader(response, sr)
+	
 	if response.Status == 0 {
 		parser.ParseResponse(response, sr)
 		parser.ParseFacetCounts(response, sr)
@@ -25,6 +27,12 @@ func (parser *StandardResultParser) Parse(response *SelectResponse) (*SolrResult
 	}
 
 	return sr, nil
+}
+
+func (parser *StandardResultParser) ParseResponseHeader(response *SelectResponse, sr *SolrResult) {
+	if responseHeader, ok := response.Response["responseHeader"].(map[string]interface{}); ok {
+		sr.ResponseHeader = responseHeader
+	}
 }
 
 func (parser *StandardResultParser) ParseError(response *SelectResponse, sr *SolrResult) {

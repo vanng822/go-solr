@@ -175,6 +175,10 @@ func TestSolrFacetSelect(t *testing.T) {
 	if id_len != 6 {
 		t.Errorf("results.facet_counts.facet_fields.id.len expected be 6 but got %d", id_len)
 	}
+	
+	if _, ok := res.ResponseHeader["params"]; ok == false {
+		t.Errorf("ResponseHeader should contain param key")
+	}
 }
 
 func TestSolrHighlightSelect(t *testing.T) {

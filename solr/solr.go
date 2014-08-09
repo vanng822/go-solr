@@ -36,6 +36,8 @@ type Collection struct {
 type SolrResult struct {
 	Status       int         // status quick access to status
 	Results      *Collection // results parsed documents, basically response object
+	
+	ResponseHeader map[string]interface{}
 	FacetCounts map[string]interface{}
 	Highlighting map[string]interface{}
 	Error        map[string]interface{}
