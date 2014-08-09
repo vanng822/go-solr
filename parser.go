@@ -45,6 +45,8 @@ func (parser *StandardResultParser) ParseResponse(response *SelectResponse, sr *
 				sr.Results.Docs[i] = Document(v.(map[string]interface{}))
 			}
 		}
+	} else if grouped, ok := response.Response["grouped"].(map[string]interface{}); ok {
+		sr.Grouped = grouped
 	} else {
 		panic(`Standard parser can only parse solr response with response object,
 					ie response.response and response.response.docs.

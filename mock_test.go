@@ -149,6 +149,38 @@ func mockSuccessCommand(w http.ResponseWriter, req *http.Request) {
 	io.WriteString(w, `{"responseHeader":{"status":0,"QTime":5}}`)
 }
 
+func mockSuccessGrouped(w http.ResponseWriter, req *http.Request) {
+	logRequest(req)
+	io.WriteString(w, `{
+		  "responseHeader":{
+		    "status":0,
+		    "QTime":2,
+		    "params":{
+		      "q":"*:*",
+		      "group.field":"id",
+		      "group":"true",
+		      "wt":"json"}},
+		  "grouped":{
+		    "id":{
+		      "matches":2,
+		      "groups":[{
+		          "groupValue":"test_id_100",
+		          "doclist":{"numFound":1,"start":0,"docs":[
+		              {
+		                "id":"test_id_100",
+		                "title":["add sucess 100"],
+		                "_version_":1475623982992457728}]
+		          }},
+		        {
+		          "groupValue":"test_id_101",
+		          "doclist":{"numFound":1,"start":0,"docs":[
+		              {
+		                "id":"test_id_101",
+		                "title":["add sucess 101"],
+		                "_version_":1475623982995603456}]
+		          }}]}}}`)
+}
+
 func mockSuccessXML(w http.ResponseWriter, req *http.Request) {
 	logRequest(req)
 	io.WriteString(w, `<response>
@@ -168,9 +200,10 @@ func mockStartServer() {
 	http.HandleFunc("/standalonecommit/update/", mockSuccessStandaloneCommit)
 	http.HandleFunc("/add/update/", mockSuccessAdd)
 	http.HandleFunc("/delete/update/", mockSuccessDelete)
-	
+
 	http.HandleFunc("/command/update/", mockSuccessCommand)
 	http.HandleFunc("/xml/update/", mockSuccessXML)
+	http.HandleFunc("/grouped/select/", mockSuccessGrouped)
 	
 	err := http.ListenAndServe(":12345", nil)
 	if err != nil {

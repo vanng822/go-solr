@@ -40,7 +40,8 @@ type SolrResult struct {
 	Highlighting map[string]interface{}
 	Error        map[string]interface{}
 
-	// grouped for grouping result, not supported for now
+	// grouped for grouping result
+	// if grouping Results will be empty
 	Grouped map[string]interface{}
 }
 
