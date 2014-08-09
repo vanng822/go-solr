@@ -3,7 +3,6 @@ package solr
 import (
 	"fmt"
 	"net/url"
-	"strings"
 )
 
 type Query struct {
@@ -81,6 +80,14 @@ func (q *Query) QueryFields(qf string) {
 	q.params.Add("qf", qf)
 }
 
+func (q *Query) Start(start int) {
+	q.params.Set("start", fmt.Sprintf("%d", start))
+}
+
+func (q *Query) Rows(rows int) {
+	q.params.Set("rows", fmt.Sprintf("%d", rows))
+}
+
 func (q *Query) String() string {
 	return q.params.Encode()
 }
@@ -88,8 +95,6 @@ func (q *Query) String() string {
 type Search struct {
 	query *Query
 	conn  *Connection
-	Start int
-	Rows  int
 	Debug string
 }
 
@@ -99,6 +104,7 @@ func NewSearch(c *Connection, q *Query) *Search {
 	if q != nil {
 		s.SetQuery(q)
 	}
+	
 	if c != nil {
 		s.conn = c
 	}
@@ -113,28 +119,19 @@ func (s *Search) SetQuery(q *Query) {
 // QueryString return a query string of all queries, including start, rows, debug and wt=json.
 // wt is always json
 func (s *Search) QueryString() string {
-
-	query := make([]string, 1, 5)
-
-	query[0] = "wt=json"
-
-	if s.Start > 0 {
-		query = append(query, fmt.Sprintf("start=%d", s.Start))
+	
+	if s.query == nil {
+		s.query = NewQuery()
 	}
-
-	if s.Rows > 0 {
-		query = append(query, fmt.Sprintf("rows=%d", s.Rows))
-	}
+	
+	s.query.params.Set("wt", "json")
 
 	if s.Debug != "" {
-		query = append(query, fmt.Sprintf("debug=%s&indent=true", s.Debug))
+		s.query.params.Set("debug", s.Debug)
+		s.query.params.Set("indent", "true")
 	}
-
-	if s.query != nil {
-		query = append(query, s.query.String())
-	}
-
-	return strings.Join(query, "&")
+	
+	return s.query.String()
 }
 
 // Result will create a StandardResultParser if no parser specified.

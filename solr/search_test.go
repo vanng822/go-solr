@@ -21,8 +21,9 @@ func TestSolrSearchMultipleValueQuery(t *testing.T) {
 	q.AddParam("testing", "test")
 	q.AddParam("testing", "testing 2")
 	res := q.String()
-	if res != "testing=test&testing=testing+2" {
-		t.Errorf("Expected to be: 'testing=test&testing=testing+2' but got '%s'", res)
+	expected := "testing=test&testing=testing+2"
+	if res != expected {
+		t.Errorf("Expected to be: '%s' but got '%s'", expected, res)
 	}
 }
 
@@ -31,8 +32,10 @@ func TestSolrSearchMultipleValueSearchQuery(t *testing.T) {
 	q.AddParam("testing", "test")
 	s := NewSearch(nil, q)
 	q.AddParam("testing", "testing 2")
-	if s.QueryString() != "wt=json&testing=test&testing=testing+2" {
-		t.Errorf("Expected to be: 'wt=json&testing=test&testing=testing+2'")
+	res := s.QueryString()
+	expected := "testing=test&testing=testing+2&wt=json"
+	if res != expected {
+		t.Errorf("Expected to be: '%s' but got '%s'", expected, res)
 	}
 }
 
@@ -40,15 +43,20 @@ func TestSolrSearchSetQuery(t *testing.T) {
 	q := NewQuery()
 	q.AddParam("testing", "test")
 	s := NewSearch(nil, q)
-	if s.QueryString() != "wt=json&testing=test" {
-		t.Errorf("Expected to be: 'wt=json&testing=test'")
+	expected := "testing=test&wt=json"
+	res := s.QueryString()
+	if res != expected {
+		t.Errorf("Expected to be: '%s' but got '%s'", expected, res)
 	}
 	q2 := NewQuery()
 	q2.AddParam("testing", "test2")
 	s.SetQuery(q2)
-
-	if s.QueryString() != "wt=json&testing=test2" {
-		t.Errorf("Expected to be: 'wt=json&testing=test2'")
+	
+	expected = "testing=test2&wt=json"
+	res = s.QueryString()
+	
+	if res != expected {
+		t.Errorf("Expected to be: '%s' but got '%s'", expected, res)
 	}
 }
 
@@ -58,8 +66,9 @@ func TestSolrSearchDebugQuery(t *testing.T) {
 	s := NewSearch(nil, q)
 	s.Debug = "true"
 	res := s.QueryString()
-	if res != "wt=json&debug=true&indent=true&testing=test" {
-		t.Errorf("Expected to be: 'wt=json&debug=true&indent=true&testing=test' but got '%s'", res)
+	expected := "debug=true&indent=true&testing=test&wt=json"
+	if res != expected {
+		t.Errorf("Expected to be: '%s' but got '%s'", expected, res)
 	}
 }
 
@@ -88,8 +97,8 @@ func TestSolrQueryRemoveParam(t *testing.T) {
 	q.AddParam("testing2", "testing 2")
 	// random order in for loop of range on map
 	res := q.String()
-	if res != "testing2=testing+2&testing=test" && res != "testing=test&testing2=testing+2" {
-		t.Errorf("Expected to be: 'testing2=testing+2&testing=test' or 'testing=test&testing2=testing+2' but got %s", res)
+	if res != "testing=test&testing2=testing+2" {
+		t.Errorf("Expected to be: 'testing=test&testing2=testing+2' but got %s", res)
 	}
 	q.RemoveParam("testing2")
 	if q.String() != "testing=test" {
