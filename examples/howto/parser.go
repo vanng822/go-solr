@@ -94,8 +94,9 @@ func main() {
 	si, _ := solr.NewSolrInterface("http://localhost:8983/solr/collection1")
 
 	query := solr.NewQuery()
-	query.AddParam("q", "title:add sucess 1")
-	
+	query.Q("title:add sucess 1")
+	query.Start(0)
+	query.Rows(15)
 	s := si.Search(query)
 	
 	parser := &TestResultParser{}
