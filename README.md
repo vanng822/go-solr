@@ -11,6 +11,8 @@ Json only
 
 No schema checking
 
+Please go to http://wiki.apache.org/solr/ for how to write solr query.
+
 ## Features
 
 Search, Add, Update, Delete, Commit, Rollback, Optimize
