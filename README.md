@@ -18,12 +18,12 @@ Search, Add, Update, Delete, Commit, Rollback, Optimize
 
 ## Install
 
-go get github.com/vanng822/go-solr
+go get github.com/vanng822/go-solr/solr
 
 ## Usage
 
     package main
-    import "github.com/vanng822/go-solr"
+    import "github.com/vanng822/go-solr/solr"
     import "fmt"
   
     func main() {

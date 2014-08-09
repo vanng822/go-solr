@@ -3,3 +3,7 @@ language: go
 go:
   - 1.3
   - tip
+
+install: go get -v ./solr
+
+script: go test -v ./solr
