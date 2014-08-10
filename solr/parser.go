@@ -47,7 +47,7 @@ func (parser *StandardResultParser) ParseError(response *SelectResponse, sr *Sol
 }
 
 // ParseResponse will assign result and build sr.docs if there is a response.
-// If there is no response property in response it will panic
+// If there is no response or grouped property in response it will return error
 func (parser *StandardResultParser) ParseResponse(response *SelectResponse, sr *SolrResult) (error) {
 	var err error
 	if resp, ok := response.Response["response"].(map[string]interface{}); ok {
