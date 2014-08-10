@@ -95,7 +95,10 @@ func main() {
 	
 	parser := &TestResultParser{}
 	r, err := s.Result(parser)
-	_ = err
+	if err != nil {
+		fmt.Println("Error when querying solr:", err.Error())
+		return
+	}
 	
 	fmt.Println(r.Results.Docs)
 	fmt.Println(parser.original_response)
