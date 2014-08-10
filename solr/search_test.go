@@ -2,8 +2,6 @@ package solr
 
 import "testing"
 
-import "fmt"
-
 func TestSolrQueryAddParam(t *testing.T) {
 
 	q := NewQuery()
@@ -12,8 +10,6 @@ func TestSolrQueryAddParam(t *testing.T) {
 	if q.String() != "qf=some+qf" {
 		t.Errorf("Expected to be: 'some qf'")
 	}
-
-	fmt.Println(q.String())
 }
 
 func TestSolrSearchMultipleValueQuery(t *testing.T) {

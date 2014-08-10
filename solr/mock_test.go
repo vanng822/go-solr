@@ -5,16 +5,19 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"os"
 )
 
 func logRequest(req *http.Request) {
-	log.Printf("RequestURI: %s", req.RequestURI)
-	body, err := ioutil.ReadAll(req.Body)
-	if err != nil {
-		panic(err.Error())
+	if os.Getenv("MOCK_LOGGING") != "" {
+		log.Printf("RequestURI: %s", req.RequestURI)
+		body, err := ioutil.ReadAll(req.Body)
+		if err != nil {
+			panic(err.Error())
+		}
+		log.Println(string(body))
+		log.Println(req.Header)
 	}
-	log.Println(string(body))
-	log.Println(req.Header)
 }
 
 func mockSuccessSelect(w http.ResponseWriter, req *http.Request) {

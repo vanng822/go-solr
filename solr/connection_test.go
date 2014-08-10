@@ -41,8 +41,7 @@ func TestBytes2Json(t *testing.T) {
 	if d["two"].(float64) != 2 {
 		t.Errorf("two should have 2 as value")
 	}
-
-	PrintMapInterface(d)
+	
 }
 
 func PrintMapInterface(d map[string]interface{}) {
@@ -95,8 +94,6 @@ func TestJson2Bytes(t *testing.T) {
 	if d["two"].(float64) != 2 {
 		t.Errorf("two should have 2 as value")
 	}
-
-	PrintMapInterface(d)
 }
 
 func TestHasError(t *testing.T) {

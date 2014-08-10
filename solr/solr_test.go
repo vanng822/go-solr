@@ -68,8 +68,6 @@ func TestSolrSuccessSelect(t *testing.T) {
 	if res.Results.Docs[0].Get("id").(string) != "change.me" {
 		t.Errorf("id of first document should be change.me")
 	}
-
-	fmt.Println(" ")
 }
 
 func TestSolrFailSelect(t *testing.T) {
@@ -115,7 +113,6 @@ func TestSolrFailSelect(t *testing.T) {
 		t.Errorf("len of .docs should be 0")
 	}
 
-	fmt.Println(" ")
 }
 
 func TestSolrFacetSelect(t *testing.T) {
@@ -131,7 +128,6 @@ func TestSolrFacetSelect(t *testing.T) {
 	q.AddParam("facet.field", "id")
 
 	s := si.Search(q)
-	fmt.Println(s.QueryString())
 	parser := new(StandardResultParser)
 	res, err := s.Result(parser)
 
@@ -197,7 +193,6 @@ func TestSolrHighlightSelect(t *testing.T) {
 	q.AddParam("hl", "true")
 
 	s := si.Search(q)
-	fmt.Println(s.QueryString())
 	parser := new(StandardResultParser)
 	res, err := s.Result(parser)
 
@@ -339,7 +334,6 @@ func TestMakeAddChunks(t *testing.T) {
 	}
 }
 func TestAdd(t *testing.T) {
-	fmt.Println("test_real")
 	si, err := NewSolrInterface("http://127.0.0.1:12345/add")
 	if err != nil {
 		t.Errorf(err.Error())
@@ -362,7 +356,6 @@ func TestAdd(t *testing.T) {
 }
 
 func TestDelete(t *testing.T) {
-	fmt.Println("test_real")
 	si, err := NewSolrInterface("http://127.0.0.1:12345/delete")
 	if err != nil {
 		t.Errorf(err.Error())
@@ -387,7 +380,6 @@ func TestDelete(t *testing.T) {
 }
 
 func TestXMLResponse(t *testing.T) {
-	fmt.Println("test_real")
 	si, err := NewSolrInterface("http://127.0.0.1:12345/xml")
 	if err != nil {
 		t.Errorf(err.Error())
@@ -409,7 +401,6 @@ func TestXMLResponse(t *testing.T) {
 }
 
 func TestRollback(t *testing.T) {
-	fmt.Println("test_real")
 	si, err := NewSolrInterface("http://127.0.0.1:12345/command")
 	if err != nil {
 		t.Errorf(err.Error())
@@ -424,7 +415,6 @@ func TestRollback(t *testing.T) {
 }
 
 func TestOptimize(t *testing.T) {
-	fmt.Println("test_real")
 	si, err := NewSolrInterface("http://127.0.0.1:12345/command")
 	if err != nil {
 		t.Errorf(err.Error())
@@ -460,7 +450,6 @@ func TestGrouped(t *testing.T) {
 	
 	s := si.Search(q)
 	
-	fmt.Println(s.QueryString())
 	res, err := s.Result(nil)
 	
 	if err != nil {

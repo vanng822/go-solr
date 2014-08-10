@@ -36,6 +36,16 @@ go get github.com/vanng822/go-solr/solr
       r, _ := s.Result(nil)
       fmt.Println(r.Results.Docs)
     }
+    
+## Developers
 
+	export MOCK_LOGGING=1
+
+for the mock logging
+
+	unset MOCK_LOGGING
+
+to remove this environment variable
+	
 ## License
 MIT
