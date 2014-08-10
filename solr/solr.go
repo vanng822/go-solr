@@ -14,12 +14,10 @@ func (d Document) Has(k string) bool {
 	return ok
 }
 
-// Get returns value of a key if key exists else panic
+// Get returns value of a key
 func (d Document) Get(k string) interface{} {
-	if v, ok := d[k]; ok {
-		return v
-	}
-	panic(fmt.Sprintf("Try to access field '%s' which does not exist", k))
+	v, _ := d[k]
+	return v 
 }
 
 // Set add a key/value to document

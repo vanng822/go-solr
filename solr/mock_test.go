@@ -181,6 +181,19 @@ func mockSuccessGrouped(w http.ResponseWriter, req *http.Request) {
 		          }}]}}}`)
 }
 
+func mockSuccessStrangeGrouped(w http.ResponseWriter, req *http.Request) {
+	logRequest(req)
+	io.WriteString(w, `{
+		  "responseHeader":{
+		    "status":0,
+		    "QTime":2,
+		    "params":{
+		      "q":"*:*",
+		      "group.field":"id",
+		      "group":"true",
+		      "wt":"json"}}}`)
+}
+
 func mockSuccessXML(w http.ResponseWriter, req *http.Request) {
 	logRequest(req)
 	io.WriteString(w, `<response>
@@ -204,6 +217,7 @@ func mockStartServer() {
 	http.HandleFunc("/command/update/", mockSuccessCommand)
 	http.HandleFunc("/xml/update/", mockSuccessXML)
 	http.HandleFunc("/grouped/select/", mockSuccessGrouped)
+	http.HandleFunc("/noresponse/select/", mockSuccessStrangeGrouped)
 	
 	err := http.ListenAndServe(":12345", nil)
 	if err != nil {

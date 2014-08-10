@@ -24,6 +24,10 @@ func TestSolrDocument(t *testing.T) {
 	if d.Get("new_title").(string) != "new title" {
 		t.Errorf("new_title expected to have value 'new title'")
 	}
+	
+	if d.Get("not_exist") != nil {
+		t.Errorf("Get not_exist key should return nil but got '%s'", d.Get("not_exist"))
+	}
 }
 
 func TestSolrSuccessSelect(t *testing.T) {
@@ -444,7 +448,6 @@ func TestOptimize(t *testing.T) {
 }
 
 func TestGrouped(t *testing.T) {
-	fmt.Println("test_real")
 	si, err := NewSolrInterface("http://127.0.0.1:12345/grouped")
 	if err != nil {
 		t.Errorf(err.Error())
@@ -473,6 +476,31 @@ func TestGrouped(t *testing.T) {
 	}
 }
 
+func TestNoResponseGrouped(t *testing.T) {
+	si, err := NewSolrInterface("http://127.0.0.1:12345/noresponse")
+	if err != nil {
+		t.Errorf(err.Error())
+	}
+	
+	q := NewQuery()
+	q.AddParam("q", "*:*")
+	q.AddParam("group", "true")
+	q.AddParam("group.field", "id")
+	
+	s := si.Search(q)
+	
+	_, err = s.Result(nil)
+	
+	if err == nil {
+		t.Errorf("Error should not be nil")
+	}
+	expected := `Standard parser can only parse solr response with response object,
+					ie response.response and response.response.docs. Or grouped response
+					Please use other parser or implement your own parser`
+	if err.Error() != expected {
+		t.Errorf("expected error '%s' but got '%s'", expected, err.Error())
+	}
+}
 /*
 func TestRealAdd(t *testing.T) {
 	fmt.Println("test_real")

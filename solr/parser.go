@@ -1,5 +1,7 @@
 package solr
-
+import (
+	"fmt"
+)
 // ResultParser is interface for parsing result from response.
 // The idea here is that application have possibility to parse.
 // Or defined own parser with internal data structure to suite
@@ -19,7 +21,10 @@ func (parser *StandardResultParser) Parse(response *SelectResponse) (*SolrResult
 	parser.ParseResponseHeader(response, sr)
 	
 	if response.Status == 0 {
-		parser.ParseResponse(response, sr)
+		err := parser.ParseResponse(response, sr)
+		if err != nil {
+			return nil, err
+		}
 		parser.ParseFacetCounts(response, sr)
 		parser.ParseHighlighting(response, sr)
 	} else {
@@ -43,7 +48,8 @@ func (parser *StandardResultParser) ParseError(response *SelectResponse, sr *Sol
 
 // ParseResponse will assign result and build sr.docs if there is a response.
 // If there is no response property in response it will panic
-func (parser *StandardResultParser) ParseResponse(response *SelectResponse, sr *SolrResult) {
+func (parser *StandardResultParser) ParseResponse(response *SelectResponse, sr *SolrResult) (error) {
+	var err error
 	if resp, ok := response.Response["response"].(map[string]interface{}); ok {
 		sr.Results.NumFound = int(resp["numFound"].(float64))
 		sr.Results.Start = int(resp["start"].(float64))
@@ -56,10 +62,12 @@ func (parser *StandardResultParser) ParseResponse(response *SelectResponse, sr *
 	} else if grouped, ok := response.Response["grouped"].(map[string]interface{}); ok {
 		sr.Grouped = grouped
 	} else {
-		panic(`Standard parser can only parse solr response with response object,
-					ie response.response and response.response.docs.
+		err = fmt.Errorf(`Standard parser can only parse solr response with response object,
+					ie response.response and response.response.docs. Or grouped response
 					Please use other parser or implement your own parser`)
 	}
+	
+	return err
 }
 
 // ParseFacetCounts will assign facet_counts to sr if there is one.
