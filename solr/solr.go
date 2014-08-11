@@ -57,6 +57,13 @@ func NewSolrInterface(solrUrl string) (*SolrInterface, error) {
 	return &SolrInterface{conn: c}, nil
 }
 
+func (si *SolrInterface) SetBasicAuth(username, password string) {
+	if si.conn == nil {
+		return
+	}
+	si.conn.SetBasicAuth(username, password)
+}
+
 func (si *SolrInterface) Search(q *Query) *Search {
 	s := NewSearch(si.conn, q)
 
