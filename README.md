@@ -39,6 +39,9 @@ go get github.com/vanng822/go-solr/solr
     
 ## Developers
 
+Use https://github.com/Skinbits/gitflow if you are member or fork
+
+
 	export MOCK_LOGGING=1
 
 for the mock logging
