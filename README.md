@@ -39,6 +39,9 @@ go get github.com/vanng822/go-solr/solr
     
 ## Developers
 
+Create feature branch if you are member or fork
+
+
 	export MOCK_LOGGING=1
 
 for the mock logging
