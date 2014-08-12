@@ -52,7 +52,9 @@ func (ca *CoreAdmin) Action(action string, params *url.Values) (*CoreAdminRespon
 	default:
 		return nil, fmt.Errorf("Action '%s' not supported", action)
 	}
-
+	
+	params.Set("wt", "json")
+	
 	r, err := HTTPGet(fmt.Sprintf("%s/admin/cores?%s", ca.url.String(), params.Encode()), nil, ca.username, ca.password)
 	if err != nil {
 		return nil, err
