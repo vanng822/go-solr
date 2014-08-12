@@ -35,7 +35,7 @@ func (ca *CoreAdmin) SetBasicAuth(username, password string) {
 	ca.password = password
 }
 
-// Call to admin/cores endpoint, additional to params neccessary for this action can specified in params.
+// Call to admin/cores endpoint, additional params neccessary for this action can specified in params.
 // No check is done for those params so check https://wiki.apache.org/solr/CoreAdmin for detail
 // action is case sensitive
 func (ca *CoreAdmin) Action(action string, params *url.Values) (*CoreAdminResponse, error) {
