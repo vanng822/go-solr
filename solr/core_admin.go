@@ -3,6 +3,7 @@ package solr
 import (
 	"fmt"
 	"net/url"
+	"strings"
 )
 
 type CoreAdmin struct {
@@ -37,24 +38,30 @@ func (ca *CoreAdmin) SetBasicAuth(username, password string) {
 
 // Call to admin/cores endpoint, additional params neccessary for this action can specified in params.
 // No check is done for those params so check https://wiki.apache.org/solr/CoreAdmin for detail
-// action is case sensitive
 func (ca *CoreAdmin) Action(action string, params *url.Values) (*CoreAdminResponse, error) {
-	switch action {
+	switch strings.ToUpper(action) {
 	case "STATUS":
+		params.Set("action", "STATUS")
 	case "RELOAD":
+		params.Set("action", "RELOAD")
 	case "CREATE":
+		params.Set("action", "CREATE")
 	case "RENAME":
+		params.Set("action", "RENAME")
 	case "SWAP":
+		params.Set("action", "SWAP")
 	case "UNLOAD":
+		params.Set("action", "UNLOAD")
 	case "SPLIT":
-	case "mergeindexes":
-		params.Set("action", action)
+		params.Set("action", "SPLIT")
+	case "MERGEINDEXES":
+		params.Set("action", "mergeindexes")
 	default:
 		return nil, fmt.Errorf("Action '%s' not supported", action)
 	}
-	
+
 	params.Set("wt", "json")
-	
+
 	r, err := HTTPGet(fmt.Sprintf("%s/admin/cores?%s", ca.url.String(), params.Encode()), nil, ca.username, ca.password)
 	if err != nil {
 		return nil, err

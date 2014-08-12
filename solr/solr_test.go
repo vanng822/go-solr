@@ -569,3 +569,17 @@ func TestCoreAdminCoresAction(t *testing.T) {
 		t.Errorf("Status expected to be 0 but got '%d'", res.Status)
 	}
 }
+
+func TestSupportedAction(t *testing.T) {
+
+	ca, _ := NewCoreAdmin("http://127.0.0.1:12345/solr")
+
+	params := &url.Values{}
+	actions := []string{"STATUS", "RELOAD", "CREATE", "RENAME", "SWAP", "UNLOAD", "SPLIT", "mergeindexes"}
+	for _, action := range actions {
+		_, err := ca.Action(action, params)
+		if err != nil {
+			t.Errorf("Should not be an error but got '%s'", err.Error())
+		}
+	}
+}
