@@ -1,5 +1,5 @@
 package solr
 
 const (
-	VERSION = "0.0"
+	VERSION = "0.1"
 )
