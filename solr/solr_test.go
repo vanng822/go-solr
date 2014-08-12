@@ -338,7 +338,8 @@ func TestAdd(t *testing.T) {
 	if err != nil {
 		t.Errorf(err.Error())
 	}
-
+	si.SetBasicAuth("test", "post")
+	
 	docs := make([]Document, 0, 5)
 	for i := 0; i < 5; i++ {
 		docs = append(docs, Document{"id": fmt.Sprintf("test_id_%d", i), "title": fmt.Sprintf("add sucess %d", i)})
@@ -449,7 +450,7 @@ func TestGrouped(t *testing.T) {
 	q.AddParam("group.field", "id")
 	
 	s := si.Search(q)
-	si.SetBasicAuth("test", "test")
+	si.SetBasicAuth("test", "get")
 	res, err := s.Result(nil)
 	
 	if err != nil {
