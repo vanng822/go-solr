@@ -12,7 +12,7 @@ import (
 var userAgent = fmt.Sprintf("Go-solr/%s (+https://github.com/vanng822/go-solr)", VERSION)
 
 // HTTPPost make a POST request to path which also includes domain, headers are optional
-func HTTPPost(path string, data *[]byte, headers [][]string) ([]byte, error) {
+func HTTPPost(path string, data *[]byte, headers [][]string, username, password string) ([]byte, error) {
 	var (
 		req *http.Request
 		err error
@@ -24,13 +24,22 @@ func HTTPPost(path string, data *[]byte, headers [][]string) ([]byte, error) {
 	} else {
 		req, err = http.NewRequest("POST", path, bytes.NewReader(*data))
 	}
+
+	if err != nil {
+		return nil, err
+	}
+
+	if username != "" && password != "" {
+		req.SetBasicAuth(username, password)
+	}
+
 	if len(headers) > 0 {
 		for i := range headers {
 			req.Header.Add(headers[i][0], headers[i][1])
 		}
 	}
 	req.Header.Set("User-Agent", userAgent)
-	
+
 	resp, err := client.Do(req)
 
 	if err != nil {
@@ -48,9 +57,17 @@ func HTTPPost(path string, data *[]byte, headers [][]string) ([]byte, error) {
 }
 
 // HTTPGet make a GET request to url, headers are optional
-func HTTPGet(url string, headers [][]string) ([]byte, error) {
+func HTTPGet(url string, headers [][]string, username, password string) ([]byte, error) {
 	client := &http.Client{}
 	req, err := http.NewRequest("GET", url, nil)
+
+	if err != nil {
+		return nil, err
+	}
+
+	if username != "" && password != "" {
+		req.SetBasicAuth(username, password)
+	}
 
 	if len(headers) > 0 {
 		for i := range headers {
@@ -122,7 +139,9 @@ type UpdateResponse struct {
 }
 
 type Connection struct {
-	url *url.URL
+	url      *url.URL
+	username string
+	password string
 }
 
 // NewConnection will parse solrUrl and return a connection object, solrUrl must be a absolute url or path
@@ -135,8 +154,13 @@ func NewConnection(solrUrl string) (*Connection, error) {
 	return &Connection{url: u}, nil
 }
 
+func (c *Connection) SetBasicAuth(username, password string) {
+	c.username = username
+	c.password = password
+}
+
 func (c *Connection) Select(selectQuery string) (*SelectResponse, error) {
-	r, err := HTTPGet(fmt.Sprintf("%s/select/?%s", c.url.String(), selectQuery), nil)
+	r, err := HTTPGet(fmt.Sprintf("%s/select/?%s", c.url.String(), selectQuery), nil, c.username, c.password)
 	if err != nil {
 		return nil, err
 	}
@@ -165,7 +189,7 @@ func (c *Connection) Update(data map[string]interface{}, params *url.Values) (*U
 
 	params.Set("wt", "json")
 
-	r, err := HTTPPost(fmt.Sprintf("%s/update/?%s", c.url.String(), params.Encode()), b, [][]string{{"Content-Type", "application/json"}})
+	r, err := HTTPPost(fmt.Sprintf("%s/update/?%s", c.url.String(), params.Encode()), b, [][]string{{"Content-Type", "application/json"}}, c.username, c.password)
 
 	if err != nil {
 		return nil, err
