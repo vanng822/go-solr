@@ -57,6 +57,8 @@ func NewSolrInterface(solrUrl string) (*SolrInterface, error) {
 	return &SolrInterface{conn: c}, nil
 }
 
+// SetBasicAuth sets the request's Authorization header to use HTTP Basic Authentication with the provided username and password.
+// See http://golang.org/pkg/net/http/#Request.SetBasicAuth
 func (si *SolrInterface) SetBasicAuth(username, password string) error {
 	if si.conn == nil {
 		return fmt.Errorf("You need to a connection to be able to set basic auth")
