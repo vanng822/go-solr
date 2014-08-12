@@ -224,6 +224,11 @@ func mockSuccessXML(w http.ResponseWriter, req *http.Request) {
 						</response>`)
 }
 
+func mockCoreAdmin(w http.ResponseWriter, req *http.Request) {
+	logRequest(req)
+	io.WriteString(w, `{"responseHeader":{"status":0,"QTime":50}}`)
+}
+
 func mockStartServer() {
 	http.HandleFunc("/success/select/", mockSuccessSelect)
 	http.HandleFunc("/fail/select/", mockFailSelect)
@@ -238,9 +243,11 @@ func mockStartServer() {
 	http.HandleFunc("/xml/update/", mockSuccessXML)
 	http.HandleFunc("/grouped/select/", mockSuccessGrouped)
 	http.HandleFunc("/noresponse/select/", mockSuccessStrangeGrouped)
-
+	http.HandleFunc("/solr/admin/cores", mockCoreAdmin)
+	
 	err := http.ListenAndServe(":12345", nil)
 	if err != nil {
 		log.Fatal("ListenAndServe: ", err)
 	}
 }
+
