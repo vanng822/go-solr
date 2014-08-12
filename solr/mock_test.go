@@ -6,11 +6,28 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"encoding/base64"
+	"strings"
 )
+
+func logPrintBasicAuth(req *http.Request) {
+	authData, ok := req.Header["Authorization"]
+	if ok == false {
+		return
+	}
+	auth := strings.SplitN(authData[0], " ", 2)
+	if len(auth) != 2 || auth[0] != "Basic" {
+		return
+	}
+	payload, _ := base64.StdEncoding.DecodeString(auth[1])
+	pair := strings.SplitN(string(payload), ":", 2)
+	log.Printf("Basic auth: %v", pair)
+}
 
 func logRequest(req *http.Request) {
 	if os.Getenv("MOCK_LOGGING") != "" {
 		log.Printf("RequestURI: %s", req.RequestURI)
+		logPrintBasicAuth(req)
 		body, err := ioutil.ReadAll(req.Body)
 		if err != nil {
 			panic(err.Error())
@@ -221,7 +238,7 @@ func mockStartServer() {
 	http.HandleFunc("/xml/update/", mockSuccessXML)
 	http.HandleFunc("/grouped/select/", mockSuccessGrouped)
 	http.HandleFunc("/noresponse/select/", mockSuccessStrangeGrouped)
-	
+
 	err := http.ListenAndServe(":12345", nil)
 	if err != nil {
 		log.Fatal("ListenAndServe: ", err)

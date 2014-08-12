@@ -449,7 +449,7 @@ func TestGrouped(t *testing.T) {
 	q.AddParam("group.field", "id")
 	
 	s := si.Search(q)
-	
+	si.SetBasicAuth("test", "test")
 	res, err := s.Result(nil)
 	
 	if err != nil {
