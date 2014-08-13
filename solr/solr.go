@@ -57,7 +57,8 @@ func NewSolrInterface(solrUrl, core string) (*SolrInterface, error) {
 	return &SolrInterface{conn: c}, nil
 }
 
-// Set to new core
+// Set to new core, this is just wrapper to Connection.SetCore which mean
+// it will affect all places that use this Connection instance
 func (si *SolrInterface) SetCore(core string) {
 	si.conn.SetCore(core)
 }

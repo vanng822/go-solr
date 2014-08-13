@@ -155,6 +155,7 @@ func NewConnection(solrUrl, core string) (*Connection, error) {
 	return &Connection{url: u, core: core}, nil
 }
 
+// Set to a new core
 func (c *Connection) SetCore(core string) {
 	c.core = core
 }
