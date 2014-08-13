@@ -571,6 +571,28 @@ func TestCoreAdminCoresAction(t *testing.T) {
 	}
 }
 
+func TestCoreAdminCoresActionWrappers(t *testing.T) {
+	
+	ca, _ := NewCoreAdmin("http://127.0.0.1:12345/solr")
+	
+	// Status
+	res, err := ca.Status("")
+	if err != nil {
+		t.Errorf("Should not be an error")
+	}
+	if res.Status != 0 {
+		t.Errorf("Status expected to be 0 but got '%d'", res.Status)
+	}
+	
+	res, err = ca.Status("core0")
+	if err != nil {
+		t.Errorf("Should not be an error")
+	}
+	if res.Status != 0 {
+		t.Errorf("Status expected to be 0 but got '%d'", res.Status)
+	}
+}
+
 func TestSupportedAction(t *testing.T) {
 
 	ca, _ := NewCoreAdmin("http://127.0.0.1:12345/solr")

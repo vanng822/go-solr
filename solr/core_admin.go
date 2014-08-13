@@ -74,3 +74,14 @@ func (ca *CoreAdmin) Action(action string, params *url.Values) (*CoreAdminRespon
 	result.Status = int(resp["responseHeader"].(map[string]interface{})["status"].(float64))
 	return result, nil
 }
+
+// pass empty string as core if you want status of all cores
+func (ca *CoreAdmin) Status(core string) (*CoreAdminResponse, error) {
+	params := &url.Values{}
+	
+	if core != "" {
+		params.Add("core", core)
+	}
+	
+	return ca.Action("STATUS", params)
+}
