@@ -85,7 +85,7 @@ func (parser *InheritResultParser) Parse(response *solr.SelectResponse) (*solr.S
 }
 
 func main() {
-	si, _ := solr.NewSolrInterface("http://localhost:8983/solr/collection1")
+	si, _ := solr.NewSolrInterface("http://localhost:8983/solr", "collection1")
 
 	query := solr.NewQuery()
 	query.Q("title:add sucess 1")
