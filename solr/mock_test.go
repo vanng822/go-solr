@@ -230,19 +230,19 @@ func mockCoreAdmin(w http.ResponseWriter, req *http.Request) {
 }
 
 func mockStartServer() {
-	http.HandleFunc("/success/select/", mockSuccessSelect)
-	http.HandleFunc("/fail/select/", mockFailSelect)
-	http.HandleFunc("/facet_counts/select/", mockSuccessSelectFacet)
-	http.HandleFunc("/highlight/select/", mockSuccessSelectHighlight)
+	http.HandleFunc("/success/core0/select/", mockSuccessSelect)
+	http.HandleFunc("/fail/core0/select/", mockFailSelect)
+	http.HandleFunc("/facet_counts/core0/select/", mockSuccessSelectFacet)
+	http.HandleFunc("/highlight/core0/select/", mockSuccessSelectHighlight)
 
-	http.HandleFunc("/standalonecommit/update/", mockSuccessStandaloneCommit)
-	http.HandleFunc("/add/update/", mockSuccessAdd)
-	http.HandleFunc("/delete/update/", mockSuccessDelete)
+	http.HandleFunc("/standalonecommit/core0/update/", mockSuccessStandaloneCommit)
+	http.HandleFunc("/add/core0/update/", mockSuccessAdd)
+	http.HandleFunc("/delete/core0/update/", mockSuccessDelete)
 
-	http.HandleFunc("/command/update/", mockSuccessCommand)
-	http.HandleFunc("/xml/update/", mockSuccessXML)
-	http.HandleFunc("/grouped/select/", mockSuccessGrouped)
-	http.HandleFunc("/noresponse/select/", mockSuccessStrangeGrouped)
+	http.HandleFunc("/command/core0/update/", mockSuccessCommand)
+	http.HandleFunc("/xml/core0/update/", mockSuccessXML)
+	http.HandleFunc("/grouped/core0/select/", mockSuccessGrouped)
+	http.HandleFunc("/noresponse/core0/select/", mockSuccessStrangeGrouped)
 	http.HandleFunc("/solr/admin/cores", mockCoreAdmin)
 	
 	err := http.ListenAndServe(":12345", nil)

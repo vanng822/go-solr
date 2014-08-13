@@ -140,18 +140,24 @@ type UpdateResponse struct {
 
 type Connection struct {
 	url      *url.URL
+	core     string
 	username string
 	password string
 }
 
 // NewConnection will parse solrUrl and return a connection object, solrUrl must be a absolute url or path
-func NewConnection(solrUrl string) (*Connection, error) {
+func NewConnection(solrUrl, core string) (*Connection, error) {
 	u, err := url.ParseRequestURI(solrUrl)
 	if err != nil {
 		return nil, err
 	}
 
-	return &Connection{url: u}, nil
+	return &Connection{url: u, core: core}, nil
+}
+
+// Set to a new core
+func (c *Connection) SetCore(core string) {
+	c.core = core
 }
 
 func (c *Connection) SetBasicAuth(username, password string) {
@@ -160,7 +166,7 @@ func (c *Connection) SetBasicAuth(username, password string) {
 }
 
 func (c *Connection) Select(selectQuery string) (*SelectResponse, error) {
-	r, err := HTTPGet(fmt.Sprintf("%s/select/?%s", c.url.String(), selectQuery), nil, c.username, c.password)
+	r, err := HTTPGet(fmt.Sprintf("%s/%s/select/?%s", c.url.String(), c.core, selectQuery), nil, c.username, c.password)
 	if err != nil {
 		return nil, err
 	}
@@ -189,7 +195,7 @@ func (c *Connection) Update(data map[string]interface{}, params *url.Values) (*U
 
 	params.Set("wt", "json")
 
-	r, err := HTTPPost(fmt.Sprintf("%s/update/?%s", c.url.String(), params.Encode()), b, [][]string{{"Content-Type", "application/json"}}, c.username, c.password)
+	r, err := HTTPPost(fmt.Sprintf("%s/%s/update/?%s", c.url.String(), c.core, params.Encode()), b, [][]string{{"Content-Type", "application/json"}}, c.username, c.password)
 
 	if err != nil {
 		return nil, err

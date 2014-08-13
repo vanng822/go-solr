@@ -49,12 +49,18 @@ type SolrInterface struct {
 	conn *Connection
 }
 
-func NewSolrInterface(solrUrl string) (*SolrInterface, error) {
-	c, err := NewConnection(solrUrl)
+func NewSolrInterface(solrUrl, core string) (*SolrInterface, error) {
+	c, err := NewConnection(solrUrl, core)
 	if err != nil {
 		return nil, err
 	}
 	return &SolrInterface{conn: c}, nil
+}
+
+// Set to new core, this is just wrapper to Connection.SetCore which mean
+// it will affect all places that use this Connection instance
+func (si *SolrInterface) SetCore(core string) {
+	si.conn.SetCore(core)
 }
 
 // SetBasicAuth sets the request's Authorization header to use HTTP Basic Authentication with the provided username and password.
