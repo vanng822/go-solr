@@ -4,17 +4,17 @@ import "testing"
 import "fmt"
 
 func TestConnection(t *testing.T) {
-	_, err1 := NewConnection("fakedomain.tld")
+	_, err1 := NewConnection("fakedomain.tld", "core0")
 	if err1 == nil {
 		t.Errorf("It should be an error since the url is not valid")
 	}
 
-	_, err2 := NewConnection("http://www.fakedomain.tld")
+	_, err2 := NewConnection("http://www.fakedomain.tld", "core0")
 	if err2 != nil {
 		t.Errorf("It should not be an error since the url is  valid but got '%s'", err2.Error())
 	}
 
-	_, err3 := NewConnection("http://www.fakedomain.tld/select/")
+	_, err3 := NewConnection("http://www.fakedomain.tld/select/", "core0")
 	if err3 != nil {
 		t.Errorf("It should not be an error since the url is  valid but got '%s'", err3.Error())
 	}
