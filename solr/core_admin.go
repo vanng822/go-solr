@@ -85,3 +85,11 @@ func (ca *CoreAdmin) Status(core string) (*CoreAdminResponse, error) {
 	
 	return ca.Action("STATUS", params)
 }
+
+// Swap one core with other core
+func (ca *CoreAdmin) Swap(core, other string) (*CoreAdminResponse, error) {
+	params := &url.Values{}
+	params.Add("core", core)
+	params.Add("other", other)
+	return ca.Action("SWAP", params)
+}

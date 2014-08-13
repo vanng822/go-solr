@@ -591,6 +591,16 @@ func TestCoreAdminCoresActionWrappers(t *testing.T) {
 	if res.Status != 0 {
 		t.Errorf("Status expected to be 0 but got '%d'", res.Status)
 	}
+	// Swap
+	
+	res, err = ca.Swap("core0", "core1")
+	if err != nil {
+		t.Errorf("Should not be an error")
+	}
+	if res.Status != 0 {
+		t.Errorf("Status expected to be 0 but got '%d'", res.Status)
+	}
+	
 }
 
 func TestSupportedAction(t *testing.T) {
