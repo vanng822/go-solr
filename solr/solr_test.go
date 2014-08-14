@@ -628,6 +628,28 @@ func TestCoreAdminCoresActionWrappers(t *testing.T) {
 	if res.Status != 0 {
 		t.Errorf("Status expected to be 0 but got '%d'", res.Status)
 	}
+	// Split
+	res, err = ca.Split("core0", "core1")
+	
+	if err == nil {
+		t.Errorf("Should be an error")
+	}
+	
+	expected := "You must specify at least 2 target cores"
+	
+	if err.Error() != expected {
+		t.Errorf("expcted '%s' but got '%s'", expected, err.Error())
+	}
+	
+	res, err = ca.Split("core0", "core1", "core2")
+	
+	if err != nil {
+		t.Errorf("Should not be an error")
+	}
+	
+	if res.Status != 0 {
+		t.Errorf("Status expected to be 0 but got '%d'", res.Status)
+	}
 }
 
 func TestSupportedAction(t *testing.T) {
@@ -635,7 +657,7 @@ func TestSupportedAction(t *testing.T) {
 	ca, _ := NewCoreAdmin("http://127.0.0.1:12345/solr")
 
 	params := &url.Values{}
-	actions := []string{ "CREATE", "SPLIT", "mergeindexes"}
+	actions := []string{ "CREATE", "mergeindexes"}
 	for _, action := range actions {
 		_, err := ca.Action(action, params)
 		if err != nil {
