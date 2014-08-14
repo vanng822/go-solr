@@ -75,7 +75,8 @@ func (ca *CoreAdmin) Action(action string, params *url.Values) (*CoreAdminRespon
 	return result, nil
 }
 
-// pass empty string as core if you want status of all cores
+// pass empty string as core if you want status of all cores.
+// See https://wiki.apache.org/solr/CoreAdmin#STATUS
 func (ca *CoreAdmin) Status(core string) (*CoreAdminResponse, error) {
 	params := &url.Values{}
 	
@@ -86,7 +87,8 @@ func (ca *CoreAdmin) Status(core string) (*CoreAdminResponse, error) {
 	return ca.Action("STATUS", params)
 }
 
-// Swap one core with other core
+// Swap one core with other core.
+// See https://wiki.apache.org/solr/CoreAdmin#SWAP
 func (ca *CoreAdmin) Swap(core, other string) (*CoreAdminResponse, error) {
 	params := &url.Values{}
 	params.Add("core", core)
