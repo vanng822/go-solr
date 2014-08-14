@@ -121,10 +121,10 @@ func (ca *CoreAdmin) Rename(core, other string) (*CoreAdminResponse, error) {
 	return ca.Action("RENAME", params)
 }
 
-// Split a core into 2 or more cores
+// Splits an index into two or more indexes
 // See https://wiki.apache.org/solr/CoreAdmin#SPLIT
 // Only targetCore is supported here. If you want to use "path"
-// use Action method
+// use Action method. Available in Solr4.3
 func (ca *CoreAdmin) Split(core string, targetCore ...string) (*CoreAdminResponse, error) {
 	if len(targetCore) < 2 {
 		return nil, fmt.Errorf("You must specify at least 2 target cores")
