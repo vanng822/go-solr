@@ -79,11 +79,11 @@ func (ca *CoreAdmin) Action(action string, params *url.Values) (*CoreAdminRespon
 // See https://wiki.apache.org/solr/CoreAdmin#STATUS
 func (ca *CoreAdmin) Status(core string) (*CoreAdminResponse, error) {
 	params := &url.Values{}
-	
+
 	if core != "" {
 		params.Add("core", core)
 	}
-	
+
 	return ca.Action("STATUS", params)
 }
 
@@ -101,4 +101,13 @@ func (ca *CoreAdmin) Reload(core string) (*CoreAdminResponse, error) {
 	params := &url.Values{}
 	params.Add("core", core)
 	return ca.Action("RELOAD", params)
+}
+
+// Unload a core, see https://wiki.apache.org/solr/CoreAdmin#UNLOAD
+// If you want to use those flag deleteIndex, deleteDataDir, deleteInstanceDir
+// Please use Action-method with those params specified, like ca.Action("UNLOAD", params)
+func (ca *CoreAdmin) Unload(core string) (*CoreAdminResponse, error) {
+	params := &url.Values{}
+	params.Add("core", core)
+	return ca.Action("UNLOAD", params)
 }

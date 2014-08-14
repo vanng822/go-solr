@@ -610,6 +610,14 @@ func TestCoreAdminCoresActionWrappers(t *testing.T) {
 		t.Errorf("Status expected to be 0 but got '%d'", res.Status)
 	}
 	
+	// Unload
+	res, err = ca.Unload("core0")
+	if err != nil {
+		t.Errorf("Should not be an error")
+	}
+	if res.Status != 0 {
+		t.Errorf("Status expected to be 0 but got '%d'", res.Status)
+	}
 }
 
 func TestSupportedAction(t *testing.T) {
@@ -617,7 +625,7 @@ func TestSupportedAction(t *testing.T) {
 	ca, _ := NewCoreAdmin("http://127.0.0.1:12345/solr")
 
 	params := &url.Values{}
-	actions := []string{ "CREATE", "RENAME", "UNLOAD", "SPLIT", "mergeindexes"}
+	actions := []string{ "CREATE", "RENAME", "SPLIT", "mergeindexes"}
 	for _, action := range actions {
 		_, err := ca.Action(action, params)
 		if err != nil {
