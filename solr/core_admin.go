@@ -93,3 +93,10 @@ func (ca *CoreAdmin) Swap(core, other string) (*CoreAdminResponse, error) {
 	params.Add("other", other)
 	return ca.Action("SWAP", params)
 }
+
+// Reload a core, see https://wiki.apache.org/solr/CoreAdmin#RELOAD
+func (ca *CoreAdmin) Reload(core string) (*CoreAdminResponse, error) {
+	params := &url.Values{}
+	params.Add("core", core)
+	return ca.Action("RELOAD", params)
+}
