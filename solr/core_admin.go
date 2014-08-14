@@ -111,3 +111,12 @@ func (ca *CoreAdmin) Unload(core string) (*CoreAdminResponse, error) {
 	params.Add("core", core)
 	return ca.Action("UNLOAD", params)
 }
+
+// Rename a core
+// See https://wiki.apache.org/solr/CoreAdmin#RENAME
+func (ca *CoreAdmin) Rename(core, other string) (*CoreAdminResponse, error) {
+	params := &url.Values{}
+	params.Add("core", core)
+	params.Add("other", other)
+	return ca.Action("RENAME", params)
+}
