@@ -49,6 +49,7 @@ type SolrInterface struct {
 	conn *Connection
 }
 
+// Return a new instance of SolrInterface
 func NewSolrInterface(solrUrl, core string) (*SolrInterface, error) {
 	c, err := NewConnection(solrUrl, core)
 	if err != nil {
@@ -69,10 +70,9 @@ func (si *SolrInterface) SetBasicAuth(username, password string) {
 	si.conn.SetBasicAuth(username, password)
 }
 
+// Return a new instace of Search, q is optional and one can set it later 
 func (si *SolrInterface) Search(q *Query) *Search {
-	s := NewSearch(si.conn, q)
-
-	return s
+	return NewSearch(si.conn, q)
 }
 
 // makeAddChunks splits the documents into chunks. If chunk_size is less than one it will be default to 100
@@ -145,6 +145,7 @@ func (si *SolrInterface) Update(data map[string]interface{}, params *url.Values)
 	return si.conn.Update(data, params)
 }
 
+// Commit the changes since the last commit
 func (si *SolrInterface) Commit() (*UpdateResponse, error) {
 	params := &url.Values{}
 	params.Add("commit", "true")
