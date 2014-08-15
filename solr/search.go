@@ -6,12 +6,12 @@ import (
 )
 
 type Query struct {
-	params url.Values
+	params *url.Values
 }
 
 func NewQuery() *Query {
 	q := new(Query)
-	q.params = url.Values{}
+	q.params = &url.Values{}
 	return q
 }
 
