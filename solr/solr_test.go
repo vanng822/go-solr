@@ -817,3 +817,18 @@ func TestSchemaDynamicFieldsName(t *testing.T) {
 		t.Errorf("Result expected to have 'dynamicField' key")
 	}
 }
+
+
+func TestSchemaPost(t *testing.T) {
+	s, err := NewSchema(solrUrl, "collection1")
+	data := []interface{}{map[string]interface{}{"name":"newfield1","type":"text","copyFields":[]string{"target1"}}, map[string]interface{}{"name":"newfield2","type":"text","stored":"false"}}
+	
+	res, err := s.Post("fields", data)
+	if err != nil {
+		t.Errorf("Error should be nil but got '%s'", err.Error())
+		return
+	}
+	if _, ok := res.Result["fields"]; ok == false {
+		t.Errorf("Result expected to have 'fields' key")
+	}
+}

@@ -156,3 +156,33 @@ func (s *Schema) DynamicFieldsName(name string, showDefaults bool) (*SchemaRespo
 	}
 	return s.Get(fmt.Sprintf("dynamicfields/%s", name), params)
 }
+
+// For modify schema, require Solr4.4, currently one can add fields and copy fields.
+// Example: s.Post("fields", data) for adding new fields.
+// See https://wiki.apache.org/solr/SchemaRESTAPI
+func (s *Schema) Post(path string, data interface{}) (*SchemaResponse, error) {
+	var (
+		r   []byte
+		err error
+	)
+	b, err := json2bytes(data)
+	if err != nil {
+		return nil, err
+	}
+	
+	if s.core != "" {
+		r, err = HTTPPost(fmt.Sprintf("%s/%s/schema/%s?wt=json", s.url.String(), s.core, strings.Trim(path, "/")), b, nil, s.username, s.password)
+	} else {
+		r, err = HTTPPost(fmt.Sprintf("%s/schema/%s?wt=json", s.url.String(), strings.Trim(path, "/")), b, nil, s.username, s.password)
+	}
+	if err != nil {
+		return nil, err
+	}
+	
+	resp, err := bytes2json(&r)
+	if err != nil {
+		return nil, err
+	}
+	
+	return &SchemaResponse{Result: resp, Status: int(resp["responseHeader"].(map[string]interface{})["status"].(float64))}, nil
+}
