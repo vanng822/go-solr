@@ -788,3 +788,32 @@ func TestSchemaFieldtypesName(t *testing.T) {
 		t.Errorf("Result expected to have 'fieldType' key")
 	}
 }
+
+
+
+func TestSchemaDynamicFields(t *testing.T) {
+	s, err := NewSchema(solrUrl, "collection1")
+	
+	res, err := s.DynamicFields("", false)
+	if err != nil {
+		t.Errorf("Error should be nil but got '%s'", err.Error())
+		return
+	}
+	if _, ok := res.Result["dynamicFields"]; ok == false {
+		t.Errorf("Result expected to have 'dynamicFields' key")
+	}
+}
+
+
+func TestSchemaDynamicFieldsName(t *testing.T) {
+	s, err := NewSchema(solrUrl, "collection1")
+	
+	res, err := s.DynamicFieldsName("*_coordinate", false)
+	if err != nil {
+		t.Errorf("Error should be nil but got '%s'", err.Error())
+		return
+	}
+	if _, ok := res.Result["dynamicField"]; ok == false {
+		t.Errorf("Result expected to have 'dynamicField' key")
+	}
+}
