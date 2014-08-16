@@ -116,3 +116,21 @@ func (s *Schema) FieldsName(name string, includeDynamic, showDefaults bool) (*Sc
 	}
 	return s.Get(fmt.Sprintf("fields/%s", name), params)
 }
+
+// see https://wiki.apache.org/solr/SchemaRESTAPI
+func (s *Schema) Fieldtypes(showDefaults bool) (*SchemaResponse, error) {
+	params := &url.Values{}
+	if showDefaults {
+		params.Set("showDefaults", "true")
+	}
+	return s.Get("fieldtypes", params)
+}
+
+// see https://wiki.apache.org/solr/SchemaRESTAPI
+func (s *Schema) FieldtypesName(name string, showDefaults bool) (*SchemaResponse, error) {
+	params := &url.Values{}
+	if showDefaults {
+		params.Set("showDefaults", "true")
+	}
+	return s.Get(fmt.Sprintf("fieldtypes/%s", name), params)
+}

@@ -761,3 +761,30 @@ func TestSchemaFieldsName(t *testing.T) {
 		t.Errorf("Result expected to have 'field' key")
 	}
 }
+
+func TestSchemaFieldtypes(t *testing.T) {
+	s, err := NewSchema(solrUrl, "collection1")
+	
+	res, err := s.Fieldtypes(false)
+	if err != nil {
+		t.Errorf("Error should be nil but got '%s'", err.Error())
+		return
+	}
+	if _, ok := res.Result["fieldTypes"]; ok == false {
+		t.Errorf("Result expected to have 'fieldTypes' key")
+	}
+}
+
+
+func TestSchemaFieldtypesName(t *testing.T) {
+	s, err := NewSchema(solrUrl, "collection1")
+	
+	res, err := s.FieldtypesName("location", false)
+	if err != nil {
+		t.Errorf("Error should be nil but got '%s'", err.Error())
+		return
+	}
+	if _, ok := res.Result["fieldType"]; ok == false {
+		t.Errorf("Result expected to have 'fieldType' key")
+	}
+}
