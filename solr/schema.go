@@ -49,11 +49,15 @@ func (s *Schema) Get(path string, params *url.Values) (*SchemaResponse, error) {
 	}
 
 	params.Set("wt", "json")
-
+	
+	if path != "" {
+		path = fmt.Sprintf("/%s", strings.Trim(path, "/"))
+	}
+	
 	if s.core != "" {
-		r, err = HTTPGet(fmt.Sprintf("%s/%s/schema/%s?%s", s.url.String(), s.core, strings.TrimLeft(path, "/"), params.Encode()), nil, s.username, s.password)
+		r, err = HTTPGet(fmt.Sprintf("%s/%s/schema%s?%s", s.url.String(), s.core, path, params.Encode()), nil, s.username, s.password)
 	} else {
-		r, err = HTTPGet(fmt.Sprintf("%s/schema/%s?%s", s.url.String(), strings.TrimLeft(path, "/"), params.Encode()), nil, s.username, s.password)
+		r, err = HTTPGet(fmt.Sprintf("%s/schema%s?%s", s.url.String(), path, params.Encode()), nil, s.username, s.password)
 	}
 	if err != nil {
 		return nil, err
@@ -81,3 +85,7 @@ func (s *Schema) Version() (*SchemaResponse, error) {
 	return s.Get("version", nil)
 }
 
+// Return name of schema, require Solr4.3, see https://wiki.apache.org/solr/SchemaRESTAPI
+func (s *Schema) Name() (*SchemaResponse, error) {
+	return s.Get("name", nil)
+}

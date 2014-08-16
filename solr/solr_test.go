@@ -720,3 +720,16 @@ func TestSchemaAll(t *testing.T) {
 		t.Errorf("Result expected to have 'schema' key")
 	}
 }
+
+func TestSchemaName(t *testing.T) {
+	s, err := NewSchema(solrUrl, "collection1")
+	
+	res, err := s.Name()
+	if err != nil {
+		t.Errorf("Error should be nil but got '%s'", err.Error())
+		return
+	}
+	if _, ok := res.Result["name"]; ok == false {
+		t.Errorf("Result expected to have 'name' key")
+	}
+}
