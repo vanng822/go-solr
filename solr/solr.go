@@ -164,3 +164,13 @@ func (si *SolrInterface) Optimize(params *url.Values) (*UpdateResponse, error) {
 func (si *SolrInterface) Rollback() (*UpdateResponse, error) {
 	return si.Update(map[string]interface{}{"rollback": map[string]interface{}{}}, nil)
 }
+
+// Return new instance of CoreAdmin with provided solrUrl and basic auth
+func (si *SolrInterface) CoreAdmin() (*CoreAdmin, error) {
+	ca, err := NewCoreAdmin(si.conn.url.String())
+	if err != nil {
+		return nil, err
+	}
+	ca.SetBasicAuth(si.conn.username, si.conn.password)
+	return ca, nil
+}
