@@ -49,11 +49,11 @@ func (s *Schema) Get(path string, params *url.Values) (*SchemaResponse, error) {
 	}
 
 	params.Set("wt", "json")
-	
+
 	if path != "" {
 		path = fmt.Sprintf("/%s", strings.Trim(path, "/"))
 	}
-	
+
 	if s.core != "" {
 		r, err = HTTPGet(fmt.Sprintf("%s/%s/schema%s?%s", s.url.String(), s.core, path, params.Encode()), nil, s.username, s.password)
 	} else {
@@ -88,4 +88,31 @@ func (s *Schema) Version() (*SchemaResponse, error) {
 // Return name of schema, require Solr4.3, see https://wiki.apache.org/solr/SchemaRESTAPI
 func (s *Schema) Name() (*SchemaResponse, error) {
 	return s.Get("name", nil)
+}
+
+// see https://wiki.apache.org/solr/SchemaRESTAPI
+func (s *Schema) Fields(fl string, includeDynamic, showDefaults bool) (*SchemaResponse, error) {
+	params := &url.Values{}
+	if includeDynamic {
+		params.Set("includeDynamic", "true")
+	}
+	if showDefaults {
+		params.Set("showDefaults", "true")
+	}
+	if fl != "" {
+		params.Set("fl", fl)
+	}
+	return s.Get("fields", params)
+}
+
+// see https://wiki.apache.org/solr/SchemaRESTAPI
+func (s *Schema) FieldsName(name string, includeDynamic, showDefaults bool) (*SchemaResponse, error) {
+	params := &url.Values{}
+	if includeDynamic {
+		params.Set("includeDynamic", "true")
+	}
+	if showDefaults {
+		params.Set("showDefaults", "true")
+	}
+	return s.Get(fmt.Sprintf("fields/%s", name), params)
 }
