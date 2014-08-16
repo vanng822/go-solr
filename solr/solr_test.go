@@ -6,6 +6,8 @@ import (
 	"testing"
 )
 
+var solrUrl = "http://127.0.0.1:12345/solr"
+
 func TestSolrDocument(t *testing.T) {
 	d := Document{"id": "test_id", "title": "test title"}
 	if d.Has("id") == false {
@@ -663,5 +665,170 @@ func TestSupportedAction(t *testing.T) {
 		if err != nil {
 			t.Errorf("Should not be an error but got '%s'", err.Error())
 		}
+	}
+}
+
+// Schema tests
+func TestSchemaGet(t *testing.T) {
+	s, err := NewSchema(solrUrl, "collection1")
+	
+	res, err := s.Get("fields", nil)
+	if err != nil {
+		t.Errorf("Error should be nil but got '%s'", err.Error())
+		return
+	}
+	if _, ok := res.Result["fields"]; ok == false {
+		t.Errorf("Result expected to have 'fields' key")
+	}
+}
+
+func TestSchemaUniquekey(t *testing.T) {
+	s, err := NewSchema(solrUrl, "collection1")
+	
+	res, err := s.Uniquekey()
+	if err != nil {
+		t.Errorf("Error should be nil but got '%s'", err.Error())
+		return
+	}
+	if _, ok := res.Result["uniqueKey"]; ok == false {
+		t.Errorf("Result expected to have 'uniqueKey' key")
+	}
+}
+
+func TestSchemaVersion(t *testing.T) {
+	s, err := NewSchema(solrUrl, "collection1")
+	
+	res, err := s.Version()
+	if err != nil {
+		t.Errorf("Error should be nil but got '%s'", err.Error())
+		return
+	}
+	if _, ok := res.Result["version"]; ok == false {
+		t.Errorf("Result expected to have 'version' key")
+	}
+}
+
+func TestSchemaAll(t *testing.T) {
+	s, err := NewSchema(solrUrl, "collection1")
+	
+	res, err := s.All()
+	if err != nil {
+		t.Errorf("Error should be nil but got '%s'", err.Error())
+		return
+	}
+	if _, ok := res.Result["schema"]; ok == false {
+		t.Errorf("Result expected to have 'schema' key")
+	}
+}
+
+func TestSchemaName(t *testing.T) {
+	s, err := NewSchema(solrUrl, "collection1")
+	
+	res, err := s.Name()
+	if err != nil {
+		t.Errorf("Error should be nil but got '%s'", err.Error())
+		return
+	}
+	if _, ok := res.Result["name"]; ok == false {
+		t.Errorf("Result expected to have 'name' key")
+	}
+}
+
+
+func TestSchemaFields(t *testing.T) {
+	s, err := NewSchema(solrUrl, "collection1")
+	
+	res, err := s.Fields("", false, false)
+	if err != nil {
+		t.Errorf("Error should be nil but got '%s'", err.Error())
+		return
+	}
+	if _, ok := res.Result["fields"]; ok == false {
+		t.Errorf("Result expected to have 'fields' key")
+	}
+}
+
+
+func TestSchemaFieldsName(t *testing.T) {
+	s, err := NewSchema(solrUrl, "collection1")
+	
+	res, err := s.FieldsName("title", false, false)
+	if err != nil {
+		t.Errorf("Error should be nil but got '%s'", err.Error())
+		return
+	}
+	if _, ok := res.Result["field"]; ok == false {
+		t.Errorf("Result expected to have 'field' key")
+	}
+}
+
+func TestSchemaFieldtypes(t *testing.T) {
+	s, err := NewSchema(solrUrl, "collection1")
+	
+	res, err := s.Fieldtypes(false)
+	if err != nil {
+		t.Errorf("Error should be nil but got '%s'", err.Error())
+		return
+	}
+	if _, ok := res.Result["fieldTypes"]; ok == false {
+		t.Errorf("Result expected to have 'fieldTypes' key")
+	}
+}
+
+
+func TestSchemaFieldtypesName(t *testing.T) {
+	s, err := NewSchema(solrUrl, "collection1")
+	
+	res, err := s.FieldtypesName("location", false)
+	if err != nil {
+		t.Errorf("Error should be nil but got '%s'", err.Error())
+		return
+	}
+	if _, ok := res.Result["fieldType"]; ok == false {
+		t.Errorf("Result expected to have 'fieldType' key")
+	}
+}
+
+
+
+func TestSchemaDynamicFields(t *testing.T) {
+	s, err := NewSchema(solrUrl, "collection1")
+	
+	res, err := s.DynamicFields("", false)
+	if err != nil {
+		t.Errorf("Error should be nil but got '%s'", err.Error())
+		return
+	}
+	if _, ok := res.Result["dynamicFields"]; ok == false {
+		t.Errorf("Result expected to have 'dynamicFields' key")
+	}
+}
+
+
+func TestSchemaDynamicFieldsName(t *testing.T) {
+	s, err := NewSchema(solrUrl, "collection1")
+	
+	res, err := s.DynamicFieldsName("*_coordinate", false)
+	if err != nil {
+		t.Errorf("Error should be nil but got '%s'", err.Error())
+		return
+	}
+	if _, ok := res.Result["dynamicField"]; ok == false {
+		t.Errorf("Result expected to have 'dynamicField' key")
+	}
+}
+
+func TestSchemaPost(t *testing.T) {
+	s, err := NewSchema(solrUrl, "collection1")
+	data := []interface{}{map[string]interface{}{"name":"newfield1","type":"text","copyFields":[]string{"target1"}}, map[string]interface{}{"name":"newfield2","type":"text","stored":"false"}}
+	
+	res, err := s.Post("fields", data)
+	if err != nil {
+		t.Errorf("Error should be nil but got '%s'", err.Error())
+		return
+	}
+	// TODO: make sure mock response with a real one
+	if _, ok := res.Result["fields"]; ok == false {
+		t.Errorf("Result expected to have 'fields' key")
 	}
 }
