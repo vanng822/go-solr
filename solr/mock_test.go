@@ -296,7 +296,7 @@ func mockStartServer() {
 	http.HandleFunc("/noresponse/core0/select/", mockSuccessStrangeGrouped)
 	http.HandleFunc("/solr/admin/cores", mockCoreAdmin)
 	
-	http.HandleFunc("/solr/collection1/schema", mockSchema)
+	http.HandleFunc("/solr/collection1/schema/", mockSchema)
 	http.HandleFunc("/solr/collection1/schema/fields", mockSchemaFields)
 	http.HandleFunc("/solr/collection1/schema/fields/title", mockSchemaFieldsTitle)
 	http.HandleFunc("/solr/collection1/schema/dynamicfields", mockSchemaDynamicFields)

@@ -66,6 +66,11 @@ func (s *Schema) Get(path string, params *url.Values) (*SchemaResponse, error) {
 	return &SchemaResponse{Result: resp, Status: int(resp["responseHeader"].(map[string]interface{})["status"].(float64))}, nil
 }
 
+//  Return entire schema, require Solr4.3, see https://wiki.apache.org/solr/SchemaRESTAPI
+func (s *Schema) All() (*SchemaResponse, error) {
+	return s.Get("", nil)
+}
+
 // Require Solr4.3, see https://wiki.apache.org/solr/SchemaRESTAPI
 func (s *Schema) Uniquekey() (*SchemaResponse, error) {
 	return s.Get("uniquekey", nil)
@@ -75,3 +80,4 @@ func (s *Schema) Uniquekey() (*SchemaResponse, error) {
 func (s *Schema) Version() (*SchemaResponse, error) {
 	return s.Get("version", nil)
 }
+
