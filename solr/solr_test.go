@@ -818,7 +818,6 @@ func TestSchemaDynamicFieldsName(t *testing.T) {
 	}
 }
 
-
 func TestSchemaPost(t *testing.T) {
 	s, err := NewSchema(solrUrl, "collection1")
 	data := []interface{}{map[string]interface{}{"name":"newfield1","type":"text","copyFields":[]string{"target1"}}, map[string]interface{}{"name":"newfield2","type":"text","stored":"false"}}
@@ -828,6 +827,7 @@ func TestSchemaPost(t *testing.T) {
 		t.Errorf("Error should be nil but got '%s'", err.Error())
 		return
 	}
+	// TODO: make sure mock response with a realy one
 	if _, ok := res.Result["fields"]; ok == false {
 		t.Errorf("Result expected to have 'fields' key")
 	}

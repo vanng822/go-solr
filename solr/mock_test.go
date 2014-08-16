@@ -1,12 +1,12 @@
 package solr
 
 import (
+	"encoding/base64"
 	"io"
 	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
-	"encoding/base64"
 	"strings"
 )
 
@@ -155,6 +155,12 @@ func mockSuccessStandaloneCommit(w http.ResponseWriter, req *http.Request) {
 
 func mockSuccessAdd(w http.ResponseWriter, req *http.Request) {
 	logRequest(req)
+	if req.Method == "POST" {
+		if req.Header.Get("Content-Type") != "application/json" {
+			writeContentTypeError(w)
+			return
+		}
+	}
 	io.WriteString(w, `{"responseHeader":{"status":0,"QTime":5}}`)
 }
 
@@ -236,6 +242,12 @@ func mockSchema(w http.ResponseWriter, req *http.Request) {
 
 func mockSchemaFields(w http.ResponseWriter, req *http.Request) {
 	logRequest(req)
+	if req.Method == "POST" {
+		if req.Header.Get("Content-Type") != "application/json" {
+			writeContentTypeError(w)
+			return
+		}
+	}
 	io.WriteString(w, `{"responseHeader":{"status":0,"QTime":1},"fields":[{"name":"_root_","type":"string","indexed":true,"stored":false},{"name":"_version_","type":"long","indexed":true,"stored":true},{"name":"author","type":"text_general","indexed":true,"stored":true},{"name":"cat","type":"string","multiValued":true,"indexed":true,"stored":true},{"name":"category","type":"text_general","indexed":true,"stored":true},{"name":"comments","type":"text_general","indexed":true,"stored":true},{"name":"content","type":"text_general","multiValued":true,"indexed":false,"stored":true},{"name":"content_type","type":"string","multiValued":true,"indexed":true,"stored":true},{"name":"description","type":"text_general","indexed":true,"stored":true},{"name":"features","type":"text_general","multiValued":true,"indexed":true,"stored":true},{"name":"id","type":"string","multiValued":false,"indexed":true,"required":true,"stored":true,"uniqueKey":true},{"name":"inStock","type":"boolean","indexed":true,"stored":true},{"name":"includes","type":"text_general","termPositions":true,"termVectors":true,"indexed":true,"termOffsets":true,"stored":true},{"name":"keywords","type":"text_general","indexed":true,"stored":true},{"name":"last_modified","type":"date","indexed":true,"stored":true},{"name":"links","type":"string","multiValued":true,"indexed":true,"stored":true},{"name":"manu","type":"text_general","omitNorms":true,"indexed":true,"stored":true},{"name":"manu_exact","type":"string","indexed":true,"stored":false},{"name":"name","type":"text_general","indexed":true,"stored":true},{"name":"payloads","type":"payloads","indexed":true,"stored":true},{"name":"popularity","type":"int","indexed":true,"stored":true},{"name":"price","type":"float","indexed":true,"stored":true},{"name":"resourcename","type":"text_general","indexed":true,"stored":true},{"name":"sku","type":"text_en_splitting_tight","omitNorms":true,"indexed":true,"stored":true},{"name":"store","type":"location","indexed":true,"stored":true},{"name":"subject","type":"text_general","indexed":true,"stored":true},{"name":"text","type":"text_general","multiValued":true,"indexed":true,"stored":false},{"name":"text_rev","type":"text_general_rev","multiValued":true,"indexed":true,"stored":false},{"name":"title","type":"text_general","multiValued":true,"indexed":true,"stored":true},{"name":"url","type":"text_general","indexed":true,"stored":true},{"name":"weight","type":"float","indexed":true,"stored":true}]}`)
 }
 
@@ -279,6 +291,13 @@ func mockSchemaVersion(w http.ResponseWriter, req *http.Request) {
 	io.WriteString(w, `{"responseHeader":{"status":0,"QTime":1},"version":1.5}`)
 }
 
+func writeContentTypeError(w http.ResponseWriter) {
+	io.WriteString(w, `{
+		  "error":{
+		    "msg":"Must specify a Content-Type header with POST requests",
+		    "code":415}}`)
+
+}
 
 func mockStartServer() {
 	http.HandleFunc("/success/core0/select/", mockSuccessSelect)
@@ -295,7 +314,7 @@ func mockStartServer() {
 	http.HandleFunc("/grouped/core0/select/", mockSuccessGrouped)
 	http.HandleFunc("/noresponse/core0/select/", mockSuccessStrangeGrouped)
 	http.HandleFunc("/solr/admin/cores", mockCoreAdmin)
-	
+
 	http.HandleFunc("/solr/collection1/schema", mockSchema)
 	http.HandleFunc("/solr/collection1/schema/fields", mockSchemaFields)
 	http.HandleFunc("/solr/collection1/schema/fields/title", mockSchemaFieldsTitle)
@@ -306,11 +325,9 @@ func mockStartServer() {
 	http.HandleFunc("/solr/collection1/schema/name", mockSchemaName)
 	http.HandleFunc("/solr/collection1/schema/uniquekey", mockSchemaUniquekey)
 	http.HandleFunc("/solr/collection1/schema/version", mockSchemaVersion)
-	
-	
+
 	err := http.ListenAndServe(":12345", nil)
 	if err != nil {
 		log.Fatal("ListenAndServe: ", err)
 	}
 }
-

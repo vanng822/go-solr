@@ -18,6 +18,11 @@ type SchemaResponse struct {
 	Result map[string]interface{}
 }
 
+type SchemaUpdateResponse struct {
+	Success bool
+	Result map[string]interface{}
+}
+
 // NewSchema will parse solrUrl and return a schema object, solrUrl must be a absolute url or path
 func NewSchema(solrUrl, core string) (*Schema, error) {
 	u, err := url.ParseRequestURI(solrUrl)
@@ -160,7 +165,7 @@ func (s *Schema) DynamicFieldsName(name string, showDefaults bool) (*SchemaRespo
 // For modify schema, require Solr4.4, currently one can add fields and copy fields.
 // Example: s.Post("fields", data) for adding new fields.
 // See https://wiki.apache.org/solr/SchemaRESTAPI
-func (s *Schema) Post(path string, data interface{}) (*SchemaResponse, error) {
+func (s *Schema) Post(path string, data interface{}) (*SchemaUpdateResponse, error) {
 	var (
 		r   []byte
 		err error
@@ -171,9 +176,9 @@ func (s *Schema) Post(path string, data interface{}) (*SchemaResponse, error) {
 	}
 	
 	if s.core != "" {
-		r, err = HTTPPost(fmt.Sprintf("%s/%s/schema/%s?wt=json", s.url.String(), s.core, strings.Trim(path, "/")), b, nil, s.username, s.password)
+		r, err = HTTPPost(fmt.Sprintf("%s/%s/schema/%s?wt=json", s.url.String(), s.core, strings.Trim(path, "/")), b, [][]string{{"Content-Type", "application/json"}}, s.username, s.password)
 	} else {
-		r, err = HTTPPost(fmt.Sprintf("%s/schema/%s?wt=json", s.url.String(), strings.Trim(path, "/")), b, nil, s.username, s.password)
+		r, err = HTTPPost(fmt.Sprintf("%s/schema/%s?wt=json", s.url.String(), strings.Trim(path, "/")), b, [][]string{{"Content-Type", "application/json"}}, s.username, s.password)
 	}
 	if err != nil {
 		return nil, err
@@ -183,6 +188,10 @@ func (s *Schema) Post(path string, data interface{}) (*SchemaResponse, error) {
 	if err != nil {
 		return nil, err
 	}
+	// check error in resp
+	if hasError(resp) {
+		return &SchemaUpdateResponse{Success: false, Result: resp}, nil
+	}
 	
-	return &SchemaResponse{Result: resp, Status: int(resp["responseHeader"].(map[string]interface{})["status"].(float64))}, nil
+	return &SchemaUpdateResponse{Success: true, Result: resp}, nil
 }
