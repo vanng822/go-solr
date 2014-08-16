@@ -17,7 +17,7 @@ func (d Document) Has(k string) bool {
 // Get returns value of a key
 func (d Document) Get(k string) interface{} {
 	v, _ := d[k]
-	return v 
+	return v
 }
 
 // Set add a key/value to document
@@ -32,14 +32,12 @@ type Collection struct {
 }
 
 type SolrResult struct {
-	Status       int         // status quick access to status
-	Results      *Collection // results parsed documents, basically response object
-	
+	Status         int         // status quick access to status
+	Results        *Collection // results parsed documents, basically response object
 	ResponseHeader map[string]interface{}
-	FacetCounts map[string]interface{}
-	Highlighting map[string]interface{}
-	Error        map[string]interface{}
-
+	FacetCounts    map[string]interface{}
+	Highlighting   map[string]interface{}
+	Error          map[string]interface{}
 	// grouped for grouping result
 	// if grouping Results will be empty
 	Grouped map[string]interface{}
@@ -70,7 +68,7 @@ func (si *SolrInterface) SetBasicAuth(username, password string) {
 	si.conn.SetBasicAuth(username, password)
 }
 
-// Return a new instace of Search, q is optional and one can set it later 
+// Return a new instace of Search, q is optional and one can set it later
 func (si *SolrInterface) Search(q *Query) *Search {
 	return NewSearch(si.conn, q)
 }
@@ -98,7 +96,7 @@ func makeAddChunks(docs []Document, chunk_size int) []map[string]interface{} {
 	return chunks
 }
 
-// Add will insert documents in batch of chunk_size. success is false as long as one chunk failed. 
+// Add will insert documents in batch of chunk_size. success is false as long as one chunk failed.
 // The result in UpdateResponse is summery of response from all chunks
 // with key chunk_%d
 func (si *SolrInterface) Add(docs []Document, chunk_size int, params *url.Values) (*UpdateResponse, error) {
@@ -160,8 +158,8 @@ func (si *SolrInterface) Optimize(params *url.Values) (*UpdateResponse, error) {
 	return si.Update(map[string]interface{}{}, params)
 }
 
-// Rollback rollbacks all add/deletes made to the index since the last commit. 
-// This should use with caution. 
+// Rollback rollbacks all add/deletes made to the index since the last commit.
+// This should use with caution.
 // See https://wiki.apache.org/solr/UpdateXmlMessages#A.22rollback.22
 func (si *SolrInterface) Rollback() (*UpdateResponse, error) {
 	return si.Update(map[string]interface{}{"rollback": map[string]interface{}{}}, nil)
