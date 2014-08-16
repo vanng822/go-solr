@@ -70,3 +70,8 @@ func (s *Schema) Get(path string, params *url.Values) (*SchemaResponse, error) {
 func (s *Schema) Uniquekey() (*SchemaResponse, error) {
 	return s.Get("uniquekey", nil)
 }
+
+// Require Solr4.3, see https://wiki.apache.org/solr/SchemaRESTAPI
+func (s *Schema) Version() (*SchemaResponse, error) {
+	return s.Get("version", nil)
+}

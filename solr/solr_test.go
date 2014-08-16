@@ -678,7 +678,7 @@ func TestSchemaGet(t *testing.T) {
 		return
 	}
 	if _, ok := res.Result["fields"]; ok == false {
-		t.Errorf("Result expected to have fields key")
+		t.Errorf("Result expected to have 'fields' key")
 	}
 }
 
@@ -691,6 +691,19 @@ func TestSchemaUniquekey(t *testing.T) {
 		return
 	}
 	if _, ok := res.Result["uniqueKey"]; ok == false {
-		t.Errorf("Result expected to have uniqueKey key")
+		t.Errorf("Result expected to have 'uniqueKey' key")
+	}
+}
+
+func TestSchemaVersion(t *testing.T) {
+	s, err := NewSchema(solrUrl, "collection1")
+	
+	res, err := s.Version()
+	if err != nil {
+		t.Errorf("Error should be nil but got '%s'", err.Error())
+		return
+	}
+	if _, ok := res.Result["version"]; ok == false {
+		t.Errorf("Result expected to have 'version' key")
 	}
 }

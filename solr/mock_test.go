@@ -274,6 +274,12 @@ func mockSchemaUniquekey(w http.ResponseWriter, req *http.Request) {
 	io.WriteString(w, `{"responseHeader":{"status":0,"QTime":3},"uniqueKey":"id"}`)
 }
 
+func mockSchemaVersion(w http.ResponseWriter, req *http.Request) {
+	logRequest(req)
+	io.WriteString(w, `{"responseHeader":{"status":0,"QTime":1},"version":1.5}`)
+}
+
+
 func mockStartServer() {
 	http.HandleFunc("/success/core0/select/", mockSuccessSelect)
 	http.HandleFunc("/fail/core0/select/", mockFailSelect)
@@ -299,6 +305,7 @@ func mockStartServer() {
 	http.HandleFunc("/solr/collection1/schema/fieldtypes/location", mockSchemaFieldTypesLocation)
 	http.HandleFunc("/solr/collection1/schema/name", mockSchemaName)
 	http.HandleFunc("/solr/collection1/schema/uniquekey", mockSchemaUniquekey)
+	http.HandleFunc("/solr/collection1/schema/version", mockSchemaVersion)
 	
 	
 	err := http.ListenAndServe(":12345", nil)
