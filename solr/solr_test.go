@@ -827,7 +827,7 @@ func TestSchemaPost(t *testing.T) {
 		t.Errorf("Error should be nil but got '%s'", err.Error())
 		return
 	}
-	// TODO: make sure mock response with a realy one
+	// TODO: make sure mock response with a real one
 	if _, ok := res.Result["fields"]; ok == false {
 		t.Errorf("Result expected to have 'fields' key")
 	}
