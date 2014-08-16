@@ -38,6 +38,7 @@ func (s *Schema) SetBasicAuth(username, password string) {
 	s.password = password
 }
 
+// See Get requests in https://wiki.apache.org/solr/SchemaRESTAPI for detail
 func (s *Schema) Get(path string, params *url.Values) (*SchemaResponse, error) {
 	var (
 		r   []byte
