@@ -174,3 +174,13 @@ func (si *SolrInterface) CoreAdmin() (*CoreAdmin, error) {
 	ca.SetBasicAuth(si.conn.username, si.conn.password)
 	return ca, nil
 }
+
+// Return new instance of Schema with provided solrUrl and basic auth
+func (si *SolrInterface) Schema() (*Schema, error) {
+	s, err := NewSchema(si.conn.url.String(), si.conn.core)
+	if err != nil {
+		return nil, err
+	}
+	s.SetBasicAuth(si.conn.username, si.conn.password)
+	return s, nil
+}
