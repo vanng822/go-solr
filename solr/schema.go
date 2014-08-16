@@ -65,3 +65,8 @@ func (s *Schema) Get(path string, params *url.Values) (*SchemaResponse, error) {
 
 	return &SchemaResponse{Result: resp, Status: int(resp["responseHeader"].(map[string]interface{})["status"].(float64))}, nil
 }
+
+// Require Solr4.3, see https://wiki.apache.org/solr/SchemaRESTAPI
+func (s *Schema) Uniquekey() (*SchemaResponse, error) {
+	return s.Get("uniquekey", nil)
+}
