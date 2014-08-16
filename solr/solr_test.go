@@ -6,6 +6,8 @@ import (
 	"testing"
 )
 
+var solrUrl = "http://127.0.0.1:12345/solr"
+
 func TestSolrDocument(t *testing.T) {
 	d := Document{"id": "test_id", "title": "test title"}
 	if d.Has("id") == false {
@@ -663,5 +665,19 @@ func TestSupportedAction(t *testing.T) {
 		if err != nil {
 			t.Errorf("Should not be an error but got '%s'", err.Error())
 		}
+	}
+}
+
+// Schema tests
+func TestSchemaGet(t *testing.T) {
+	s, err := NewSchema(solrUrl, "collection1")
+	
+	res, err := s.Get("fields", nil)
+	if err != nil {
+		t.Errorf("Error should be nil but got '%s'", err.Error())
+		return
+	}
+	if _, ok := res.Result["fields"]; ok == false {
+		t.Errorf("Result expected to have fields key")
 	}
 }
