@@ -832,3 +832,14 @@ func TestSchemaPost(t *testing.T) {
 		t.Errorf("Result expected to have 'fields' key")
 	}
 }
+
+func TestPing(t *testing.T) {
+	si, _ := NewSolrInterface(solrUrl, "collection1")
+	status, qtime, _ := si.Ping()
+	if status != "OK" {
+		t.Errorf("Status expected to be 'OK' but got '%s'", status)
+	}
+	if qtime != 2 {
+		t.Errorf("Status expected to be 'OK' but got '%d'", qtime)
+	}
+}
