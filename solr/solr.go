@@ -184,3 +184,36 @@ func (si *SolrInterface) Schema() (*Schema, error) {
 	s.SetBasicAuth(si.conn.username, si.conn.password)
 	return s, nil
 }
+
+// Return 'status' and QTime from solr, if everything is fine status should have value 'OK'
+// QTime will have value -1 if can not determine
+func (si *SolrInterface) Ping() (status string, qtime int, err error) {
+	var path string
+	params := &url.Values{}
+	params.Add("wt", "json")
+	if si.conn.core != "" {
+		path = fmt.Sprintf("%s/%s/admin/ping?%s", si.conn.url.String(), si.conn.core, params.Encode())
+	} else {
+		path = fmt.Sprintf("%s/admin/ping?%s", si.conn.url.String(), params.Encode())
+	}
+
+	r, err := HTTPGet(path, nil, si.conn.username, si.conn.password)
+	if err != nil {
+		return "", -1, err
+	}
+
+	resp, err := bytes2json(&r)
+	if err != nil {
+		return "", -1, err
+	}
+	status, ok := resp["status"].(string)
+	if ok == false {
+		return "", -1, fmt.Errorf("Unexpected response returned")
+	}
+	if QTime, ok := resp["responseHeader"].(map[string]interface{})["QTime"]; ok {
+		qtime = int(QTime.(float64))
+	} else {
+		return "", -1, fmt.Errorf("Unexpected response returned")
+	}
+	return status, qtime, nil
+}

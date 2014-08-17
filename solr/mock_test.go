@@ -299,6 +299,11 @@ func writeContentTypeError(w http.ResponseWriter) {
 
 }
 
+func mockPing(w http.ResponseWriter, req *http.Request) {
+	logRequest(req)
+	io.WriteString(w, `{"responseHeader":{"status":0,"QTime":2,"params":{"df":"text","echoParams":"all","rows":"10","echoParams":"all","wt":"json","ts":"1408264558581","_":"1408264558582","q":"solrpingquery","distrib":"false"}},"status":"OK"}`)
+}
+
 func mockStartServer() {
 	http.HandleFunc("/success/core0/select/", mockSuccessSelect)
 	http.HandleFunc("/fail/core0/select/", mockFailSelect)
@@ -325,7 +330,8 @@ func mockStartServer() {
 	http.HandleFunc("/solr/collection1/schema/name", mockSchemaName)
 	http.HandleFunc("/solr/collection1/schema/uniquekey", mockSchemaUniquekey)
 	http.HandleFunc("/solr/collection1/schema/version", mockSchemaVersion)
-
+	http.HandleFunc("/solr/collection1/admin/ping", mockPing)
+	
 	err := http.ListenAndServe(":12345", nil)
 	if err != nil {
 		log.Fatal("ListenAndServe: ", err)
