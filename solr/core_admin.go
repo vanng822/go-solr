@@ -30,10 +30,27 @@ func NewCoreAdmin(solrUrl string) (*CoreAdmin, error) {
 	return &CoreAdmin{url: u}, nil
 }
 
+
 // Set basic auth in case solr require login
 func (ca *CoreAdmin) SetBasicAuth(username, password string) {
 	ca.username = username
 	ca.password = password
+}
+
+// Method for making GET-request to any relitive path to /admin/ such as /admin/cores or /admin/info/threads
+func (ca *CoreAdmin) Get(path string, params *url.Values) (*CoreAdminResponse, error) {
+	params.Set("wt", "json")
+	r, err := HTTPGet(fmt.Sprintf("%s/admin/%s?%s", ca.url.String(), path, params.Encode()), nil, ca.username, ca.password)
+	if err != nil {
+		return nil, err
+	}
+	resp, err := bytes2json(&r)
+	if err != nil {
+		return nil, err
+	}
+	result := &CoreAdminResponse{Result: resp}
+	result.Status = int(resp["responseHeader"].(map[string]interface{})["status"].(float64))
+	return result, nil
 }
 
 // Call to admin/cores endpoint, additional params neccessary for this action can specified in params.
@@ -59,20 +76,7 @@ func (ca *CoreAdmin) Action(action string, params *url.Values) (*CoreAdminRespon
 	default:
 		return nil, fmt.Errorf("Action '%s' not supported", action)
 	}
-
-	params.Set("wt", "json")
-
-	r, err := HTTPGet(fmt.Sprintf("%s/admin/cores?%s", ca.url.String(), params.Encode()), nil, ca.username, ca.password)
-	if err != nil {
-		return nil, err
-	}
-	resp, err := bytes2json(&r)
-	if err != nil {
-		return nil, err
-	}
-	result := &CoreAdminResponse{Result: resp}
-	result.Status = int(resp["responseHeader"].(map[string]interface{})["status"].(float64))
-	return result, nil
+	return ca.Get("cores", params)
 }
 
 // pass empty string as core if you want status of all cores.
