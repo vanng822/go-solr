@@ -118,26 +118,6 @@ func hasError(response map[string]interface{}) bool {
 	return ok
 }
 
-type SelectResponse struct {
-	/**
-	responseHeader map[string]interface{}
-	response       map[string]interface{}
-	facet_counts   map[string]interface{}
-	highlighting   map[string]interface{}
-	grouped        map[string]interface{}
-	debug          map[string]interface{}
-	error          map[string]interface{}
-	*/
-	Response map[string]interface{}
-	// status quick access to status
-	Status int
-}
-
-type UpdateResponse struct {
-	Success bool
-	Result  map[string]interface{}
-}
-
 type Connection struct {
 	url      *url.URL
 	core     string
@@ -165,7 +145,7 @@ func (c *Connection) SetBasicAuth(username, password string) {
 	c.password = password
 }
 
-func (c *Connection) Select(selectQuery string) (*SelectResponse, error) {
+func (c *Connection) Select(selectQuery string) (*SolrResponse, error) {
 	r, err := HTTPGet(fmt.Sprintf("%s/%s/select/?%s", c.url.String(), c.core, selectQuery), nil, c.username, c.password)
 	if err != nil {
 		return nil, err
@@ -175,13 +155,13 @@ func (c *Connection) Select(selectQuery string) (*SelectResponse, error) {
 		return nil, err
 	}
 
-	result := SelectResponse{Response: resp}
+	result := SolrResponse{Response: resp}
 	result.Status = int(resp["responseHeader"].(map[string]interface{})["status"].(float64))
 	return &result, nil
 }
 
 // Update take optional params which can use to specify addition parameters such as commit=true
-func (c *Connection) Update(data map[string]interface{}, params *url.Values) (*UpdateResponse, error) {
+func (c *Connection) Update(data map[string]interface{}, params *url.Values) (*SolrUpdateResponse, error) {
 
 	b, err := json2bytes(data)
 
@@ -206,8 +186,8 @@ func (c *Connection) Update(data map[string]interface{}, params *url.Values) (*U
 	}
 	// check error in resp
 	if hasError(resp) {
-		return &UpdateResponse{Success: false, Result: resp}, nil
+		return &SolrUpdateResponse{Success: false, Result: resp}, nil
 	}
 
-	return &UpdateResponse{Success: true, Result: resp}, nil
+	return &SolrUpdateResponse{Success: true, Result: resp}, nil
 }
