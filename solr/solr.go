@@ -8,6 +8,16 @@ import (
 
 type Document map[string]interface{}
 
+type SolrResponse struct {
+	Status int
+	Response map[string]interface{}
+}
+
+type SolrUpdateResponse struct {
+	Success bool
+	Result  map[string]interface{}
+}
+
 // Has check if a key exist in document
 func (d Document) Has(k string) bool {
 	_, ok := d[k]
@@ -99,8 +109,8 @@ func makeAddChunks(docs []Document, chunk_size int) []map[string]interface{} {
 // Add will insert documents in batch of chunk_size. success is false as long as one chunk failed.
 // The result in UpdateResponse is summery of response from all chunks
 // with key chunk_%d
-func (si *SolrInterface) Add(docs []Document, chunk_size int, params *url.Values) (*UpdateResponse, error) {
-	result := &UpdateResponse{Success: true}
+func (si *SolrInterface) Add(docs []Document, chunk_size int, params *url.Values) (*SolrUpdateResponse, error) {
+	result := &SolrUpdateResponse{Success: true}
 	responses := map[string]interface{}{}
 	chunks := makeAddChunks(docs, chunk_size)
 
@@ -123,20 +133,20 @@ func (si *SolrInterface) Add(docs []Document, chunk_size int, params *url.Values
 // Only one delete statement is supported, ie data can be { "id":"ID" } .
 // If you want to delete more docs use { "query":"QUERY" } .
 // Extra params can specify in params or in data such as { "query":"QUERY", "commitWithin":"500" }
-func (si *SolrInterface) Delete(data map[string]interface{}, params *url.Values) (*UpdateResponse, error) {
+func (si *SolrInterface) Delete(data map[string]interface{}, params *url.Values) (*SolrUpdateResponse, error) {
 	message := map[string]interface{}{"delete": data}
 	return si.Update(message, params)
 }
 
 // DeleteAll will remove all documents and commit
-func (si *SolrInterface) DeleteAll() (*UpdateResponse, error) {
+func (si *SolrInterface) DeleteAll() (*SolrUpdateResponse, error) {
 	params := &url.Values{}
 	params.Add("commit", "true")
 	return si.Delete(map[string]interface{}{"query": "*:*"}, params)
 }
 
 // Update take data of type map and optional params which can use to specify addition parameters such as commit=true
-func (si *SolrInterface) Update(data map[string]interface{}, params *url.Values) (*UpdateResponse, error) {
+func (si *SolrInterface) Update(data map[string]interface{}, params *url.Values) (*SolrUpdateResponse, error) {
 	if si.conn == nil {
 		return nil, fmt.Errorf("No connection found for making request to solr")
 	}
@@ -144,13 +154,13 @@ func (si *SolrInterface) Update(data map[string]interface{}, params *url.Values)
 }
 
 // Commit the changes since the last commit
-func (si *SolrInterface) Commit() (*UpdateResponse, error) {
+func (si *SolrInterface) Commit() (*SolrUpdateResponse, error) {
 	params := &url.Values{}
 	params.Add("commit", "true")
 	return si.Update(map[string]interface{}{}, params)
 }
 
-func (si *SolrInterface) Optimize(params *url.Values) (*UpdateResponse, error) {
+func (si *SolrInterface) Optimize(params *url.Values) (*SolrUpdateResponse, error) {
 	if params == nil {
 		params = &url.Values{}
 	}
@@ -161,7 +171,7 @@ func (si *SolrInterface) Optimize(params *url.Values) (*UpdateResponse, error) {
 // Rollback rollbacks all add/deletes made to the index since the last commit.
 // This should use with caution.
 // See https://wiki.apache.org/solr/UpdateXmlMessages#A.22rollback.22
-func (si *SolrInterface) Rollback() (*UpdateResponse, error) {
+func (si *SolrInterface) Rollback() (*SolrUpdateResponse, error) {
 	return si.Update(map[string]interface{}{"rollback": map[string]interface{}{}}, nil)
 }
 

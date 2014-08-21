@@ -1,25 +1,27 @@
 package solr
+
 import (
 	"fmt"
 )
+
 // ResultParser is interface for parsing result from response.
 // The idea here is that application have possibility to parse.
 // Or defined own parser with internal data structure to suite
 // application's need
 type ResultParser interface {
-	Parse(response *SelectResponse) (*SolrResult, error)
+	Parse(response *SolrResponse) (*SolrResult, error)
 }
 
 type StandardResultParser struct {
 }
 
-func (parser *StandardResultParser) Parse(response *SelectResponse) (*SolrResult, error) {
+func (parser *StandardResultParser) Parse(response *SolrResponse) (*SolrResult, error) {
 	sr := &SolrResult{}
 	sr.Results = new(Collection)
 	sr.Status = response.Status
-	
+
 	parser.ParseResponseHeader(response, sr)
-	
+
 	if response.Status == 0 {
 		err := parser.ParseResponse(response, sr)
 		if err != nil {
@@ -34,21 +36,21 @@ func (parser *StandardResultParser) Parse(response *SelectResponse) (*SolrResult
 	return sr, nil
 }
 
-func (parser *StandardResultParser) ParseResponseHeader(response *SelectResponse, sr *SolrResult) {
+func (parser *StandardResultParser) ParseResponseHeader(response *SolrResponse, sr *SolrResult) {
 	if responseHeader, ok := response.Response["responseHeader"].(map[string]interface{}); ok {
 		sr.ResponseHeader = responseHeader
 	}
 }
 
-func (parser *StandardResultParser) ParseError(response *SelectResponse, sr *SolrResult) {
+func (parser *StandardResultParser) ParseError(response *SolrResponse, sr *SolrResult) {
 	if error, ok := response.Response["error"]; ok {
 		sr.Error = error.(map[string]interface{})
 	}
 }
 
-// ParseResponse will assign result and build sr.docs if there is a response.
+// ParseSolrResponse will assign result and build sr.docs if there is a response.
 // If there is no response or grouped property in response it will return error
-func (parser *StandardResultParser) ParseResponse(response *SelectResponse, sr *SolrResult) (err error) {
+func (parser *StandardResultParser) ParseResponse(response *SolrResponse, sr *SolrResult) (err error) {
 	if resp, ok := response.Response["response"].(map[string]interface{}); ok {
 		sr.Results.NumFound = int(resp["numFound"].(float64))
 		sr.Results.Start = int(resp["start"].(float64))
@@ -65,13 +67,13 @@ func (parser *StandardResultParser) ParseResponse(response *SelectResponse, sr *
 					ie response.response and response.response.docs. Or grouped response
 					Please use other parser or implement your own parser`)
 	}
-	
+
 	return err
 }
 
 // ParseFacetCounts will assign facet_counts to sr if there is one.
 // No modification done here
-func (parser *StandardResultParser) ParseFacetCounts(response *SelectResponse, sr *SolrResult) {
+func (parser *StandardResultParser) ParseFacetCounts(response *SolrResponse, sr *SolrResult) {
 	if facetCounts, ok := response.Response["facet_counts"]; ok {
 		sr.FacetCounts = facetCounts.(map[string]interface{})
 	}
@@ -79,7 +81,7 @@ func (parser *StandardResultParser) ParseFacetCounts(response *SelectResponse, s
 
 // ParseHighlighting will assign highlighting to sr if there is one.
 // No modification done here
-func (parser *StandardResultParser) ParseHighlighting(response *SelectResponse, sr *SolrResult) {
+func (parser *StandardResultParser) ParseHighlighting(response *SolrResponse, sr *SolrResult) {
 	if highlighting, ok := response.Response["highlighting"]; ok {
 		sr.Highlighting = highlighting.(map[string]interface{})
 	}
