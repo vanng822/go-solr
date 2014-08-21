@@ -13,16 +13,6 @@ type Schema struct {
 	password string
 }
 
-type SchemaResponse struct {
-	Status int
-	Result map[string]interface{}
-}
-
-type SchemaUpdateResponse struct {
-	Success bool
-	Result map[string]interface{}
-}
-
 // NewSchema will parse solrUrl and return a schema object, solrUrl must be a absolute url or path
 func NewSchema(solrUrl, core string) (*Schema, error) {
 	u, err := url.ParseRequestURI(solrUrl)
@@ -44,7 +34,7 @@ func (s *Schema) SetBasicAuth(username, password string) {
 }
 
 // See Get requests in https://wiki.apache.org/solr/SchemaRESTAPI for detail
-func (s *Schema) Get(path string, params *url.Values) (*SchemaResponse, error) {
+func (s *Schema) Get(path string, params *url.Values) (*SolrResponse, error) {
 	var (
 		r   []byte
 		err error
@@ -72,31 +62,31 @@ func (s *Schema) Get(path string, params *url.Values) (*SchemaResponse, error) {
 		return nil, err
 	}
 
-	return &SchemaResponse{Result: resp, Status: int(resp["responseHeader"].(map[string]interface{})["status"].(float64))}, nil
+	return &SolrResponse{Response: resp, Status: int(resp["responseHeader"].(map[string]interface{})["status"].(float64))}, nil
 }
 
 //  Return entire schema, require Solr4.3, see https://wiki.apache.org/solr/SchemaRESTAPI
-func (s *Schema) All() (*SchemaResponse, error) {
+func (s *Schema) All() (*SolrResponse, error) {
 	return s.Get("", nil)
 }
 
 // Require Solr4.3, see https://wiki.apache.org/solr/SchemaRESTAPI
-func (s *Schema) Uniquekey() (*SchemaResponse, error) {
+func (s *Schema) Uniquekey() (*SolrResponse, error) {
 	return s.Get("uniquekey", nil)
 }
 
 // Require Solr4.3, see https://wiki.apache.org/solr/SchemaRESTAPI
-func (s *Schema) Version() (*SchemaResponse, error) {
+func (s *Schema) Version() (*SolrResponse, error) {
 	return s.Get("version", nil)
 }
 
 // Return name of schema, require Solr4.3, see https://wiki.apache.org/solr/SchemaRESTAPI
-func (s *Schema) Name() (*SchemaResponse, error) {
+func (s *Schema) Name() (*SolrResponse, error) {
 	return s.Get("name", nil)
 }
 
 // see https://wiki.apache.org/solr/SchemaRESTAPI
-func (s *Schema) Fields(fl string, includeDynamic, showDefaults bool) (*SchemaResponse, error) {
+func (s *Schema) Fields(fl string, includeDynamic, showDefaults bool) (*SolrResponse, error) {
 	params := &url.Values{}
 	if includeDynamic {
 		params.Set("includeDynamic", "true")
@@ -111,7 +101,7 @@ func (s *Schema) Fields(fl string, includeDynamic, showDefaults bool) (*SchemaRe
 }
 
 // see https://wiki.apache.org/solr/SchemaRESTAPI
-func (s *Schema) FieldsName(name string, includeDynamic, showDefaults bool) (*SchemaResponse, error) {
+func (s *Schema) FieldsName(name string, includeDynamic, showDefaults bool) (*SolrResponse, error) {
 	params := &url.Values{}
 	if includeDynamic {
 		params.Set("includeDynamic", "true")
@@ -123,7 +113,7 @@ func (s *Schema) FieldsName(name string, includeDynamic, showDefaults bool) (*Sc
 }
 
 // see https://wiki.apache.org/solr/SchemaRESTAPI
-func (s *Schema) Fieldtypes(showDefaults bool) (*SchemaResponse, error) {
+func (s *Schema) Fieldtypes(showDefaults bool) (*SolrResponse, error) {
 	params := &url.Values{}
 	if showDefaults {
 		params.Set("showDefaults", "true")
@@ -132,7 +122,7 @@ func (s *Schema) Fieldtypes(showDefaults bool) (*SchemaResponse, error) {
 }
 
 // see https://wiki.apache.org/solr/SchemaRESTAPI
-func (s *Schema) FieldtypesName(name string, showDefaults bool) (*SchemaResponse, error) {
+func (s *Schema) FieldtypesName(name string, showDefaults bool) (*SolrResponse, error) {
 	params := &url.Values{}
 	if showDefaults {
 		params.Set("showDefaults", "true")
@@ -142,7 +132,7 @@ func (s *Schema) FieldtypesName(name string, showDefaults bool) (*SchemaResponse
 
 
 // see https://wiki.apache.org/solr/SchemaRESTAPI
-func (s *Schema) DynamicFields(fl string, showDefaults bool) (*SchemaResponse, error) {
+func (s *Schema) DynamicFields(fl string, showDefaults bool) (*SolrResponse, error) {
 	params := &url.Values{}
 	if showDefaults {
 		params.Set("showDefaults", "true")
@@ -154,7 +144,7 @@ func (s *Schema) DynamicFields(fl string, showDefaults bool) (*SchemaResponse, e
 }
 
 // see https://wiki.apache.org/solr/SchemaRESTAPI
-func (s *Schema) DynamicFieldsName(name string, showDefaults bool) (*SchemaResponse, error) {
+func (s *Schema) DynamicFieldsName(name string, showDefaults bool) (*SolrResponse, error) {
 	params := &url.Values{}
 	if showDefaults {
 		params.Set("showDefaults", "true")
@@ -165,7 +155,7 @@ func (s *Schema) DynamicFieldsName(name string, showDefaults bool) (*SchemaRespo
 // For modify schema, require Solr4.4, currently one can add fields and copy fields.
 // Example: s.Post("fields", data) for adding new fields.
 // See https://wiki.apache.org/solr/SchemaRESTAPI
-func (s *Schema) Post(path string, data interface{}) (*SchemaUpdateResponse, error) {
+func (s *Schema) Post(path string, data interface{}) (*SolrUpdateResponse, error) {
 	var (
 		r   []byte
 		err error
@@ -190,8 +180,8 @@ func (s *Schema) Post(path string, data interface{}) (*SchemaUpdateResponse, err
 	}
 	// check error in resp
 	if hasError(resp) {
-		return &SchemaUpdateResponse{Success: false, Result: resp}, nil
+		return &SolrUpdateResponse{Success: false, Result: resp}, nil
 	}
 	
-	return &SchemaUpdateResponse{Success: true, Result: resp}, nil
+	return &SolrUpdateResponse{Success: true, Result: resp}, nil
 }

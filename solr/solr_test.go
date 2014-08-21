@@ -677,7 +677,7 @@ func TestSchemaGet(t *testing.T) {
 		t.Errorf("Error should be nil but got '%s'", err.Error())
 		return
 	}
-	if _, ok := res.Result["fields"]; ok == false {
+	if _, ok := res.Response["fields"]; ok == false {
 		t.Errorf("Result expected to have 'fields' key")
 	}
 }
@@ -690,7 +690,7 @@ func TestSchemaUniquekey(t *testing.T) {
 		t.Errorf("Error should be nil but got '%s'", err.Error())
 		return
 	}
-	if _, ok := res.Result["uniqueKey"]; ok == false {
+	if _, ok := res.Response["uniqueKey"]; ok == false {
 		t.Errorf("Result expected to have 'uniqueKey' key")
 	}
 }
@@ -703,7 +703,7 @@ func TestSchemaVersion(t *testing.T) {
 		t.Errorf("Error should be nil but got '%s'", err.Error())
 		return
 	}
-	if _, ok := res.Result["version"]; ok == false {
+	if _, ok := res.Response["version"]; ok == false {
 		t.Errorf("Result expected to have 'version' key")
 	}
 }
@@ -716,7 +716,7 @@ func TestSchemaAll(t *testing.T) {
 		t.Errorf("Error should be nil but got '%s'", err.Error())
 		return
 	}
-	if _, ok := res.Result["schema"]; ok == false {
+	if _, ok := res.Response["schema"]; ok == false {
 		t.Errorf("Result expected to have 'schema' key")
 	}
 }
@@ -729,7 +729,7 @@ func TestSchemaName(t *testing.T) {
 		t.Errorf("Error should be nil but got '%s'", err.Error())
 		return
 	}
-	if _, ok := res.Result["name"]; ok == false {
+	if _, ok := res.Response["name"]; ok == false {
 		t.Errorf("Result expected to have 'name' key")
 	}
 }
@@ -743,7 +743,7 @@ func TestSchemaFields(t *testing.T) {
 		t.Errorf("Error should be nil but got '%s'", err.Error())
 		return
 	}
-	if _, ok := res.Result["fields"]; ok == false {
+	if _, ok := res.Response["fields"]; ok == false {
 		t.Errorf("Result expected to have 'fields' key")
 	}
 }
@@ -757,7 +757,7 @@ func TestSchemaFieldsName(t *testing.T) {
 		t.Errorf("Error should be nil but got '%s'", err.Error())
 		return
 	}
-	if _, ok := res.Result["field"]; ok == false {
+	if _, ok := res.Response["field"]; ok == false {
 		t.Errorf("Result expected to have 'field' key")
 	}
 }
@@ -770,7 +770,7 @@ func TestSchemaFieldtypes(t *testing.T) {
 		t.Errorf("Error should be nil but got '%s'", err.Error())
 		return
 	}
-	if _, ok := res.Result["fieldTypes"]; ok == false {
+	if _, ok := res.Response["fieldTypes"]; ok == false {
 		t.Errorf("Result expected to have 'fieldTypes' key")
 	}
 }
@@ -784,7 +784,7 @@ func TestSchemaFieldtypesName(t *testing.T) {
 		t.Errorf("Error should be nil but got '%s'", err.Error())
 		return
 	}
-	if _, ok := res.Result["fieldType"]; ok == false {
+	if _, ok := res.Response["fieldType"]; ok == false {
 		t.Errorf("Result expected to have 'fieldType' key")
 	}
 }
@@ -799,7 +799,7 @@ func TestSchemaDynamicFields(t *testing.T) {
 		t.Errorf("Error should be nil but got '%s'", err.Error())
 		return
 	}
-	if _, ok := res.Result["dynamicFields"]; ok == false {
+	if _, ok := res.Response["dynamicFields"]; ok == false {
 		t.Errorf("Result expected to have 'dynamicFields' key")
 	}
 }
@@ -813,7 +813,7 @@ func TestSchemaDynamicFieldsName(t *testing.T) {
 		t.Errorf("Error should be nil but got '%s'", err.Error())
 		return
 	}
-	if _, ok := res.Result["dynamicField"]; ok == false {
+	if _, ok := res.Response["dynamicField"]; ok == false {
 		t.Errorf("Result expected to have 'dynamicField' key")
 	}
 }
