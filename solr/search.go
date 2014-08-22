@@ -99,7 +99,6 @@ func (q *Query) String() string {
 type Search struct {
 	query *Query
 	conn  *Connection
-	resource string
 	Debug string
 }
 
@@ -110,18 +109,10 @@ func NewSearch(c *Connection, q *Query) *Search {
 		s.SetQuery(q)
 	}
 	
-	s.resource = "select"
-	
 	if c != nil {
 		s.conn = c
 	}
 	return s
-}
-
-// This is for setting different path to solr resources, such as SearchHandler /select
-// MoreLikeThisHandler /mlt or Suggester /suggest and so on
-func (s *Search) SetResource(resource string) {
-	s.resource = resource
 }
 
 // SetQuery will replace old query with new query q
@@ -153,7 +144,7 @@ func (s *Search) Result(parser ResultParser) (*SolrResult, error) {
 	if s.conn == nil {
 		return nil, fmt.Errorf("No connection found for making request to solr")
 	}
-	resp, err := s.conn.Resource(s.resource, s.QueryString())
+	resp, err := s.conn.Resource("select", s.QueryString())
 	if err != nil {
 		return nil, err
 	}
@@ -162,3 +153,5 @@ func (s *Search) Result(parser ResultParser) (*SolrResult, error) {
 	}
 	return parser.Parse(resp)
 }
+
+
