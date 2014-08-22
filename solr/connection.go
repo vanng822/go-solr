@@ -145,8 +145,8 @@ func (c *Connection) SetBasicAuth(username, password string) {
 	c.password = password
 }
 
-func (c *Connection) Select(selectQuery string) (*SolrResponse, error) {
-	r, err := HTTPGet(fmt.Sprintf("%s/%s/select/?%s", c.url.String(), c.core, selectQuery), nil, c.username, c.password)
+func (c *Connection) Resource(source, queryString string) (*SolrResponse, error) {
+	r, err := HTTPGet(fmt.Sprintf("%s/%s/%s?%s", c.url.String(), c.core, source, queryString), nil, c.username, c.password)
 	if err != nil {
 		return nil, err
 	}
