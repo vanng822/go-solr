@@ -29,7 +29,7 @@ func TestSolrSearchMultipleValueSearchQuery(t *testing.T) {
 	s := NewSearch(nil, q)
 	q.AddParam("testing", "testing 2")
 	res := s.QueryString()
-	expected := "testing=test&testing=testing+2&wt=json"
+	expected := "testing=test&testing=testing+2"
 	if res != expected {
 		t.Errorf("Expected to be: '%s' but got '%s'", expected, res)
 	}
@@ -39,7 +39,7 @@ func TestSolrSearchSetQuery(t *testing.T) {
 	q := NewQuery()
 	q.AddParam("testing", "test")
 	s := NewSearch(nil, q)
-	expected := "testing=test&wt=json"
+	expected := "testing=test"
 	res := s.QueryString()
 	if res != expected {
 		t.Errorf("Expected to be: '%s' but got '%s'", expected, res)
@@ -48,7 +48,7 @@ func TestSolrSearchSetQuery(t *testing.T) {
 	q2.AddParam("testing", "test2")
 	s.SetQuery(q2)
 	
-	expected = "testing=test2&wt=json"
+	expected = "testing=test2"
 	res = s.QueryString()
 	
 	if res != expected {
@@ -62,7 +62,7 @@ func TestSolrSearchDebugQuery(t *testing.T) {
 	s := NewSearch(nil, q)
 	s.Debug = "true"
 	res := s.QueryString()
-	expected := "debug=true&indent=true&testing=test&wt=json"
+	expected := "debug=true&indent=true&testing=test"
 	if res != expected {
 		t.Errorf("Expected to be: '%s' but got '%s'", expected, res)
 	}
