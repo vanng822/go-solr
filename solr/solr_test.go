@@ -492,7 +492,7 @@ func TestStats(t *testing.T) {
 	}
 }
 
-func TestMoreLikeThis(t *testing.T) {
+func TestMoreLikeThisSuccess(t *testing.T) {
 	si, err := NewSolrInterface("http://127.0.0.1:12345/success", "collection1")
 	if err != nil {
 		t.Errorf(err.Error())
@@ -519,6 +519,40 @@ func TestMoreLikeThis(t *testing.T) {
 	if res.Match.Docs[0].Get("id") != "test_id_0" {
 		t.Errorf("First doc in match should have id 'test_id_0' but got '%s'", res.Match.Docs[0].Get("id"))
 	}
+}
+
+
+func TestMoreLikeThisError(t *testing.T) {
+	si, err := NewSolrInterface("http://127.0.0.1:12345/error", "collection1")
+	if err != nil {
+		t.Errorf(err.Error())
+	}
+	q := NewQuery()
+	q.AddParam("q", "id:tes*")
+	q.AddParam("mlt.mindf", "0")
+	q.AddParam("mlt.mintf", "0")
+	q.AddParam("mlt.match.include", "true")
+	q.Rows(3)
+	
+	s := si.Search(q)
+	// missing mlt.fl
+	res, err := s.MoreLikeThis(nil)
+	
+	if err != nil {
+		t.Errorf("Error should be nil")
+		return
+	}
+	
+	if res.Status != 400 {
+		t.Errorf("Status should be 400 but got '%d'", res.Status)
+	}
+	
+	msg := res.Error["msg"].(string)
+	expected := "Missing required parameter: mlt.fl"
+	if msg != expected {
+		t.Errorf("Error message expected to be '%s' but got '%s'", expected, msg)
+	}
+	
 }
 
 func TestNoResponseGrouped(t *testing.T) {

@@ -329,7 +329,7 @@ func mockPing(w http.ResponseWriter, req *http.Request) {
 	io.WriteString(w, `{"responseHeader":{"status":0,"QTime":2,"params":{"df":"text","echoParams":"all","rows":"10","echoParams":"all","wt":"json","ts":"1408264558581","_":"1408264558582","q":"solrpingquery","distrib":"false"}},"status":"OK"}`)
 }
 
-func mockMoreLikeThis(w http.ResponseWriter, req *http.Request) {
+func mockMoreLikeThisSuccess(w http.ResponseWriter, req *http.Request) {
 	logRequest(req)
 	io.WriteString(w, `{
 		  "responseHeader":{
@@ -357,6 +357,19 @@ func mockMoreLikeThis(w http.ResponseWriter, req *http.Request) {
 		  }}`)
 }
 
+func mockMoreLikeThisError(w http.ResponseWriter, req *http.Request) {
+	logRequest(req)
+	w.WriteHeader(400)
+	io.WriteString(w, `{
+		  "responseHeader":{
+		    "status":400,
+		    "QTime":5},
+		  "error":{
+		    "msg":"Missing required parameter: mlt.fl",
+		    "code":400}}`)
+}
+
+
 
 
 func mockStartServer() {
@@ -375,7 +388,8 @@ func mockStartServer() {
 	http.HandleFunc("/noresponse/core0/select/", mockSuccessStrangeGrouped)
 	http.HandleFunc("/solr/admin/cores", mockCoreAdmin)
 	http.HandleFunc("/stats/collection1/select", mockSuccessStats)
-	http.HandleFunc("/success/collection1/mlt", mockMoreLikeThis)
+	http.HandleFunc("/success/collection1/mlt", mockMoreLikeThisSuccess)
+	http.HandleFunc("/error/collection1/mlt", mockMoreLikeThisError)
 	
 	http.HandleFunc("/solr/collection1/schema", mockSchema)
 	http.HandleFunc("/solr/collection1/schema/fields", mockSchemaFields)
