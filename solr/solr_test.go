@@ -926,7 +926,7 @@ func TestPing(t *testing.T) {
 	if status != "OK" {
 		t.Errorf("Status expected to be 'OK' but got '%s'", status)
 	}
-	if qtime > -1 {
-		t.Errorf("Status expected not to be '-1' but got '%d'", qtime)
+	if qtime < 0 {
+		t.Errorf("Qtime expected to be larger than '-1' but got '%d'", qtime)
 	}
 }
