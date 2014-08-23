@@ -29,6 +29,7 @@ func (parser *StandardResultParser) Parse(response *SolrResponse) (*SolrResult, 
 		}
 		parser.ParseFacetCounts(response, sr)
 		parser.ParseHighlighting(response, sr)
+		parser.ParseStats(response, sr)
 	} else {
 		parser.ParseError(response, sr)
 	}
@@ -84,5 +85,12 @@ func (parser *StandardResultParser) ParseFacetCounts(response *SolrResponse, sr 
 func (parser *StandardResultParser) ParseHighlighting(response *SolrResponse, sr *SolrResult) {
 	if highlighting, ok := response.Response["highlighting"]; ok {
 		sr.Highlighting = highlighting.(map[string]interface{})
+	}
+}
+
+// Parse stats if there is
+func (parser *StandardResultParser) ParseStats(response *SolrResponse, sr *SolrResult) {
+	if stats, ok := response.Response["stats"]; ok {
+		sr.Stats = stats.(map[string]interface{})
 	}
 }

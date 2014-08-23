@@ -207,6 +207,31 @@ func mockSuccessGrouped(w http.ResponseWriter, req *http.Request) {
 		          }}]}}}`)
 }
 
+func mockSuccessStats(w http.ResponseWriter, req *http.Request) {
+	logRequest(req)
+	io.WriteString(w, `{
+		  "responseHeader":{
+		    "status":0,
+		    "QTime":1,
+		    "params":{
+		      "q":"*:*",
+		      "stats":"true",
+		      "indent":"true",
+		      "rows":"0",
+		      "wt":"json",
+		      "stats.field":"id"}},
+		  "response":{"numFound":200,"start":0,"docs":[]
+		  },
+		  "stats":{
+		    "stats_fields":{
+		      "id":{
+		        "min":"test_id_0",
+		        "max":"test_id_99",
+		        "count":200,
+		        "missing":0,
+		        "facets":{}}}}}`)
+}
+
 func mockSuccessStrangeGrouped(w http.ResponseWriter, req *http.Request) {
 	logRequest(req)
 	io.WriteString(w, `{
@@ -319,7 +344,8 @@ func mockStartServer() {
 	http.HandleFunc("/grouped/core0/select/", mockSuccessGrouped)
 	http.HandleFunc("/noresponse/core0/select/", mockSuccessStrangeGrouped)
 	http.HandleFunc("/solr/admin/cores", mockCoreAdmin)
-
+	http.HandleFunc("/stats/collection1/select", mockSuccessStats)
+	
 	http.HandleFunc("/solr/collection1/schema", mockSchema)
 	http.HandleFunc("/solr/collection1/schema/fields", mockSchemaFields)
 	http.HandleFunc("/solr/collection1/schema/fields/title", mockSchemaFieldsTitle)

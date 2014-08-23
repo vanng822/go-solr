@@ -9,7 +9,7 @@ import (
 type Document map[string]interface{}
 
 type SolrResponse struct {
-	Status int
+	Status   int
 	Response map[string]interface{}
 }
 
@@ -48,9 +48,9 @@ type SolrResult struct {
 	FacetCounts    map[string]interface{}
 	Highlighting   map[string]interface{}
 	Error          map[string]interface{}
-	// grouped for grouping result
-	// if grouping Results will be empty
-	Grouped map[string]interface{}
+	Grouped        map[string]interface{} // grouped for grouping result if grouping Results will be empty
+	Stats          map[string]interface{}
+	MoreLikeThis   map[string]interface{} // MoreLikeThis using Search (select) Component
 }
 
 type SolrInterface struct {

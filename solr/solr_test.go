@@ -468,6 +468,30 @@ func TestGrouped(t *testing.T) {
 	}
 }
 
+func TestStats(t *testing.T) {
+	si, err := NewSolrInterface("http://127.0.0.1:12345/stats", "collection1")
+	if err != nil {
+		t.Errorf(err.Error())
+	}
+	
+	q := NewQuery()
+	q.AddParam("q", "*:*")
+	q.AddParam("stats", "true")
+	q.AddParam("stats.field", "id")
+	
+	s := si.Search(q)
+	
+	res, err := s.Result(nil)
+	
+	if err != nil {
+		t.Errorf("Error should be nil")
+		return
+	}
+	if _, ok := res.Stats["stats_fields"]; ok == false {
+		t.Errorf("should have key stats_fields in Stats")
+	}
+}
+
 func TestNoResponseGrouped(t *testing.T) {
 	si, err := NewSolrInterface("http://127.0.0.1:12345/noresponse", "core1")
 	if err != nil {
