@@ -30,6 +30,7 @@ func (parser *StandardResultParser) Parse(response *SolrResponse) (*SolrResult, 
 		parser.ParseFacetCounts(response, sr)
 		parser.ParseHighlighting(response, sr)
 		parser.ParseStats(response, sr)
+		parser.ParseMoreLikeThis(response, sr)
 	} else {
 		parser.ParseError(response, sr)
 	}
@@ -49,18 +50,22 @@ func (parser *StandardResultParser) ParseError(response *SolrResponse, sr *SolrR
 	}
 }
 
+func ParseDocResponse(docResponse map[string]interface{}, collection *Collection) {
+	collection.NumFound = int(docResponse["numFound"].(float64))
+	collection.Start = int(docResponse["start"].(float64))
+	if docs, ok := docResponse["docs"].([]interface{}); ok {
+		collection.Docs = make([]Document, len(docs))
+		for i, v := range docs {
+			collection.Docs[i] = Document(v.(map[string]interface{}))
+		}
+	}
+}
+
 // ParseSolrResponse will assign result and build sr.docs if there is a response.
 // If there is no response or grouped property in response it will return error
 func (parser *StandardResultParser) ParseResponse(response *SolrResponse, sr *SolrResult) (err error) {
 	if resp, ok := response.Response["response"].(map[string]interface{}); ok {
-		sr.Results.NumFound = int(resp["numFound"].(float64))
-		sr.Results.Start = int(resp["start"].(float64))
-		if docs, ok := resp["docs"].([]interface{}); ok {
-			sr.Results.Docs = make([]Document, len(docs))
-			for i, v := range docs {
-				sr.Results.Docs[i] = Document(v.(map[string]interface{}))
-			}
-		}
+		ParseDocResponse(resp, sr.Results)
 	} else if grouped, ok := response.Response["grouped"].(map[string]interface{}); ok {
 		sr.Grouped = grouped
 	} else {
@@ -88,9 +93,48 @@ func (parser *StandardResultParser) ParseHighlighting(response *SolrResponse, sr
 	}
 }
 
-// Parse stats if there is
+// Parse stats if there is  in response
 func (parser *StandardResultParser) ParseStats(response *SolrResponse, sr *SolrResult) {
 	if stats, ok := response.Response["stats"].(map[string]interface{}); ok {
 		sr.Stats = stats
 	}
+}
+
+// Parse moreLikeThis if there is in response
+func (parser *StandardResultParser) ParseMoreLikeThis(response *SolrResponse, sr *SolrResult) {
+	if moreLikeThis, ok := response.Response["moreLikeThis"].(map[string]interface{}); ok {
+		sr.MoreLikeThis = moreLikeThis
+	}
+}
+
+type MltResultParser interface {
+	Parse(response *SolrResponse) (*SolrMltResult, error)
+}
+
+type MoreLikeThisParser struct {
+}
+
+func (parser *MoreLikeThisParser) Parse(response *SolrResponse) (*SolrMltResult, error) {
+	sr := &SolrMltResult{}
+	sr.Results = new(Collection)
+	sr.Match = new(Collection)
+	sr.Status = response.Status
+	
+	if responseHeader, ok := response.Response["responseHeader"].(map[string]interface{}); ok {
+		sr.ResponseHeader = responseHeader
+	}
+	
+	if response.Status == 0 {
+		if resp, ok := response.Response["response"].(map[string]interface{}); ok {
+			ParseDocResponse(resp, sr.Results)
+		}
+		if match, ok := response.Response["match"].(map[string]interface{}); ok {
+			ParseDocResponse(match, sr.Match)
+		}
+	} else {
+		if error, ok := response.Response["error"].(map[string]interface{}); ok {
+			sr.Error = error
+		}
+	}
+	return sr, nil
 }

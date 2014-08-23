@@ -53,6 +53,14 @@ type SolrResult struct {
 	MoreLikeThis   map[string]interface{} // MoreLikeThis using Search (select) Component
 }
 
+type SolrMltResult struct {
+	Status         int         // status quick access to status
+	Results        *Collection // results parsed documents, basically response object
+	Match          *Collection
+	ResponseHeader map[string]interface{}
+	Error          map[string]interface{}
+}
+
 type SolrInterface struct {
 	conn *Connection
 }
