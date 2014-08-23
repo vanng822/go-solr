@@ -6,4 +6,6 @@ go:
 
 install: go get -v ./solr
 
+before_script: curl -sSL https://raw.githubusercontent.com/moliware/travis-solr/master/travis-solr.sh | SOLR_VERSION=4.7.2 bash
+
 script: go test -v ./solr
