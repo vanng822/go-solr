@@ -492,6 +492,35 @@ func TestStats(t *testing.T) {
 	}
 }
 
+func TestMoreLikeThis(t *testing.T) {
+	si, err := NewSolrInterface("http://127.0.0.1:12345/success", "collection1")
+	if err != nil {
+		t.Errorf(err.Error())
+	}
+	q := NewQuery()
+	q.AddParam("q", "id:tes*")
+	q.AddParam("mlt.fl", "id,title")
+	q.AddParam("mlt.mindf", "0")
+	q.AddParam("mlt.mintf", "0")
+	q.AddParam("mlt.match.include", "true")
+	q.Rows(3)
+	
+	s := si.Search(q)
+	
+	res, err := s.MoreLikeThis(nil)
+	
+	if err != nil {
+		t.Errorf("Error should be nil")
+		return
+	}
+	if len(res.Results.Docs) != 3 {
+		t.Errorf("Length of result should be 3 but got '%d'", len(res.Results.Docs))
+	}
+	if res.Match.Docs[0].Get("id") != "test_id_0" {
+		t.Errorf("First doc in match should have id 'test_id_0' but got '%s'", res.Match.Docs[0].Get("id"))
+	}
+}
+
 func TestNoResponseGrouped(t *testing.T) {
 	si, err := NewSolrInterface("http://127.0.0.1:12345/noresponse", "core1")
 	if err != nil {
