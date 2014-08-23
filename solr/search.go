@@ -120,31 +120,40 @@ func (s *Search) SetQuery(q *Query) {
 	s.query = q
 }
 
-// QueryString return a query string of all queries, including start, rows, debug and wt=json.
-// wt is always json
-func (s *Search) QueryString() string {
+// Return query params including debug and indent if Debug is set
+func (s *Search) QueryParams() *url.Values {
 	
 	if s.query == nil {
 		s.query = NewQuery()
 	}
 	
-	s.query.params.Set("wt", "json")
-
 	if s.Debug != "" {
 		s.query.params.Set("debug", s.Debug)
 		s.query.params.Set("indent", "true")
 	}
 	
-	return s.query.String()
+	return s.query.params
+}
+
+// QueryString return a query string of all queries except wt=json
+func (s *Search) QueryString() string {
+	return s.QueryParams().Encode()
+}
+
+// Wrapper for connection.Resource which will add wt=json automatically
+// One can use this to query to /solr/{CORE}/{RESOURCE} example /solr/collection1/select
+// This can be useful when you use an search component that is not supported in this package
+func (s *Search) Resource(resource string, params *url.Values) (*SolrResponse, error) {
+	if s.conn == nil {
+		return nil, fmt.Errorf("No connection found for making request to solr")
+	}
+	return s.conn.Resource(resource, params)
 }
 
 // Result will create a StandardResultParser if no parser specified.
 // parser must be an implementation of ResultParser interface
 func (s *Search) Result(parser ResultParser) (*SolrResult, error) {
-	if s.conn == nil {
-		return nil, fmt.Errorf("No connection found for making request to solr")
-	}
-	resp, err := s.conn.Select(s.QueryString())
+	resp, err := s.Resource("select", s.QueryParams())
 	if err != nil {
 		return nil, err
 	}
@@ -153,3 +162,5 @@ func (s *Search) Result(parser ResultParser) (*SolrResult, error) {
 	}
 	return parser.Parse(resp)
 }
+
+
