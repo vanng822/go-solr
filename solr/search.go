@@ -141,7 +141,7 @@ func (s *Search) QueryString() string {
 }
 
 // Wrapper for connection.Resource which will add wt=json automatically
-// One can use this to query to /solr/[CORE/]{RESOURCE} example /solr/collection1/select
+// One can use this to query to /solr/{CORE}/{RESOURCE} example /solr/collection1/select
 // This can be useful when you use an search component that is not supported in this package
 func (s *Search) Resource(resource string, params *url.Values) (*SolrResponse, error) {
 	if s.conn == nil {
