@@ -120,6 +120,7 @@ func (s *Search) SetQuery(q *Query) {
 	s.query = q
 }
 
+// Return query params including debug and indent if Debug is set
 func (s *Search) QueryParams() *url.Values {
 	
 	if s.query == nil {
