@@ -44,8 +44,8 @@ func (parser *StandardResultParser) ParseResponseHeader(response *SolrResponse, 
 }
 
 func (parser *StandardResultParser) ParseError(response *SolrResponse, sr *SolrResult) {
-	if error, ok := response.Response["error"]; ok {
-		sr.Error = error.(map[string]interface{})
+	if error, ok := response.Response["error"].(map[string]interface{}); ok {
+		sr.Error = error
 	}
 }
 
@@ -75,22 +75,22 @@ func (parser *StandardResultParser) ParseResponse(response *SolrResponse, sr *So
 // ParseFacetCounts will assign facet_counts to sr if there is one.
 // No modification done here
 func (parser *StandardResultParser) ParseFacetCounts(response *SolrResponse, sr *SolrResult) {
-	if facetCounts, ok := response.Response["facet_counts"]; ok {
-		sr.FacetCounts = facetCounts.(map[string]interface{})
+	if facetCounts, ok := response.Response["facet_counts"].(map[string]interface{}); ok {
+		sr.FacetCounts = facetCounts
 	}
 }
 
 // ParseHighlighting will assign highlighting to sr if there is one.
 // No modification done here
 func (parser *StandardResultParser) ParseHighlighting(response *SolrResponse, sr *SolrResult) {
-	if highlighting, ok := response.Response["highlighting"]; ok {
-		sr.Highlighting = highlighting.(map[string]interface{})
+	if highlighting, ok := response.Response["highlighting"].(map[string]interface{}); ok {
+		sr.Highlighting = highlighting
 	}
 }
 
 // Parse stats if there is
 func (parser *StandardResultParser) ParseStats(response *SolrResponse, sr *SolrResult) {
-	if stats, ok := response.Response["stats"]; ok {
-		sr.Stats = stats.(map[string]interface{})
+	if stats, ok := response.Response["stats"].(map[string]interface{}); ok {
+		sr.Stats = stats
 	}
 }
