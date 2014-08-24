@@ -41,6 +41,7 @@ type Collection struct {
 	NumFound int
 }
 
+// Parsed result for SearchHandler response, ie /select
 type SolrResult struct {
 	Status         int         // status quick access to status
 	Results        *Collection // results parsed documents, basically response object
@@ -51,6 +52,15 @@ type SolrResult struct {
 	Grouped        map[string]interface{} // grouped for grouping result if grouping Results will be empty
 	Stats          map[string]interface{}
 	MoreLikeThis   map[string]interface{} // MoreLikeThis using Search (select) Component
+}
+
+// Parsed result for MoreLikeThisHandler response, ie /mlt
+type SolrMltResult struct {
+	Status         int         // status quick access to status
+	Results        *Collection // results parsed documents, basically response object
+	Match          *Collection // Documents for match section
+	ResponseHeader map[string]interface{}
+	Error          map[string]interface{}
 }
 
 type SolrInterface struct {

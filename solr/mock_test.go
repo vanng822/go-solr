@@ -329,6 +329,49 @@ func mockPing(w http.ResponseWriter, req *http.Request) {
 	io.WriteString(w, `{"responseHeader":{"status":0,"QTime":2,"params":{"df":"text","echoParams":"all","rows":"10","echoParams":"all","wt":"json","ts":"1408264558581","_":"1408264558582","q":"solrpingquery","distrib":"false"}},"status":"OK"}`)
 }
 
+func mockMoreLikeThisSuccess(w http.ResponseWriter, req *http.Request) {
+	logRequest(req)
+	io.WriteString(w, `{
+		  "responseHeader":{
+		    "status":0,
+		    "QTime":12},
+		  "match":{"numFound":200,"start":0,"docs":[
+		      {
+		        "id":"test_id_0",
+		        "title":["add sucess 0"],
+		        "_version_":1476345720316362752}]
+		  },
+		  "response":{"numFound":199,"start":0,"docs":[
+		      {
+		        "id":"test_id_1",
+		        "title":["add sucess 1"],
+		        "_version_":1476345720644567040},
+		      {
+		        "id":"test_id_2",
+		        "title":["add sucess 2"],
+		        "_version_":1476345720645615616},
+		      {
+		        "id":"test_id_3",
+		        "title":["add sucess 3"],
+		        "_version_":1476345720645615617}]
+		  }}`)
+}
+
+func mockMoreLikeThisError(w http.ResponseWriter, req *http.Request) {
+	logRequest(req)
+	w.WriteHeader(400)
+	io.WriteString(w, `{
+		  "responseHeader":{
+		    "status":400,
+		    "QTime":5},
+		  "error":{
+		    "msg":"Missing required parameter: mlt.fl",
+		    "code":400}}`)
+}
+
+
+
+
 func mockStartServer() {
 	http.HandleFunc("/success/core0/select/", mockSuccessSelect)
 	http.HandleFunc("/fail/core0/select/", mockFailSelect)
@@ -345,6 +388,8 @@ func mockStartServer() {
 	http.HandleFunc("/noresponse/core0/select/", mockSuccessStrangeGrouped)
 	http.HandleFunc("/solr/admin/cores", mockCoreAdmin)
 	http.HandleFunc("/stats/collection1/select", mockSuccessStats)
+	http.HandleFunc("/success/collection1/mlt", mockMoreLikeThisSuccess)
+	http.HandleFunc("/error/collection1/mlt", mockMoreLikeThisError)
 	
 	http.HandleFunc("/solr/collection1/schema", mockSchema)
 	http.HandleFunc("/solr/collection1/schema/fields", mockSchemaFields)

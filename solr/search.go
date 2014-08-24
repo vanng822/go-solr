@@ -108,7 +108,7 @@ func NewSearch(c *Connection, q *Query) *Search {
 	if q != nil {
 		s.SetQuery(q)
 	}
-	
+
 	if c != nil {
 		s.conn = c
 	}
@@ -122,16 +122,16 @@ func (s *Search) SetQuery(q *Query) {
 
 // Return query params including debug and indent if Debug is set
 func (s *Search) QueryParams() *url.Values {
-	
+
 	if s.query == nil {
 		s.query = NewQuery()
 	}
-	
+
 	if s.Debug != "" {
 		s.query.params.Set("debug", s.Debug)
 		s.query.params.Set("indent", "true")
 	}
-	
+
 	return s.query.params
 }
 
@@ -163,4 +163,15 @@ func (s *Search) Result(parser ResultParser) (*SolrResult, error) {
 	return parser.Parse(resp)
 }
 
-
+// This method is for making query to MoreLikeThisHandler
+// See http://wiki.apache.org/solr/MoreLikeThisHandler
+func (s *Search) MoreLikeThis(parser MltResultParser) (*SolrMltResult, error) {
+	resp, err := s.Resource("mlt", s.QueryParams())
+	if err != nil {
+		return nil, err
+	}
+	if parser == nil {
+		parser = new(MoreLikeThisParser)
+	}
+	return parser.Parse(resp)
+}
