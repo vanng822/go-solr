@@ -115,7 +115,7 @@ func TestHasError(t *testing.T) {
 
 	data2 := map[string]interface{}{
 		"responseHeader": map[string]interface{}{
-			"status": 400,
+			"status": 0,
 			"QTime":  30,
 			"params": map[string]interface{}{
 				"indent": "true",
