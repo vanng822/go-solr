@@ -103,7 +103,7 @@ func TestHasError(t *testing.T) {
 			"QTime":  30,
 			"params": map[string]interface{}{
 				"indent": "true",
-				"q":      "**",
+				"q":      "*:*",
 				"wt":     "json"}},
 		"error": map[string]interface{}{
 			"msg":  "no field name specified in query and no default specified via 'df' param",
@@ -119,7 +119,7 @@ func TestHasError(t *testing.T) {
 			"QTime":  30,
 			"params": map[string]interface{}{
 				"indent": "true",
-				"q":      "**",
+				"q":      "*:*",
 				"wt":     "json"}},
 		"response": map[string]interface{}{
 			"numFound": 1,
