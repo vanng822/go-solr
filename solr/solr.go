@@ -8,16 +8,6 @@ import (
 
 type Document map[string]interface{}
 
-type SolrResponse struct {
-	Status   int
-	Response map[string]interface{}
-}
-
-type SolrUpdateResponse struct {
-	Success bool
-	Result  map[string]interface{}
-}
-
 // Has check if a key exist in document
 func (d Document) Has(k string) bool {
 	_, ok := d[k]
@@ -33,6 +23,16 @@ func (d Document) Get(k string) interface{} {
 // Set add a key/value to document
 func (d Document) Set(k string, v interface{}) {
 	d[k] = v
+}
+
+type SolrResponse struct {
+	Status   int
+	Response map[string]interface{}
+}
+
+type SolrUpdateResponse struct {
+	Success bool
+	Result  map[string]interface{}
 }
 
 type Collection struct {
