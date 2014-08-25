@@ -17,6 +17,8 @@ Please go to http://wiki.apache.org/solr/ for how to write solr query.
 
 Search, Add, Update, Delete, Commit, Rollback, Optimize
 
+Core admin, Schema REST API
+
 
 ## Install
 
