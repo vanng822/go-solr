@@ -117,7 +117,7 @@ func makeAddChunks(docs []Document, chunk_size int) []map[string]interface{} {
 }
 
 // Add will insert documents in batch of chunk_size. success is false as long as one chunk failed.
-// The result in UpdateResponse is summery of response from all chunks
+// The result in SolrUpdateResponse is summery of response from all chunks
 // with key chunk_%d
 func (si *SolrInterface) Add(docs []Document, chunk_size int, params *url.Values) (*SolrUpdateResponse, error) {
 	result := &SolrUpdateResponse{Success: true}
