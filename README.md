@@ -5,7 +5,7 @@ go-solr
 [![Build Status](https://travis-ci.org/vanng822/go-solr.svg?branch=master)](https://travis-ci.org/vanng822/go-solr)
 [![GoDoc](https://godoc.org/github.com/vanng822/go-solr/solr?status.svg)](https://godoc.org/github.com/vanng822/go-solr/solr)
 
-Solr v4
+Solr v4, required v4.4 if you want use all supported features.
 
 Json only
 
