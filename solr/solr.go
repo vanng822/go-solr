@@ -221,8 +221,8 @@ func (si *SolrInterface) Ping() (status string, qtime int, err error) {
 	if ok == false {
 		return "", -1, fmt.Errorf("Unexpected response returned")
 	}
-	if QTime, ok := resp["responseHeader"].(map[string]interface{})["QTime"]; ok {
-		qtime = int(QTime.(float64))
+	if QTime, ok := resp["responseHeader"].(map[string]interface{})["QTime"].(float64); ok {
+		qtime = int(QTime)
 	} else {
 		qtime = -1
 	}
