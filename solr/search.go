@@ -84,10 +84,12 @@ func (q *Query) QueryFields(qf string) {
 	q.params.Add("qf", qf)
 }
 
+// Start sets start value which is the offset of result
 func (q *Query) Start(start int) {
 	q.params.Set("start", fmt.Sprintf("%d", start))
 }
 
+// Rows sets value for rows which means set the limit for how many rows to return
 func (q *Query) Rows(rows int) {
 	q.params.Set("rows", fmt.Sprintf("%d", rows))
 }
