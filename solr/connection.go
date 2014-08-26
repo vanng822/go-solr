@@ -93,15 +93,15 @@ func HTTPGet(url string, headers [][]string, username, password string) ([]byte,
 }
 
 func bytes2json(data *[]byte) (map[string]interface{}, error) {
-	var container interface{}
+	var jsonData interface{}
 
-	err := json.Unmarshal(*data, &container)
+	err := json.Unmarshal(*data, &jsonData)
 
 	if err != nil {
 		return nil, err
 	}
 
-	return container.(map[string]interface{}), nil
+	return jsonData.(map[string]interface{}), nil
 }
 
 func json2bytes(data interface{}) (*[]byte, error) {
