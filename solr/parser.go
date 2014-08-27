@@ -45,8 +45,8 @@ func (parser *StandardResultParser) ParseResponseHeader(response *SolrResponse, 
 }
 
 func (parser *StandardResultParser) ParseError(response *SolrResponse, sr *SolrResult) {
-	if error, ok := response.Response["error"].(map[string]interface{}); ok {
-		sr.Error = error
+	if err, ok := response.Response["error"].(map[string]interface{}); ok {
+		sr.Error = err
 	}
 }
 
@@ -132,8 +132,8 @@ func (parser *MoreLikeThisParser) Parse(response *SolrResponse) (*SolrMltResult,
 			ParseDocResponse(match, sr.Match)
 		}
 	} else {
-		if error, ok := response.Response["error"].(map[string]interface{}); ok {
-			sr.Error = error
+		if err, ok := response.Response["error"].(map[string]interface{}); ok {
+			sr.Error = err
 		}
 	}
 	return sr, nil
