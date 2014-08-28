@@ -99,15 +99,15 @@ func TestJson2Bytes(t *testing.T) {
 func TestHasError(t *testing.T) {
 	data := map[string]interface{}{
 		"responseHeader": map[string]interface{}{
-			"status": 400,
-			"QTime":  30,
+			"status": float64(400),
+			"QTime":  float64(30),
 			"params": map[string]interface{}{
 				"indent": "true",
 				"q":      "*:*",
 				"wt":     "json"}},
 		"error": map[string]interface{}{
 			"msg":  "no field name specified in query and no default specified via 'df' param",
-			"code": 400}}
+			"code": float64(400)}}
 
 	if hasError(data) != true {
 		t.Errorf("Should have an error")
@@ -115,21 +115,67 @@ func TestHasError(t *testing.T) {
 
 	data2 := map[string]interface{}{
 		"responseHeader": map[string]interface{}{
-			"status": 0,
-			"QTime":  30,
+			"status": float64(0),
+			"QTime":  float64(30),
 			"params": map[string]interface{}{
 				"indent": "true",
 				"q":      "*:*",
 				"wt":     "json"}},
 		"response": map[string]interface{}{
-			"numFound": 1,
-			"start":    0,
+			"numFound": float64(1),
+			"start":    float64(0),
 			"docs": []map[string]interface{}{{
 				"id":        "change.me",
 				"title":     "change.me",
-				"_version_": 14}}}}
+				"_version_": float64(14)}}}}
 
 	if hasError(data2) != false {
 		t.Errorf("Should not has an error")
+	}
+}
+
+func TestSuccessStatus(t *testing.T) {
+	data := map[string]interface{}{
+		"responseHeader": map[string]interface{}{
+			"status": float64(400),
+			"QTime":  float64(30),
+			"params": map[string]interface{}{
+				"indent": "true",
+				"q":      "*:*",
+				"wt":     "json"}},
+		"error": map[string]interface{}{
+			"msg":  "no field name specified in query and no default specified via 'df' param",
+			"code": float64(400)}}
+	if successStatus(data) != false {
+		t.Errorf("Status check should give false but got true")
+	}
+	
+	data2 := map[string]interface{}{
+		"error": map[string]interface{}{
+			"msg":  "Must specify a Content-Type header with POST requests",
+			"code": float64(415)}}
+			
+	if successStatus(data2) != false {
+		t.Errorf("Status check should give false but got true")
+	}
+	
+	data3 := map[string]interface{}{
+		"responseHeader": map[string]interface{}{
+			"status": float64(0),
+			"QTime":  float64(30),
+			"params": map[string]interface{}{
+				"indent": "true",
+				"q":      "*:*",
+				"wt":     "json"}},
+		"response": map[string]interface{}{
+			"numFound": float64(1),
+			"start":    float64(0),
+			"docs": []map[string]interface{}{{
+				"id":        "change.me",
+				"title":     "change.me",
+				"_version_": float64(14)}}}}
+
+	if successStatus(data3) != true {
+		t.Errorf("Status check should give true but got false")
 	}
 }

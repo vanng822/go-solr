@@ -179,7 +179,7 @@ func (s *Schema) Post(path string, data interface{}) (*SolrUpdateResponse, error
 		return nil, err
 	}
 	// check error in resp
-	if hasError(resp) {
+	if !successStatus(resp) || hasError(resp) {
 		return &SolrUpdateResponse{Success: false, Result: resp}, nil
 	}
 	

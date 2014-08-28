@@ -118,6 +118,19 @@ func hasError(response map[string]interface{}) bool {
 	return ok
 }
 
+func successStatus(response map[string]interface{}) bool {
+	responseHeader, ok := response["responseHeader"].(map[string]interface{})
+	if !ok {
+		return false
+	}
+	
+	if status, ok := responseHeader["status"].(float64); ok {
+		return 0 == int(status)
+	}
+	
+	return false
+}
+
 type Connection struct {
 	url      *url.URL
 	core     string
@@ -186,7 +199,7 @@ func (c *Connection) Update(data map[string]interface{}, params *url.Values) (*S
 		return nil, err
 	}
 	// check error in resp
-	if hasError(resp) {
+	if !successStatus(resp) || hasError(resp) {
 		return &SolrUpdateResponse{Success: false, Result: resp}, nil
 	}
 
