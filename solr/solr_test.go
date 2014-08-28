@@ -352,6 +352,10 @@ func TestAdd(t *testing.T) {
 	if res == nil {
 		t.Errorf("Add response should not be nil")
 	}
+	
+	if res.Success != true {
+		t.Errorf("res.Success should be true but got false")
+	}
 
 	if res2 == nil {
 		t.Errorf("Commit response should not be nil")
@@ -914,6 +918,12 @@ func TestSchemaPost(t *testing.T) {
 		t.Errorf("Error should be nil but got '%s'", err.Error())
 		return
 	}
+	
+	if res.Success != true {
+		t.Errorf("res.Success should be true but got false")
+		return
+	}
+	
 	// TODO: make sure mock response with a real one
 	if _, ok := res.Result["fields"]; ok == false {
 		t.Errorf("Result expected to have 'fields' key")
