@@ -801,7 +801,7 @@ func TestSchemaVersion(t *testing.T) {
 
 func TestSchemaAll(t *testing.T) {
 	s, err := NewSchema(solrUrl, "collection1")
-	
+	s.SetBasicAuth("test", "test")
 	res, err := s.All()
 	if err != nil {
 		t.Errorf("Error should be nil but got '%s'", err.Error())
