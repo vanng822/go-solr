@@ -277,7 +277,7 @@ func mockCoreAdmin(w http.ResponseWriter, req *http.Request) {
 func mockSchema(w http.ResponseWriter, req *http.Request) {
 	logRequest(req)
 	login := getBaciAuth(req)
-	if len(login) == 0 || !authenticate(login[0], login[1]) {
+	if len(login) != 2 || !authenticate(login[0], login[1]) {
 		authenticateChallenge(w, "Mock")
 		return
 	}
