@@ -21,3 +21,15 @@ func TestWrongAction(t *testing.T) {
 	}
 }
 
+func TestCoreAdminInvalidUrl(t *testing.T) {
+	_, err := NewCoreAdmin("sdff")
+	if err == nil {
+		t.Errorf("Expected an error")
+		return
+	}
+	expected := "parse sdff: invalid URI for request"
+	if err.Error() != expected {
+		t.Errorf("expected '%s' but got '%s'", expected, err.Error())
+	}
+}
+

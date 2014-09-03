@@ -32,6 +32,31 @@ func TestSolrDocument(t *testing.T) {
 	}
 }
 
+func TestSolrInvalidUrl(t *testing.T) {
+	_, err := NewSolrInterface("sdff", "")
+	if err == nil {
+		t.Errorf("Expected an error")
+		return
+	}
+	expected := "parse sdff: invalid URI for request"
+	if err.Error() != expected {
+		t.Errorf("expected '%s' but got '%s'", expected, err.Error())
+	}
+}
+
+func TestSolrNoConnection(t *testing.T) {
+	si := SolrInterface{}
+	_, err := si.Update(nil, nil)
+	if err == nil {
+		t.Errorf("Expected an error")
+		return
+	}
+	expected := "No connection found for making request to solr"
+	if err.Error() != expected {
+		t.Errorf("expected '%s' but got '%s'", expected, err.Error())
+	}
+}
+
 func TestSolrSuccessSelect(t *testing.T) {
 	go mockStartServer()
 

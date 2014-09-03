@@ -12,6 +12,36 @@ func TestSolrQueryAddParam(t *testing.T) {
 	}
 }
 
+func TestSolrQuerySetParam(t *testing.T) {
+
+	q := NewQuery()
+	q.SetParam("qf", "some qf")
+
+	if q.String() != "qf=some+qf" {
+		t.Errorf("Expected to be: 'some qf'")
+	}
+}
+
+func TestSolrQueryGetParam(t *testing.T) {
+
+	q := NewQuery()
+	q.SetParam("qf", "some qf")
+
+	if q.GetParam("qf") != "some qf" {
+		t.Errorf("Expected to be: 'some qf'")
+	}
+}
+
+func TestSolrQueryStart(t *testing.T) {
+
+	q := NewQuery()
+	q.Start(100)
+
+	if q.String() != "start=100" {
+		t.Errorf("Expected 'start=100'")
+	}
+}
+
 func TestSolrSearchMultipleValueQuery(t *testing.T) {
 	q := NewQuery()
 	q.AddParam("testing", "test")
