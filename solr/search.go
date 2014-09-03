@@ -69,6 +69,7 @@ func (q *Query) DefType(defType string) {
 
 // bf (Boost Functions) parameter http://wiki.apache.org/solr/DisMaxQParserPlugin
 // Example: ord(popularity)^0.5 recip(rord(price),1,1000,1000)^0.3
+// Check this http://wiki.apache.org/solr/FunctionQuery for available functions
 func (q *Query) BoostFunctions(bf string) {
 	q.params.Add("bf", bf)
 }
