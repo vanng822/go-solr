@@ -1,7 +1,10 @@
 package solr
 
-import "testing"
-import "fmt"
+import (
+	"testing"
+	"fmt"
+	"net/url"
+	)
 
 func TestConnection(t *testing.T) {
 	_, err1 := NewConnection("fakedomain.tld", "core0")
@@ -19,6 +22,25 @@ func TestConnection(t *testing.T) {
 		t.Errorf("It should not be an error since the url is  valid but got '%s'", err3.Error())
 	}
 }
+
+func TestConnectionResourceInvalidDomain(t *testing.T) {
+	conn, err := NewConnection("http://www.fakedomain.tld/", "core0")
+	_, err = conn.Resource("select", &url.Values{})
+	expected := "Get http://www.fakedomain.tld//core0/select?wt=json: dial tcp: lookup www.fakedomain.tld: no such host"
+	if err.Error() != expected {
+		t.Errorf("expected '%s' but got '%s'", expected, err.Error())
+	}
+}
+
+func TestConnectionUpdateInvalidDomain(t *testing.T) {
+	conn, err := NewConnection("http://www.fakedomain.tld/", "core0")
+	_, err = conn.Update(map[string]interface{}{}, nil)
+	expected := "Post http://www.fakedomain.tld//core0/update/?wt=json: dial tcp: lookup www.fakedomain.tld: no such host"
+	if err.Error() != expected {
+		t.Errorf("expected '%s' but got '%s'", expected, err.Error())
+	}
+}
+
 
 func TestBytes2JsonWrongJson(t *testing.T) {
 	data := []byte(`<xml><x>y</x><yy>boo</yy></xml>`)

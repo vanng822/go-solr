@@ -97,6 +97,38 @@ func TestSolrSuccessSelect(t *testing.T) {
 	}
 }
 
+func TestSolrConnectionPostWithoutDataSucces(t *testing.T) {
+	_, err := HTTPPost(fmt.Sprintf("%s/collection1/schema", solrUrl), nil, nil, "", "")
+	if err != nil {
+		t.Errorf("Not expected an error")
+		return
+	}
+}
+
+func TestSolrConnectionPostWithoutDataError(t *testing.T) {
+	_, err := HTTPPost("http://www.fakedomain.tld/collection1/schema", nil, nil, "", "")
+	if err == nil {
+		t.Errorf("Expected an error")
+		return
+	}
+	expected := "Post http://www.fakedomain.tld/collection1/schema: dial tcp: lookup www.fakedomain.tld: no such host"
+	if err.Error() != expected {
+		t.Errorf("expected '%s' but got '%s'", expected, err.Error())
+	}
+}
+
+func TestSolrConnectionGetWithHeadersError(t *testing.T) {
+	_, err := HTTPGet("http://www.fakedomain.tld/collection1/schema", [][]string{{"Content-Type", "application/json"}}, "", "")
+	if err == nil {
+		t.Errorf("Expected an error")
+		return
+	}
+	expected := "Get http://www.fakedomain.tld/collection1/schema: dial tcp: lookup www.fakedomain.tld: no such host"
+	if err.Error() != expected {
+		t.Errorf("expected '%s' but got '%s'", expected, err.Error())
+	}
+}
+
 func TestSolrFailSelect(t *testing.T) {
 	si, err := NewSolrInterface("http://127.0.0.1:12345/fail", "core0")
 

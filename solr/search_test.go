@@ -221,3 +221,11 @@ func TestQueryQueryField(t *testing.T) {
 		t.Errorf("expected '%s' but got '%s'", expected, result)
 	}
 }
+
+func TestSearchNoQuerySet(t *testing.T) {
+	s := NewSearch(&Connection{}, nil)
+	expected := ""
+	if s.QueryString() != expected {
+		t.Errorf("Expected '%s' but got '%s'", expected, s.QueryString())
+	}
+}
