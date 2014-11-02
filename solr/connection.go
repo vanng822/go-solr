@@ -38,22 +38,7 @@ func HTTPPost(path string, data *[]byte, headers [][]string, username, password 
 			req.Header.Add(headers[i][0], headers[i][1])
 		}
 	}
-	req.Header.Set("User-Agent", userAgent)
-
-	resp, err := client.Do(req)
-
-	if err != nil {
-		return nil, err
-	}
-
-	defer resp.Body.Close()
-
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return nil, err
-	}
-
-	return body, nil
+	return makeRequest(client, req)
 }
 
 // HTTPGet make a GET request to url, headers are optional
@@ -74,8 +59,12 @@ func HTTPGet(url string, headers [][]string, username, password string) ([]byte,
 			req.Header.Add(headers[i][0], headers[i][1])
 		}
 	}
-	req.Header.Set("User-Agent", userAgent)
+	return makeRequest(client, req)
+}
 
+func makeRequest(client *http.Client, req *http.Request) ([]byte, error) {
+	req.Header.Set("User-Agent", userAgent)
+	
 	resp, err := client.Do(req)
 
 	if err != nil {
@@ -85,10 +74,10 @@ func HTTPGet(url string, headers [][]string, username, password string) ([]byte,
 	defer resp.Body.Close()
 
 	body, err := ioutil.ReadAll(resp.Body)
-
 	if err != nil {
 		return nil, err
 	}
+
 	return body, nil
 }
 
@@ -123,11 +112,11 @@ func successStatus(response map[string]interface{}) bool {
 	if !ok {
 		return false
 	}
-	
+
 	if status, ok := responseHeader["status"].(float64); ok {
 		return 0 == int(status)
 	}
-	
+
 	return false
 }
 
