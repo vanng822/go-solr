@@ -706,6 +706,22 @@ func TestRealDeleteAll(t *testing.T) {
 }
 */
 
+func TestNewCoreAdmin(t *testing.T) {
+	si, err := NewSolrInterface(solrUrl, "collection1")
+	si.SetBasicAuth("test", "test")
+	ca, err := si.CoreAdmin()
+	if err != nil {
+		t.Errorf("Should not get an error when creating a schema object")
+		return
+	}
+	if ca.username != "test" || ca.password != "test" {
+		t.Errorf("Wrong credidentials copied")
+	}
+	if ca.url.String() != solrUrl {
+		t.Errorf("Wrong url copied")
+	}
+}
+
 func TestCoreAdminCoresAction(t *testing.T) {
 	
 	ca, _ := NewCoreAdmin("http://127.0.0.1:12345/solr")
@@ -817,6 +833,22 @@ func TestSupportedAction(t *testing.T) {
 }
 
 // Schema tests
+func TestNewSchema(t *testing.T) {
+	si, err := NewSolrInterface(solrUrl, "collection1")
+	si.SetBasicAuth("test", "test")
+	s, err := si.Schema()
+	if err != nil {
+		t.Errorf("Should not get an error when creating a schema object")
+		return
+	}
+	if s.username != "test" || s.password != "test" {
+		t.Errorf("Wrong credidentials copied")
+	}
+	if s.url.String() != solrUrl {
+		t.Errorf("Wrong url copied")
+	}
+}
+
 func TestSchemaGet(t *testing.T) {
 	s, err := NewSchema(solrUrl, "collection1")
 	
