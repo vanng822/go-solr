@@ -15,7 +15,7 @@ func NewQuery() *Query {
 	return q
 }
 
-func (q *Query) AddParam(k string, v string) {
+func (q *Query) AddParam(k, v string) {
 	q.params.Add(k, v)
 }
 
@@ -27,7 +27,7 @@ func (q *Query) GetParam(k string) string {
 	return q.params.Get(k)
 }
 
-func (q *Query) SetParam(k string, v string) {
+func (q *Query) SetParam(k, v string) {
 	q.params.Set(k, v)
 }
 
@@ -57,7 +57,7 @@ func (q *Query) FieldList(fl string) {
 
 // geofilt - The distance filter http://wiki.apache.org/solr/SpatialSearch
 // Output example: fq={!geofilt pt=45.15,-93.85 sfield=store d=5}
-func (q *Query) Geofilt(latitude float64, longitude float64, sfield string, distance float64) {
+func (q *Query) Geofilt(latitude, longitude float64, sfield string, distance float64) {
 	q.params.Add("fq", fmt.Sprintf("{!geofilt pt=%#v,%#v sfield=%s d=%#v}", latitude, longitude, sfield, distance))
 }
 
