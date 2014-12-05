@@ -15,7 +15,7 @@ type CoreAdmin struct {
 // solrUrl should look like this http://0.0.0.0:8983/solr[/admin/cores] ie /admin/cores will append automatically
 // when calling Action
 func NewCoreAdmin(solrUrl string) (*CoreAdmin, error) {
-	u, err := url.ParseRequestURI(solrUrl)
+	u, err := url.ParseRequestURI(strings.TrimRight(solrUrl, "/"))
 	if err != nil {
 		return nil, err
 	}

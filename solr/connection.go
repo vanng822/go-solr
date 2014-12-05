@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
+	"strings"
 )
 
 var userAgent = fmt.Sprintf("Go-solr/%s (+https://github.com/vanng822/go-solr)", VERSION)
@@ -129,7 +130,7 @@ type Connection struct {
 
 // NewConnection will parse solrUrl and return a connection object, solrUrl must be a absolute url or path
 func NewConnection(solrUrl, core string) (*Connection, error) {
-	u, err := url.ParseRequestURI(solrUrl)
+	u, err := url.ParseRequestURI(strings.TrimRight(solrUrl, "/"))
 	if err != nil {
 		return nil, err
 	}

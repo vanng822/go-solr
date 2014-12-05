@@ -26,7 +26,7 @@ func TestConnection(t *testing.T) {
 func TestConnectionResourceInvalidDomain(t *testing.T) {
 	conn, err := NewConnection("http://www.fakedomain.tld/", "core0")
 	_, err = conn.Resource("select", &url.Values{})
-	expected := "Get http://www.fakedomain.tld//core0/select?wt=json: dial tcp: lookup www.fakedomain.tld: no such host"
+	expected := "Get http://www.fakedomain.tld/core0/select?wt=json: dial tcp: lookup www.fakedomain.tld: no such host"
 	if err.Error() != expected {
 		t.Errorf("expected '%s' but got '%s'", expected, err.Error())
 	}
@@ -35,7 +35,7 @@ func TestConnectionResourceInvalidDomain(t *testing.T) {
 func TestConnectionUpdateInvalidDomain(t *testing.T) {
 	conn, err := NewConnection("http://www.fakedomain.tld/", "core0")
 	_, err = conn.Update(map[string]interface{}{}, nil)
-	expected := "Post http://www.fakedomain.tld//core0/update/?wt=json: dial tcp: lookup www.fakedomain.tld: no such host"
+	expected := "Post http://www.fakedomain.tld/core0/update/?wt=json: dial tcp: lookup www.fakedomain.tld: no such host"
 	if err.Error() != expected {
 		t.Errorf("expected '%s' but got '%s'", expected, err.Error())
 	}

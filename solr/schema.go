@@ -15,7 +15,7 @@ type Schema struct {
 
 // NewSchema will parse solrUrl and return a schema object, solrUrl must be a absolute url or path
 func NewSchema(solrUrl, core string) (*Schema, error) {
-	u, err := url.ParseRequestURI(solrUrl)
+	u, err := url.ParseRequestURI(strings.TrimRight(solrUrl, "/"))
 	if err != nil {
 		return nil, err
 	}
