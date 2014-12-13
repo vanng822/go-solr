@@ -425,7 +425,7 @@ func TestDelete(t *testing.T) {
 		t.Errorf(err.Error())
 	}
 
-	res, _ := si.Delete(map[string]interface{}{"query": "id:test_id_1 OR id:test_id_2", "commitWithin": "500"}, nil)
+	res, _ := si.Delete(M{"query": "id:test_id_1 OR id:test_id_2", "commitWithin": "500"}, nil)
 
 	// not sure what we can test here but at least run and see thing flows
 	if res == nil {
@@ -435,7 +435,7 @@ func TestDelete(t *testing.T) {
 	params := &url.Values{}
 	params.Add("commitWithin", "500")
 
-	res2, _ := si.Delete(map[string]interface{}{"query": "*:*"}, params)
+	res2, _ := si.Delete(M{"query": "*:*"}, params)
 
 	// not sure what we can test here but at least run and see thing flows
 	if res2 == nil {
@@ -1000,7 +1000,7 @@ func TestSchemaDynamicFieldsName(t *testing.T) {
 
 func TestSchemaPost(t *testing.T) {
 	s, err := NewSchema(solrUrl, "collection1")
-	data := []interface{}{map[string]interface{}{"name":"newfield1","type":"text","copyFields":[]string{"target1"}}, map[string]interface{}{"name":"newfield2","type":"text","stored":"false"}}
+	data := []interface{}{M{"name":"newfield1","type":"text","copyFields":[]string{"target1"}}, M{"name":"newfield2","type":"text","stored":"false"}}
 	
 	res, err := s.Post("fields", data)
 	if err != nil {

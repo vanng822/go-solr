@@ -6,6 +6,8 @@ import (
 	"net/url"
 )
 
+type M map[string]interface{}
+
 type Document map[string]interface{}
 
 // Has check if a key exist in document
@@ -111,7 +113,7 @@ func makeAddChunks(docs []Document, chunk_size int) []map[string]interface{} {
 			add = append(add, docs[doc_counter])
 			doc_counter++
 		}
-		chunks[i] = map[string]interface{}{"add": add}
+		chunks[i] = M{"add": add}
 	}
 	return chunks
 }
@@ -121,7 +123,7 @@ func makeAddChunks(docs []Document, chunk_size int) []map[string]interface{} {
 // with key chunk_%d
 func (si *SolrInterface) Add(docs []Document, chunk_size int, params *url.Values) (*SolrUpdateResponse, error) {
 	result := &SolrUpdateResponse{Success: true}
-	responses := map[string]interface{}{}
+	responses := M{}
 	chunks := makeAddChunks(docs, chunk_size)
 
 	for i := 0; i < len(chunks); i++ {
@@ -130,7 +132,7 @@ func (si *SolrInterface) Add(docs []Document, chunk_size int, params *url.Values
 			return nil, err
 		}
 		result.Success = result.Success && res.Success
-		responses[fmt.Sprintf("chunk_%d", i+1)] = map[string]interface{}{
+		responses[fmt.Sprintf("chunk_%d", i+1)] = M{
 			"result":  res.Result,
 			"success": res.Success,
 			"total":   len(chunks[i]["add"].([]Document))}
@@ -144,7 +146,7 @@ func (si *SolrInterface) Add(docs []Document, chunk_size int, params *url.Values
 // If you want to delete more docs use { "query":"QUERY" } .
 // Extra params can specify in params or in data such as { "query":"QUERY", "commitWithin":"500" }
 func (si *SolrInterface) Delete(data map[string]interface{}, params *url.Values) (*SolrUpdateResponse, error) {
-	message := map[string]interface{}{"delete": data}
+	message := M{"delete": data}
 	return si.Update(message, params)
 }
 
@@ -152,7 +154,7 @@ func (si *SolrInterface) Delete(data map[string]interface{}, params *url.Values)
 func (si *SolrInterface) DeleteAll() (*SolrUpdateResponse, error) {
 	params := &url.Values{}
 	params.Add("commit", "true")
-	return si.Delete(map[string]interface{}{"query": "*:*"}, params)
+	return si.Delete(M{"query": "*:*"}, params)
 }
 
 // Update take data of type map and optional params which can use to specify addition parameters such as commit=true
@@ -167,7 +169,7 @@ func (si *SolrInterface) Update(data map[string]interface{}, params *url.Values)
 func (si *SolrInterface) Commit() (*SolrUpdateResponse, error) {
 	params := &url.Values{}
 	params.Add("commit", "true")
-	return si.Update(map[string]interface{}{}, params)
+	return si.Update(M{}, params)
 }
 
 func (si *SolrInterface) Optimize(params *url.Values) (*SolrUpdateResponse, error) {
@@ -175,14 +177,14 @@ func (si *SolrInterface) Optimize(params *url.Values) (*SolrUpdateResponse, erro
 		params = &url.Values{}
 	}
 	params.Set("optimize", "true")
-	return si.Update(map[string]interface{}{}, params)
+	return si.Update(M{}, params)
 }
 
 // Rollback rollbacks all add/deletes made to the index since the last commit.
 // This should use with caution.
 // See https://wiki.apache.org/solr/UpdateXmlMessages#A.22rollback.22
 func (si *SolrInterface) Rollback() (*SolrUpdateResponse, error) {
-	return si.Update(map[string]interface{}{"rollback": map[string]interface{}{}}, nil)
+	return si.Update(M{"rollback": M{}}, nil)
 }
 
 // Return new instance of CoreAdmin with provided solrUrl and basic auth
