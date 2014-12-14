@@ -4,7 +4,13 @@ import (
 	"fmt"
 	"net/url"
 	"testing"
+	"os"
 )
+
+func TestMain(m *testing.M) {
+	go mockStartServer()
+	os.Exit(m.Run())
+}
 
 var solrUrl = "http://127.0.0.1:12345/solr"
 
@@ -58,8 +64,6 @@ func TestSolrNoConnection(t *testing.T) {
 }
 
 func TestSolrSuccessSelect(t *testing.T) {
-	go mockStartServer()
-
 	si, err := NewSolrInterface("http://127.0.0.1:12345/success", "core0")
 
 	if err != nil {
