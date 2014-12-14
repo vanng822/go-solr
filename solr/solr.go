@@ -6,6 +6,8 @@ import (
 	"net/url"
 )
 
+// Shortcut for map[string]interface{}
+// Use where applicable
 type M map[string]interface{}
 
 type Document map[string]interface{}
@@ -37,6 +39,7 @@ type SolrUpdateResponse struct {
 	Result  map[string]interface{}
 }
 
+// Holding the search result
 type Collection struct {
 	Docs     []Document
 	Start    int
