@@ -3,8 +3,9 @@ package solr
 import (
 	"fmt"
 	"net/url"
-	"testing"
 	"os"
+	"strings"
+	"testing"
 )
 
 func TestMain(m *testing.M) {
@@ -32,7 +33,7 @@ func TestSolrDocument(t *testing.T) {
 	if d.Get("new_title").(string) != "new title" {
 		t.Errorf("new_title expected to have value 'new title'")
 	}
-	
+
 	if d.Get("not_exist") != nil {
 		t.Errorf("Get not_exist key should return nil but got '%s'", d.Get("not_exist"))
 	}
@@ -115,8 +116,10 @@ func TestSolrConnectionPostWithoutDataError(t *testing.T) {
 		t.Errorf("Expected an error")
 		return
 	}
-	expected := "Post http://www.fakedomain.tld/collection1/schema: dial tcp: lookup www.fakedomain.tld: no such host"
-	if err.Error() != expected {
+	expected := "Post http://www.fakedomain.tld/collection1/schema: dial tcp"
+	error_report := err.Error()
+
+	if strings.HasPrefix(error_report, expected) == false {
 		t.Errorf("expected '%s' but got '%s'", expected, err.Error())
 	}
 }
@@ -127,8 +130,9 @@ func TestSolrConnectionGetWithHeadersError(t *testing.T) {
 		t.Errorf("Expected an error")
 		return
 	}
-	expected := "Get http://www.fakedomain.tld/collection1/schema: dial tcp: lookup www.fakedomain.tld: no such host"
-	if err.Error() != expected {
+	expected := "Get http://www.fakedomain.tld/collection1/schema: dial tcp"
+	error_report := err.Error()
+	if strings.HasPrefix(error_report, expected) == false {
 		t.Errorf("expected '%s' but got '%s'", expected, err.Error())
 	}
 }
@@ -238,7 +242,7 @@ func TestSolrFacetSelect(t *testing.T) {
 	if id_len != 6 {
 		t.Errorf("results.facet_counts.facet_fields.id.len expected be 6 but got %d", id_len)
 	}
-	
+
 	if _, ok := res.ResponseHeader["params"]; ok == false {
 		t.Errorf("ResponseHeader should contain param key")
 	}
@@ -402,7 +406,7 @@ func TestAdd(t *testing.T) {
 		t.Errorf(err.Error())
 	}
 	si.SetBasicAuth("test", "post")
-	
+
 	docs := make([]Document, 0, 5)
 	for i := 0; i < 5; i++ {
 		docs = append(docs, Document{"id": fmt.Sprintf("test_id_%d", i), "title": fmt.Sprintf("add sucess %d", i)})
@@ -413,7 +417,7 @@ func TestAdd(t *testing.T) {
 	if res == nil {
 		t.Errorf("Add response should not be nil")
 	}
-	
+
 	if res.Success != true {
 		t.Errorf("res.Success should be true but got false")
 	}
@@ -510,16 +514,16 @@ func TestGrouped(t *testing.T) {
 	if err != nil {
 		t.Errorf(err.Error())
 	}
-	
+
 	q := NewQuery()
 	q.AddParam("q", "*:*")
 	q.AddParam("group", "true")
 	q.AddParam("group.field", "id")
-	
+
 	s := si.Search(q)
 	si.SetBasicAuth("test", "get")
 	res, err := s.Result(nil)
-	
+
 	if err != nil {
 		t.Errorf("Error should be nil")
 		return
@@ -527,7 +531,7 @@ func TestGrouped(t *testing.T) {
 	if _, ok := res.Grouped["id"]; ok == false {
 		t.Errorf("should have key id in grouped")
 	}
-	
+
 	if res.Results.Docs != nil {
 		t.Errorf("Docs should be nil")
 	}
@@ -538,16 +542,16 @@ func TestStats(t *testing.T) {
 	if err != nil {
 		t.Errorf(err.Error())
 	}
-	
+
 	q := NewQuery()
 	q.AddParam("q", "*:*")
 	q.AddParam("stats", "true")
 	q.AddParam("stats.field", "id")
-	
+
 	s := si.Search(q)
-	
+
 	res, err := s.Result(nil)
-	
+
 	if err != nil {
 		t.Errorf("Error should be nil")
 		return
@@ -569,11 +573,11 @@ func TestMoreLikeThisSuccess(t *testing.T) {
 	q.AddParam("mlt.mintf", "0")
 	q.AddParam("mlt.match.include", "true")
 	q.Rows(3)
-	
+
 	s := si.Search(q)
-	
+
 	res, err := s.MoreLikeThis(nil)
-	
+
 	if err != nil {
 		t.Errorf("Error should be nil")
 		return
@@ -586,7 +590,6 @@ func TestMoreLikeThisSuccess(t *testing.T) {
 	}
 }
 
-
 func TestMoreLikeThisError(t *testing.T) {
 	si, err := NewSolrInterface("http://127.0.0.1:12345/error", "collection1")
 	if err != nil {
@@ -598,26 +601,26 @@ func TestMoreLikeThisError(t *testing.T) {
 	q.AddParam("mlt.mintf", "0")
 	q.AddParam("mlt.match.include", "true")
 	q.Rows(3)
-	
+
 	s := si.Search(q)
 	// missing mlt.fl
 	res, err := s.MoreLikeThis(nil)
-	
+
 	if err != nil {
 		t.Errorf("Error should be nil")
 		return
 	}
-	
+
 	if res.Status != 400 {
 		t.Errorf("Status should be 400 but got '%d'", res.Status)
 	}
-	
+
 	msg := res.Error["msg"].(string)
 	expected := "Missing required parameter: mlt.fl"
 	if msg != expected {
 		t.Errorf("Error message expected to be '%s' but got '%s'", expected, msg)
 	}
-	
+
 }
 
 func TestNoResponseGrouped(t *testing.T) {
@@ -625,16 +628,16 @@ func TestNoResponseGrouped(t *testing.T) {
 	if err != nil {
 		t.Errorf(err.Error())
 	}
-	
+
 	q := NewQuery()
 	q.AddParam("q", "*:*")
 	q.AddParam("group", "true")
 	q.AddParam("group.field", "id")
 	si.SetCore("core0")
 	s := si.Search(q)
-	
+
 	_, err = s.Result(nil)
-	
+
 	if err == nil {
 		t.Errorf("Error should not be nil")
 	}
@@ -727,9 +730,9 @@ func TestNewCoreAdmin(t *testing.T) {
 }
 
 func TestCoreAdminCoresAction(t *testing.T) {
-	
+
 	ca, _ := NewCoreAdmin("http://127.0.0.1:12345/solr")
-	
+
 	params := &url.Values{}
 	params.Add("core", "core0")
 	res, err := ca.Action("RELOAD", params)
@@ -742,9 +745,9 @@ func TestCoreAdminCoresAction(t *testing.T) {
 }
 
 func TestCoreAdminCoresActionWrappers(t *testing.T) {
-	
+
 	ca, _ := NewCoreAdmin("http://127.0.0.1:12345/solr")
-	
+
 	// Status
 	res, err := ca.Status("")
 	if err != nil {
@@ -753,7 +756,7 @@ func TestCoreAdminCoresActionWrappers(t *testing.T) {
 	if res.Status != 0 {
 		t.Errorf("Status expected to be 0 but got '%d'", res.Status)
 	}
-	
+
 	res, err = ca.Status("core0")
 	if err != nil {
 		t.Errorf("Should not be an error")
@@ -762,7 +765,7 @@ func TestCoreAdminCoresActionWrappers(t *testing.T) {
 		t.Errorf("Status expected to be 0 but got '%d'", res.Status)
 	}
 	// Swap
-	
+
 	res, err = ca.Swap("core0", "core1")
 	if err != nil {
 		t.Errorf("Should not be an error")
@@ -770,7 +773,7 @@ func TestCoreAdminCoresActionWrappers(t *testing.T) {
 	if res.Status != 0 {
 		t.Errorf("Status expected to be 0 but got '%d'", res.Status)
 	}
-	
+
 	// Reload
 	res, err = ca.Reload("core0")
 	if err != nil {
@@ -779,7 +782,7 @@ func TestCoreAdminCoresActionWrappers(t *testing.T) {
 	if res.Status != 0 {
 		t.Errorf("Status expected to be 0 but got '%d'", res.Status)
 	}
-	
+
 	// Unload
 	res, err = ca.Unload("core0")
 	if err != nil {
@@ -788,10 +791,10 @@ func TestCoreAdminCoresActionWrappers(t *testing.T) {
 	if res.Status != 0 {
 		t.Errorf("Status expected to be 0 but got '%d'", res.Status)
 	}
-	
+
 	// Rename
 	res, err = ca.Rename("core0", "core5")
-	
+
 	if err != nil {
 		t.Errorf("Should not be an error")
 	}
@@ -800,23 +803,23 @@ func TestCoreAdminCoresActionWrappers(t *testing.T) {
 	}
 	// Split
 	res, err = ca.Split("core0", "core1")
-	
+
 	if err == nil {
 		t.Errorf("Should be an error")
 	}
-	
+
 	expected := "You must specify at least 2 target cores"
-	
+
 	if err.Error() != expected {
 		t.Errorf("expcted '%s' but got '%s'", expected, err.Error())
 	}
-	
+
 	res, err = ca.Split("core0", "core1", "core2")
-	
+
 	if err != nil {
 		t.Errorf("Should not be an error")
 	}
-	
+
 	if res.Status != 0 {
 		t.Errorf("Status expected to be 0 but got '%d'", res.Status)
 	}
@@ -827,7 +830,7 @@ func TestSupportedAction(t *testing.T) {
 	ca, _ := NewCoreAdmin("http://127.0.0.1:12345/solr")
 
 	params := &url.Values{}
-	actions := []string{ "CREATE", "mergeindexes"}
+	actions := []string{"CREATE", "mergeindexes"}
 	for _, action := range actions {
 		_, err := ca.Action(action, params)
 		if err != nil {
@@ -855,7 +858,7 @@ func TestNewSchema(t *testing.T) {
 
 func TestSchemaGet(t *testing.T) {
 	s, err := NewSchema(solrUrl, "collection1")
-	
+
 	res, err := s.Get("fields", nil)
 	if err != nil {
 		t.Errorf("Error should be nil but got '%s'", err.Error())
@@ -868,7 +871,7 @@ func TestSchemaGet(t *testing.T) {
 
 func TestSchemaUniquekey(t *testing.T) {
 	s, err := NewSchema(solrUrl, "collection1")
-	
+
 	res, err := s.Uniquekey()
 	if err != nil {
 		t.Errorf("Error should be nil but got '%s'", err.Error())
@@ -881,7 +884,7 @@ func TestSchemaUniquekey(t *testing.T) {
 
 func TestSchemaVersion(t *testing.T) {
 	s, err := NewSchema(solrUrl, "collection1")
-	
+
 	res, err := s.Version()
 	if err != nil {
 		t.Errorf("Error should be nil but got '%s'", err.Error())
@@ -907,7 +910,7 @@ func TestSchemaAll(t *testing.T) {
 
 func TestSchemaName(t *testing.T) {
 	s, err := NewSchema(solrUrl, "collection1")
-	
+
 	res, err := s.Name()
 	if err != nil {
 		t.Errorf("Error should be nil but got '%s'", err.Error())
@@ -918,10 +921,9 @@ func TestSchemaName(t *testing.T) {
 	}
 }
 
-
 func TestSchemaFields(t *testing.T) {
 	s, err := NewSchema(solrUrl, "collection1")
-	
+
 	res, err := s.Fields("", false, false)
 	if err != nil {
 		t.Errorf("Error should be nil but got '%s'", err.Error())
@@ -932,10 +934,9 @@ func TestSchemaFields(t *testing.T) {
 	}
 }
 
-
 func TestSchemaFieldsName(t *testing.T) {
 	s, err := NewSchema(solrUrl, "collection1")
-	
+
 	res, err := s.FieldsName("title", false, false)
 	if err != nil {
 		t.Errorf("Error should be nil but got '%s'", err.Error())
@@ -948,7 +949,7 @@ func TestSchemaFieldsName(t *testing.T) {
 
 func TestSchemaFieldtypes(t *testing.T) {
 	s, err := NewSchema(solrUrl, "collection1")
-	
+
 	res, err := s.Fieldtypes(false)
 	if err != nil {
 		t.Errorf("Error should be nil but got '%s'", err.Error())
@@ -959,10 +960,9 @@ func TestSchemaFieldtypes(t *testing.T) {
 	}
 }
 
-
 func TestSchemaFieldtypesName(t *testing.T) {
 	s, err := NewSchema(solrUrl, "collection1")
-	
+
 	res, err := s.FieldtypesName("location", false)
 	if err != nil {
 		t.Errorf("Error should be nil but got '%s'", err.Error())
@@ -973,11 +973,9 @@ func TestSchemaFieldtypesName(t *testing.T) {
 	}
 }
 
-
-
 func TestSchemaDynamicFields(t *testing.T) {
 	s, err := NewSchema(solrUrl, "collection1")
-	
+
 	res, err := s.DynamicFields("", false)
 	if err != nil {
 		t.Errorf("Error should be nil but got '%s'", err.Error())
@@ -988,10 +986,9 @@ func TestSchemaDynamicFields(t *testing.T) {
 	}
 }
 
-
 func TestSchemaDynamicFieldsName(t *testing.T) {
 	s, err := NewSchema(solrUrl, "collection1")
-	
+
 	res, err := s.DynamicFieldsName("*_coordinate", false)
 	if err != nil {
 		t.Errorf("Error should be nil but got '%s'", err.Error())
@@ -1004,19 +1001,19 @@ func TestSchemaDynamicFieldsName(t *testing.T) {
 
 func TestSchemaPost(t *testing.T) {
 	s, err := NewSchema(solrUrl, "collection1")
-	data := []interface{}{M{"name":"newfield1","type":"text","copyFields":[]string{"target1"}}, M{"name":"newfield2","type":"text","stored":"false"}}
-	
+	data := []interface{}{M{"name": "newfield1", "type": "text", "copyFields": []string{"target1"}}, M{"name": "newfield2", "type": "text", "stored": "false"}}
+
 	res, err := s.Post("fields", data)
 	if err != nil {
 		t.Errorf("Error should be nil but got '%s'", err.Error())
 		return
 	}
-	
+
 	if res.Success != true {
 		t.Errorf("res.Success should be true but got false")
 		return
 	}
-	
+
 	// TODO: make sure mock response with a real one
 	if _, ok := res.Result["fields"]; ok == false {
 		t.Errorf("Result expected to have 'fields' key")
