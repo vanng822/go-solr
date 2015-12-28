@@ -10,7 +10,9 @@ import (
 	"strings"
 )
 
-var userAgent = fmt.Sprintf("Go-solr/%s (+https://github.com/vanng822/go-solr)", VERSION)
+var userAgent = fmt.Sprintf("Go-solr/%s (+https://github.com/tokopedia/go-solr)", VERSION)
+
+var transport = http.Transport{}
 
 // HTTPPost make a POST request to path which also includes domain, headers are optional
 func HTTPPost(path string, data *[]byte, headers [][]string, username, password string) ([]byte, error) {
@@ -19,7 +21,7 @@ func HTTPPost(path string, data *[]byte, headers [][]string, username, password 
 		err error
 	)
 
-	client := &http.Client{}
+	client := &http.Client{Transport: &transport}
 	if data == nil {
 		req, err = http.NewRequest("POST", path, nil)
 	} else {
@@ -44,7 +46,7 @@ func HTTPPost(path string, data *[]byte, headers [][]string, username, password 
 
 // HTTPGet make a GET request to url, headers are optional
 func HTTPGet(url string, headers [][]string, username, password string) ([]byte, error) {
-	client := &http.Client{}
+	client := &http.Client{Transport: &transport}
 	req, err := http.NewRequest("GET", url, nil)
 
 	if err != nil {
@@ -65,7 +67,7 @@ func HTTPGet(url string, headers [][]string, username, password string) ([]byte,
 
 func makeRequest(client *http.Client, req *http.Request) ([]byte, error) {
 	req.Header.Set("User-Agent", userAgent)
-	
+
 	resp, err := client.Do(req)
 
 	if err != nil {
