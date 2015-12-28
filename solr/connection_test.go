@@ -1,10 +1,11 @@
 package solr
 
 import (
-	"testing"
 	"fmt"
 	"net/url"
-	)
+	"strings"
+	"testing"
+)
 
 func TestConnection(t *testing.T) {
 	_, err1 := NewConnection("fakedomain.tld", "core0")
@@ -26,8 +27,9 @@ func TestConnection(t *testing.T) {
 func TestConnectionResourceInvalidDomain(t *testing.T) {
 	conn, err := NewConnection("http://www.fakedomain.tld/", "core0")
 	_, err = conn.Resource("select", &url.Values{})
-	expected := "Get http://www.fakedomain.tld/core0/select?wt=json: dial tcp: lookup www.fakedomain.tld: no such host"
-	if err.Error() != expected {
+	expected := "Get http://www.fakedomain.tld/core0/select?wt=json: dial tcp"
+	error_report := err.Error()
+	if strings.HasPrefix(error_report, expected) == false {
 		t.Errorf("expected '%s' but got '%s'", expected, err.Error())
 	}
 }
@@ -35,12 +37,12 @@ func TestConnectionResourceInvalidDomain(t *testing.T) {
 func TestConnectionUpdateInvalidDomain(t *testing.T) {
 	conn, err := NewConnection("http://www.fakedomain.tld/", "core0")
 	_, err = conn.Update(map[string]interface{}{}, nil)
-	expected := "Post http://www.fakedomain.tld/core0/update/?wt=json: dial tcp: lookup www.fakedomain.tld: no such host"
-	if err.Error() != expected {
+	expected := "Post http://www.fakedomain.tld/core0/update/?wt=json: dial tcp"
+	error_report := err.Error()
+	if strings.HasPrefix(error_report, expected) == false {
 		t.Errorf("expected '%s' but got '%s'", expected, err.Error())
 	}
 }
-
 
 func TestBytes2JsonWrongJson(t *testing.T) {
 	data := []byte(`<xml><x>y</x><yy>boo</yy></xml>`)
@@ -63,7 +65,7 @@ func TestBytes2Json(t *testing.T) {
 	if d["two"].(float64) != 2 {
 		t.Errorf("two should have 2 as value")
 	}
-	
+
 }
 
 func PrintMapInterface(d map[string]interface{}) {
@@ -171,16 +173,16 @@ func TestSuccessStatus(t *testing.T) {
 	if successStatus(data) != false {
 		t.Errorf("Status check should give false but got true")
 	}
-	
+
 	data2 := map[string]interface{}{
 		"error": map[string]interface{}{
 			"msg":  "Must specify a Content-Type header with POST requests",
 			"code": float64(415)}}
-			
+
 	if successStatus(data2) != false {
 		t.Errorf("Status check should give false but got true")
 	}
-	
+
 	data3 := map[string]interface{}{
 		"responseHeader": map[string]interface{}{
 			"status": float64(0),
