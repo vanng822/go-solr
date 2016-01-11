@@ -84,18 +84,6 @@ func makeRequest(client *http.Client, req *http.Request) ([]byte, error) {
 	return body, nil
 }
 
-func bytes2json(data *[]byte) (map[string]interface{}, error) {
-	var jsonData interface{}
-
-	err := json.Unmarshal(*data, &jsonData)
-
-	if err != nil {
-		return nil, err
-	}
-
-	return jsonData.(map[string]interface{}), nil
-}
-
 func json2bytes(data interface{}) (*[]byte, error) {
 	b, err := json.Marshal(data)
 	if err != nil {
@@ -150,12 +138,11 @@ func (c *Connection) SetBasicAuth(username, password string) {
 	c.password = password
 }
 
-func (c *Connection) Resource(source string, params *url.Values) (*SolrResponse, error) {
+func (c *Connection) Resource(source string, params *url.Values) (*[]byte, error) {
 	params.Set("wt", "json")
 	r, err := HTTPGet(fmt.Sprintf("%s/%s/%s?%s", c.url.String(), c.core, source, params.Encode()), nil, c.username, c.password)
-	if err != nil {
-		return nil, err
-	}
+	return &r, err
+	/*return
 	resp, err := bytes2json(&r)
 	if err != nil {
 		return nil, err
@@ -163,7 +150,7 @@ func (c *Connection) Resource(source string, params *url.Values) (*SolrResponse,
 
 	result := SolrResponse{Response: resp}
 	result.Status = int(resp["responseHeader"].(map[string]interface{})["status"].(float64))
-	return &result, nil
+	return &result, nil */
 }
 
 // Update take optional params which can use to specify addition parameters such as commit=true

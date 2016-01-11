@@ -683,9 +683,9 @@ func TestRealAdd(t *testing.T) {
 
 	fmt.Println(r.Results)
 }
-*/
 
-/*
+
+
 func TestRealDelete(t *testing.T) {
 	fmt.Println("test_real")
 	si, err := NewSolrInterface("http://localhost:8983/solr", "collection1")
@@ -712,7 +712,6 @@ func TestRealDeleteAll(t *testing.T) {
 	fmt.Println(res.Result)
 }
 */
-
 func TestNewCoreAdmin(t *testing.T) {
 	si, err := NewSolrInterface(solrUrl, "collection1")
 	si.SetBasicAuth("test", "test")

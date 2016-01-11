@@ -1,6 +1,7 @@
 package solr
 
 import (
+	"encoding/json"
 	"fmt"
 	"math"
 	"net/url"
@@ -40,6 +41,30 @@ type SolrUpdateResponse struct {
 }
 
 // Holding the search result
+type FireworkCollection struct {
+	Docs     *json.RawMessage
+	Start    int
+	NumFound int
+}
+
+// Parsed result for SearchHandler response, ie /select
+type FireworkSolrResult struct {
+	Status  int                // status quick access to status
+	Results FireworkCollection `json:"response"` // results parsed documents, basically response object
+	QTime   int
+	Params  map[string]string `json:"params"`
+
+	ResponseHeader map[string]interface{}
+	FacetCounts    map[string]interface{}
+
+	Highlighting map[string]interface{}
+	Error        map[string]interface{}
+	Grouped      map[string]interface{} // grouped for grouping result if grouping Results will be empty
+	Stats        map[string]interface{}
+	MoreLikeThis map[string]interface{} // MoreLikeThis using Search (select) Component
+}
+
+// Holding the search result
 type Collection struct {
 	Docs     []Document
 	Start    int
@@ -50,6 +75,7 @@ type Collection struct {
 type SolrResult struct {
 	Status         int         // status quick access to status
 	Results        *Collection // results parsed documents, basically response object
+	QTime          int
 	ResponseHeader map[string]interface{}
 	FacetCounts    map[string]interface{}
 	Highlighting   map[string]interface{}
