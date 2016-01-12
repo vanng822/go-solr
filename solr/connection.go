@@ -142,15 +142,7 @@ func (c *Connection) Resource(source string, params *url.Values) (*[]byte, error
 	params.Set("wt", "json")
 	r, err := HTTPGet(fmt.Sprintf("%s/%s/%s?%s", c.url.String(), c.core, source, params.Encode()), nil, c.username, c.password)
 	return &r, err
-	/*return
-	resp, err := bytes2json(&r)
-	if err != nil {
-		return nil, err
-	}
 
-	result := SolrResponse{Response: resp}
-	result.Status = int(resp["responseHeader"].(map[string]interface{})["status"].(float64))
-	return &result, nil */
 }
 
 // Update take optional params which can use to specify addition parameters such as commit=true
