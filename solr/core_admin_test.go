@@ -1,14 +1,14 @@
 package solr
 
 import (
-	"testing"
 	"net/url"
+	"testing"
 )
 
 func TestWrongAction(t *testing.T) {
-	
+
 	ca, _ := NewCoreAdmin("http://127.0.0.1:12345/solr")
-	
+
 	params := &url.Values{}
 	params.Add("core", "core0")
 	_, err := ca.Action("BLABLA", params)
@@ -32,4 +32,3 @@ func TestCoreAdminInvalidUrl(t *testing.T) {
 		t.Errorf("expected '%s' but got '%s'", expected, err.Error())
 	}
 }
-

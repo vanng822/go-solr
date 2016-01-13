@@ -1,22 +1,52 @@
 package solr
 
 import (
+	"encoding/json"
 	"fmt"
 )
+
+func bytes2json(data *[]byte) (map[string]interface{}, error) {
+	var jsonData interface{}
+
+	err := json.Unmarshal(*data, &jsonData)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return jsonData.(map[string]interface{}), nil
+}
 
 // ResultParser is interface for parsing result from response.
 // The idea here is that application have possibility to parse.
 // Or defined own parser with internal data structure to suite
 // application's need
 type ResultParser interface {
-	Parse(response *SolrResponse) (*SolrResult, error)
+	Parse(resp *[]byte) (*SolrResult, error)
+}
+
+type FireworkResultParser struct {
+}
+
+func (parser *FireworkResultParser) Parse(resp *[]byte) (FireworkSolrResult, error) {
+	var res FireworkSolrResult
+	err := json.Unmarshal(*resp, &res)
+	return res, err
 }
 
 type StandardResultParser struct {
 }
 
-func (parser *StandardResultParser) Parse(response *SolrResponse) (*SolrResult, error) {
+func (parser *StandardResultParser) Parse(resp_ *[]byte) (*SolrResult, error) {
 	sr := &SolrResult{}
+	jsonbuf, err := bytes2json(resp_)
+	if err != nil {
+		return sr, err
+	}
+	response := new(SolrResponse)
+	response.Response = jsonbuf
+	response.Status = int(jsonbuf["responseHeader"].(map[string]interface{})["status"].(float64))
+
 	sr.Results = new(Collection)
 	sr.Status = response.Status
 
@@ -108,31 +138,39 @@ func (parser *StandardResultParser) ParseMoreLikeThis(response *SolrResponse, sr
 }
 
 type MltResultParser interface {
-	Parse(response *SolrResponse) (*SolrMltResult, error)
+	Parse(*[]byte) (*SolrMltResult, error)
 }
 
 type MoreLikeThisParser struct {
 }
 
-func (parser *MoreLikeThisParser) Parse(response *SolrResponse) (*SolrMltResult, error) {
+func (parser *MoreLikeThisParser) Parse(resp_ *[]byte) (*SolrMltResult, error) {
+	jsonbuf, err := bytes2json(resp_)
 	sr := &SolrMltResult{}
+	if err != nil {
+		return sr, nil
+	}
+	var resp = new(SolrResponse)
+	resp.Response = jsonbuf
+	resp.Status = int(jsonbuf["responseHeader"].(map[string]interface{})["status"].(float64))
+
 	sr.Results = new(Collection)
 	sr.Match = new(Collection)
-	sr.Status = response.Status
-	
-	if responseHeader, ok := response.Response["responseHeader"].(map[string]interface{}); ok {
+	sr.Status = resp.Status
+
+	if responseHeader, ok := resp.Response["responseHeader"].(map[string]interface{}); ok {
 		sr.ResponseHeader = responseHeader
 	}
-	
-	if response.Status == 0 {
-		if resp, ok := response.Response["response"].(map[string]interface{}); ok {
+
+	if resp.Status == 0 {
+		if resp, ok := resp.Response["response"].(map[string]interface{}); ok {
 			ParseDocResponse(resp, sr.Results)
 		}
-		if match, ok := response.Response["match"].(map[string]interface{}); ok {
+		if match, ok := resp.Response["match"].(map[string]interface{}); ok {
 			ParseDocResponse(match, sr.Match)
 		}
 	} else {
-		if err, ok := response.Response["error"].(map[string]interface{}); ok {
+		if err, ok := resp.Response["error"].(map[string]interface{}); ok {
 			sr.Error = err
 		}
 	}
