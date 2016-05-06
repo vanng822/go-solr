@@ -77,6 +77,8 @@ type SolrResult struct {
 	Results        *Collection // results parsed documents, basically response object
 	QTime          int
 	ResponseHeader map[string]interface{}
+	Facets         map[string]interface{}
+	JsonFacets     map[string]interface{}
 	FacetCounts    map[string]interface{}
 	Highlighting   map[string]interface{}
 	Error          map[string]interface{}

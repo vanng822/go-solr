@@ -158,3 +158,54 @@ func TestQueryQueryField(t *testing.T) {
 	}
 }
 
+func TestSolrQueryAddFacet(t *testing.T) {
+	q := NewQuery()
+	q.AddFacet("color")
+	q.AddFacet("size")
+	expected := "facet=true&facet.field=color&facet.field=size"
+	result := q.String()
+	if result != expected {
+		t.Errorf("expected '%s' but got '%s'", expected, result)
+	}
+}
+
+func TestSolrQuerySetFacetMinCount(t *testing.T) {
+	q := NewQuery()
+	q.SetFacetMinCount(10)
+	expected := "facet.mincount=10"
+	result := q.String()
+	if result != expected {
+		t.Errorf("expected '%s' but got '%s'", expected, result)
+	}
+}
+
+func TestSolrQueryAddFacetPivot(t *testing.T) {
+	q := NewQuery()
+	q.AddFacetPivot("color")
+	q.AddFacetPivot("size")
+	expected := "facet.pivot=color&facet.pivot=size"
+	result := q.String()
+	if result != expected {
+		t.Errorf("expected '%s' but got '%s'", expected, result)
+	}
+}
+
+func TestSolrQuerySetFacetPivotMinCount(t *testing.T) {
+	q := NewQuery()
+	q.SetFacetPivotMinCount(10)
+	expected := "facet.pivot.mincount=10"
+	result := q.String()
+	if result != expected {
+		t.Errorf("expected '%s' but got '%s'", expected, result)
+	}
+}
+
+func TestSolrQueryAddJsonFacet(t *testing.T) {
+	q := NewQuery()
+	q.AddJsonFacet("{categories:{type:terms,field:cat,sort:'x desc',facet:{x:'avg(price)',y:'sum(price)'}}")
+	expected := "json.facet=%7Bcategories%3A%7Btype%3Aterms%2Cfield%3Acat%2Csort%3A%27x+desc%27%2Cfacet%3A%7Bx%3A%27avg%28price%29%27%2Cy%3A%27sum%28price%29%27%7D%7D"
+	result := q.String()
+	if result != expected {
+		t.Errorf("expected '%s' but got '%s'", expected, result)
+	}
+}
