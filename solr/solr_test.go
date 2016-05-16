@@ -590,6 +590,34 @@ func TestMoreLikeThisSuccess(t *testing.T) {
 	}
 }
 
+func TestSpellCheck(t *testing.T) {
+	si, err := NewSolrInterface("http://127.0.0.1:12345/spell", "collection1")
+	if err != nil {
+		t.Errorf(err.Error())
+	}
+	q := NewQuery()
+	q.AddParam("q", "id:tets")
+	q.Rows(10)
+
+	s := si.Search(q)
+
+	res, err := s.SpellCheck(nil)
+
+	if err != nil {
+		t.Errorf("Error should be nil")
+		return
+	}
+
+	if res.SpellCheck["spellcheck"] != nil {
+		if spellcheck, ok := res.SpellCheck["spellcheck"].(map[string]interface{}); ok {
+			if _, ok := spellcheck["suggestions"].([]interface{}); ok {
+				return
+			}
+		}
+	}
+	t.Error("spellcheck component not responding, result should have 'spellcheck' entry")
+}
+
 func TestMoreLikeThisError(t *testing.T) {
 	si, err := NewSolrInterface("http://127.0.0.1:12345/error", "collection1")
 	if err != nil {

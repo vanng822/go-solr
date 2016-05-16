@@ -61,6 +61,7 @@ func (parser *StandardResultParser) Parse(resp_ *[]byte) (*SolrResult, error) {
 		parser.ParseHighlighting(response, sr)
 		parser.ParseStats(response, sr)
 		parser.ParseMoreLikeThis(response, sr)
+		parser.ParseSpellCheck(response, sr)
 	} else {
 		parser.ParseError(response, sr)
 	}
@@ -134,6 +135,13 @@ func (parser *StandardResultParser) ParseStats(response *SolrResponse, sr *SolrR
 func (parser *StandardResultParser) ParseMoreLikeThis(response *SolrResponse, sr *SolrResult) {
 	if moreLikeThis, ok := response.Response["moreLikeThis"].(map[string]interface{}); ok {
 		sr.MoreLikeThis = moreLikeThis
+	}
+}
+
+// Parse moreLikeThis if there is in response
+func (parser *StandardResultParser) ParseSpellCheck(response *SolrResponse, sr *SolrResult) {
+	if spellCheck, ok := response.Response["spellcheck"].(map[string]interface{}); ok {
+		sr.SpellCheck = spellCheck
 	}
 }
 
