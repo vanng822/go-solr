@@ -69,6 +69,30 @@ func mockSuccessSelect(w http.ResponseWriter, req *http.Request) {
 		  }}`)
 }
 
+func mockSuccessSpell(w http.ResponseWriter, req *http.Request) {
+	logRequest(req)
+	io.WriteString(w, `{
+		  "responseHeader":{
+		    "status":0,
+		    "QTime":1,
+		    "params":{
+		      "indent":"true",
+		      "q":"*:*",
+		      "wt":"json"}},
+		  "response":{"numFound":1,"start":0,"docs":[],
+		  "spellcheck": {
+    		"suggestions": [
+    			"tets",
+    			"numFound": 5,
+        		"startOffset": 0,
+        		"endOffset": 5,
+        		"origFreq": 3,
+        		"suggestion": [{"word":"test","freq":9}]
+    			]
+    		}
+		  }}`)
+}
+
 func mockSuccessSelectFacet(w http.ResponseWriter, req *http.Request) {
 	logRequest(req)
 	io.WriteString(w, `{
@@ -422,7 +446,8 @@ func mockStartServer() {
 	http.HandleFunc("/solr/collection1/schema/uniquekey", mockSchemaUniquekey)
 	http.HandleFunc("/solr/collection1/schema/version", mockSchemaVersion)
 	http.HandleFunc("/solr/collection1/admin/ping", mockPing)
-	
+	http.HandleFunc("/solr/collection1/spell", mockSuccessSpell)
+
 	err := http.ListenAndServe(":12345", nil)
 	if err != nil {
 		log.Fatal("ListenAndServe: ", err)
