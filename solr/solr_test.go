@@ -607,7 +607,7 @@ func TestSpellCheck(t *testing.T) {
 	res, err := s.SpellCheck(nil)
 
 	if err != nil {
-		t.Errorf("Error should be nil")
+		t.Error(err)
 		return
 	}
 
