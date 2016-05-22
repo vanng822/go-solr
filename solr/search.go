@@ -84,3 +84,16 @@ func (s *Search) MoreLikeThis(parser MltResultParser) (*SolrMltResult, error) {
 	}
 	return parser.Parse(resp)
 }
+
+// This method is for making query to SpellCheckHandler
+// See https://wiki.apache.org/solr/SpellCheckComponent
+func (s *Search) SpellCheck(parser ResultParser) (*SolrResult, error) {
+	resp, err := s.Resource("spell", s.QueryParams())
+	if err != nil {
+		return nil, err
+	}
+	if parser == nil {
+		parser = new(StandardResultParser)
+	}
+	return parser.Parse(resp)
+}

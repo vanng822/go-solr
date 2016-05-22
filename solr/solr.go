@@ -83,6 +83,7 @@ type SolrResult struct {
 	Grouped        map[string]interface{} // grouped for grouping result if grouping Results will be empty
 	Stats          map[string]interface{}
 	MoreLikeThis   map[string]interface{} // MoreLikeThis using Search (select) Component
+	SpellCheck     map[string]interface{} // SpellCheck using SpellCheck (spell) Component
 }
 
 // Parsed result for MoreLikeThisHandler response, ie /mlt
