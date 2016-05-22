@@ -79,18 +79,17 @@ func mockSuccessSpell(w http.ResponseWriter, req *http.Request) {
 		      "indent":"true",
 		      "q":"*:*",
 		      "wt":"json"}},
-		  "response":{"numFound":1,"start":0,"docs":[],
+		  "response":{"numFound":0,"start":0,"docs":[]},
 		  "spellcheck": {
-    		"suggestions": [
-    			"tets",
-    			"numFound": 5,
-        		"startOffset": 0,
-        		"endOffset": 5,
-        		"origFreq": 3,
-        		"suggestion": [{"word":"test","freq":9}]
-    			]
-    		}
-		  }}`)
+            "suggestions": [
+                  "tets",
+                  {
+                              "numFound": 5,
+                              "startOffset": 0,
+                              "endOffset": 5,
+                              "origFreq": 3,
+                              "suggestion": [{"word":"test","freq":9}]
+                  }]}}`)
 }
 
 func mockSuccessSelectFacet(w http.ResponseWriter, req *http.Request) {

@@ -591,7 +591,7 @@ func TestMoreLikeThisSuccess(t *testing.T) {
 }
 
 func TestSpellCheck(t *testing.T) {
-	si, err := NewSolrInterface("http://127.0.0.1:12345/spell", "collection1")
+	si, err := NewSolrInterface("http://127.0.0.1:12345/solr", "collection1")
 	if err != nil {
 		t.Errorf(err.Error())
 	}
@@ -610,15 +610,35 @@ func TestSpellCheck(t *testing.T) {
 		t.Error(err)
 		return
 	}
-
-	if res.SpellCheck["spellcheck"] != nil {
-		if spellcheck, ok := res.SpellCheck["spellcheck"].(map[string]interface{}); ok {
-			if _, ok := spellcheck["suggestions"].([]interface{}); ok {
-				return
-			}
-		}
+	if _, ok := res.SpellCheck["suggestions"].([]interface{}); ok {
+		return
 	}
 	t.Error("spellcheck component not responding, result should have 'spellcheck' entry")
+}
+
+func TestSpellCheckNotFound(t *testing.T) {
+	si, err := NewSolrInterface("http://127.0.0.1:12345/stats", "collection1")
+	if err != nil {
+		t.Errorf(err.Error())
+	}
+	q := NewQuery()
+	q.DefType("edismax")
+	q.Q("tets")
+	q.QueryFields("id")
+
+	s := si.Search(q)
+
+	res, err := s.Result(nil)
+
+	if err != nil {
+		t.Error(err)
+		return
+	}
+	if len(res.SpellCheck) == 0 {
+		return
+	}
+
+	t.Error("spellcheck component responding, result shouldn't have 'spellcheck' entry")
 }
 
 func TestMoreLikeThisError(t *testing.T) {
