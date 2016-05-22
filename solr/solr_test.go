@@ -596,8 +596,11 @@ func TestSpellCheck(t *testing.T) {
 		t.Errorf(err.Error())
 	}
 	q := NewQuery()
-	q.AddParam("q", "id:tets")
-	q.Rows(10)
+	q.DefType("edismax")
+	q.Q("tets")
+	q.QueryFields("id")
+	q.SetParam("spellcheck", "true")
+	q.SetParam("spellcheck.q", "tets")
 
 	s := si.Search(q)
 
