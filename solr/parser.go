@@ -34,6 +34,84 @@ func (parser *FireworkResultParser) Parse(resp *[]byte) (FireworkSolrResult, err
 	return res, err
 }
 
+type ExtensiveResultParser struct {
+}
+
+func (parser *ExtensiveResultParser) Parse(resp_ *[]byte) (*SolrResult, error) {
+	sr := &SolrResult{}
+	jsonbuf, err := bytes2json(resp_)
+	if err != nil {
+		return sr, err
+	}
+	response := new(SolrResponse)
+	response.Response = jsonbuf
+	response.Status = int(jsonbuf["responseHeader"].(map[string]interface{})["status"].(float64))
+
+	sr.Results = new(Collection)
+	sr.Status = response.Status
+
+	parser.ParseResponseHeader(response, sr)
+
+	if 0 != response.Status {
+		parser.ParseError(response, sr)
+		return sr, nil
+	}
+
+	err = parser.ParseResponse(response, sr)
+
+	if err != nil {
+		return nil, err
+	}
+
+	parser.ParseFacets(response, sr)
+	parser.ParseJsonFacets(response, sr)
+
+	return sr, nil
+}
+
+func (parser *ExtensiveResultParser) ParseResponseHeader(response *SolrResponse, sr *SolrResult) {
+	if responseHeader, ok := response.Response["responseHeader"].(map[string]interface{}); ok {
+		sr.ResponseHeader = responseHeader
+	}
+}
+
+func (parser *ExtensiveResultParser) ParseError(response *SolrResponse, sr *SolrResult) {
+	if err, ok := response.Response["error"].(map[string]interface{}); ok {
+		sr.Error = err
+	}
+}
+
+// ParseJsonFacets will assign facets and build sr.jsonfacets if there is a facet_counts
+func (parser *ExtensiveResultParser) ParseFacets(response *SolrResponse, sr *SolrResult) {
+	if fc, ok := response.Response["facet_counts"].(map[string]interface{}); ok {
+		sr.FacetCounts = fc
+		if f, ok := fc["facet_fields"].(map[string]interface{}); ok {
+			sr.Facets = f
+		}
+	}
+}
+
+// ParseJsonFacets will assign facets and build sr.jsonfacets if there is a facets
+func (parser *ExtensiveResultParser) ParseJsonFacets(response *SolrResponse, sr *SolrResult) {
+	if jf, ok := response.Response["facets"].(map[string]interface{}); ok {
+		sr.JsonFacets = jf
+	}
+}
+
+// ParseSolrResponse will assign result and build sr.docs if there is a response.
+// If there is no response or grouped property in response it will return error
+func (parser *ExtensiveResultParser) ParseResponse(response *SolrResponse, sr *SolrResult) (err error) {
+	if resp, ok := response.Response["response"].(map[string]interface{}); ok {
+		ParseDocResponse(resp, sr.Results)
+	} else {
+		err = fmt.Errorf(`Extensive parser can only parse solr response with response object,
+					ie response.response and response.response.docs. Or grouped response
+					Please use other parser or implement your own parser`)
+	}
+
+	return err
+}
+
 type StandardResultParser struct {
 }
 

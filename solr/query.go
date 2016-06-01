@@ -55,6 +55,37 @@ func (q *Query) FieldList(fl string) {
 	q.params.Add("fl", fl)
 }
 
+// f (Facet) https://cwiki.apache.org/confluence/display/solr/Faceting#Faceting-Thefacet.fieldParameter
+// Example: category
+func (q *Query) AddFacet(f string) {
+	q.params.Set("facet", "true")
+	q.params.Add("facet.field", f)
+}
+
+// mc (Facet min count) https://cwiki.apache.org/confluence/display/solr/Faceting#Faceting-Thefacet.mincountParameter
+// Example: 5
+func (q *Query) SetFacetMinCount(mc int) {
+	q.params.Set("facet.mincount", fmt.Sprintf("%d", mc))
+}
+
+// f (Facet) https://wiki.apache.org/solr/SimpleFacetParameters#facet.pivot
+// Example: category
+func (q *Query) AddFacetPivot(f string) {
+	q.params.Add("facet.pivot", f)
+}
+
+// mc (Facet pivot min count) https://wiki.apache.org/solr/SimpleFacetParameters#facet.pivot
+// Example: 5
+func (q *Query) SetFacetPivotMinCount(mc int) {
+	q.params.Set("facet.pivot.mincount", fmt.Sprintf("%d", mc))
+}
+
+// jf (Json facet) https://cwiki.apache.org/confluence/display/solr/JSON+Request+API#JSONRequestAPI-FacetExample
+// Example: {avg_price:"avg(price)"}
+func (q *Query) AddJsonFacet(jf string) {
+	q.params.Add("json.facet", jf)
+}
+
 // geofilt - The distance filter http://wiki.apache.org/solr/SpatialSearch
 // Output example: fq={!geofilt pt=45.15,-93.85 sfield=store d=5}
 func (q *Query) Geofilt(latitude, longitude float64, sfield string, distance float64) {
