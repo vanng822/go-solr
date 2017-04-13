@@ -57,11 +57,12 @@ type FireworkSolrResult struct {
 	ResponseHeader map[string]interface{}
 	FacetCounts    map[string]interface{}
 
-	Highlighting map[string]interface{}
-	Error        map[string]interface{}
-	Grouped      map[string]interface{} // grouped for grouping result if grouping Results will be empty
-	Stats        map[string]interface{}
-	MoreLikeThis map[string]interface{} // MoreLikeThis using Search (select) Component
+	Highlighting   map[string]interface{}
+	Error          map[string]interface{}
+	Grouped        map[string]interface{} // grouped for grouping result if grouping Results will be empty
+	Stats          map[string]interface{}
+	MoreLikeThis   map[string]interface{} // MoreLikeThis using Search (select) Component
+	NextCursorMark string                 `json:"nextCursorMark"`
 }
 
 // Holding the search result
@@ -86,6 +87,7 @@ type SolrResult struct {
 	Stats          map[string]interface{}
 	MoreLikeThis   map[string]interface{} // MoreLikeThis using Search (select) Component
 	SpellCheck     map[string]interface{} // SpellCheck using SpellCheck (spell) Component
+	NextCursorMark string
 }
 
 // Parsed result for MoreLikeThisHandler response, ie /mlt
