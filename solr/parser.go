@@ -49,7 +49,7 @@ func (parser *ExtensiveResultParser) Parse(resp_ *[]byte) (*SolrResult, error) {
 
 	sr.Results = new(Collection)
 	sr.Status = response.Status
-	sr.NextCursorMark = jsonbuf["nextCursorMark"].(string)
+	sr.NextCursorMark = fmt.Sprintf("%s", jsonbuf["nextCursorMark"])
 
 	parser.ParseResponseHeader(response, sr)
 
@@ -128,7 +128,7 @@ func (parser *StandardResultParser) Parse(resp_ *[]byte) (*SolrResult, error) {
 
 	sr.Results = new(Collection)
 	sr.Status = response.Status
-	sr.NextCursorMark = jsonbuf["nextCursorMark"].(string)
+	sr.NextCursorMark = fmt.Sprintf("%s", jsonbuf["nextCursorMark"])
 
 	parser.ParseResponseHeader(response, sr)
 
