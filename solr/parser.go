@@ -117,6 +117,7 @@ type StandardResultParser struct {
 }
 
 func (parser *StandardResultParser) Parse(resp_ *[]byte) (*SolrResult, error) {
+
 	sr := &SolrResult{}
 	jsonbuf, err := bytes2json(resp_)
 	if err != nil {
@@ -128,7 +129,9 @@ func (parser *StandardResultParser) Parse(resp_ *[]byte) (*SolrResult, error) {
 
 	sr.Results = new(Collection)
 	sr.Status = response.Status
-	sr.NextCursorMark = fmt.Sprintf("%s", jsonbuf["nextCursorMark"])
+	if jsonbuf["nextCursorMark"] != nil {
+		sr.NextCursorMark = fmt.Sprintf("%s", jsonbuf["nextCursorMark"])
+	}
 
 	parser.ParseResponseHeader(response, sr)
 
