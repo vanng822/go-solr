@@ -49,7 +49,9 @@ func (parser *ExtensiveResultParser) Parse(resp_ *[]byte) (*SolrResult, error) {
 
 	sr.Results = new(Collection)
 	sr.Status = response.Status
-	sr.NextCursorMark = fmt.Sprintf("%s", jsonbuf["nextCursorMark"])
+	if nextCursorMark, ok := jsonbuf["nextCursorMark"]; ok {
+		sr.NextCursorMark = fmt.Sprintf("%s", nextCursorMark)
+	}
 
 	parser.ParseResponseHeader(response, sr)
 
