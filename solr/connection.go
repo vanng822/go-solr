@@ -146,7 +146,7 @@ func (c *Connection) Resource(source string, params *url.Values) (*[]byte, error
 }
 
 // Update take optional params which can use to specify addition parameters such as commit=true
-func (c *Connection) Update(data map[string]interface{}, params *url.Values) (*SolrUpdateResponse, error) {
+func (c *Connection) Update(data interface{}, params *url.Values) (*SolrUpdateResponse, error) {
 
 	b, err := json2bytes(data)
 
