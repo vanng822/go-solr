@@ -191,8 +191,8 @@ func (si *SolrInterface) DeleteAll() (*SolrUpdateResponse, error) {
 	return si.Delete(M{"query": "*:*"}, params)
 }
 
-// Update take data of type map and optional params which can use to specify addition parameters such as commit=true
-func (si *SolrInterface) Update(data map[string]interface{}, params *url.Values) (*SolrUpdateResponse, error) {
+// Update take data of type interface{} and optional params which can use to specify addition parameters such as commit=true
+func (si *SolrInterface) Update(data interface{}, params *url.Values) (*SolrUpdateResponse, error) {
 	if si.conn == nil {
 		return nil, fmt.Errorf("No connection found for making request to solr")
 	}
