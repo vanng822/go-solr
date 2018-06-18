@@ -116,6 +116,7 @@ type Connection struct {
 	core     string
 	username string
 	password string
+	headers [][]string
 }
 
 // NewConnection will parse solrUrl and return a connection object, solrUrl must be a absolute url or path
@@ -137,6 +138,11 @@ func (c *Connection) SetBasicAuth(username, password string) {
 	c.password = password
 }
 
+func (c *Connection) AddHeader(key, value string) {
+	header := []string{key, value}
+	c.headers = append(c.headers, header)
+}
+
 func (c *Connection) Resource(source string, params *url.Values) (*[]byte, error) {
 	params.Set("wt", "json")
 	baseUrl := fmt.Sprintf("%s/%s/%s", c.url.String(), c.core, source)
@@ -146,10 +152,12 @@ func (c *Connection) Resource(source string, params *url.Values) (*[]byte, error
 	var err error
 	if len(baseUrl) + len(encodedParameters) >= maximumUrlLength {
 		data := []byte(encodedParameters)
-		headers := [][]string{{"Content-Type", "application/x-www-form-urlencoded"}}
+		var headers [][]string
+		copy(headers, c.headers)
+		headers = append(headers, []string{"Content-Type", "application/x-www-form-urlencoded"})
 		r, err = HTTPPost(baseUrl, &data, headers, c.username, c.password)
 	} else {
-		r, err = HTTPGet(fmt.Sprintf("%s?%s", baseUrl, encodedParameters), nil, c.username, c.password)
+		r, err = HTTPGet(fmt.Sprintf("%s?%s", baseUrl, encodedParameters), c.headers, c.username, c.password)
 	}
 	return &r, err
 
