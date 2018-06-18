@@ -124,7 +124,6 @@ func NewConnection(solrUrl, core string) (*Connection, error) {
 	if err != nil {
 		return nil, err
 	}
-
 	return &Connection{url: u, core: core}, nil
 }
 
@@ -140,7 +139,18 @@ func (c *Connection) SetBasicAuth(username, password string) {
 
 func (c *Connection) Resource(source string, params *url.Values) (*[]byte, error) {
 	params.Set("wt", "json")
-	r, err := HTTPGet(fmt.Sprintf("%s/%s/%s?%s", c.url.String(), c.core, source, params.Encode()), nil, c.username, c.password)
+	baseUrl := fmt.Sprintf("%s/%s/%s", c.url.String(), c.core, source)
+	encodedParameters := params.Encode()
+	maximumUrlLength := 2083
+	var r []byte
+	var err error
+	if len(baseUrl) + len(encodedParameters) >= maximumUrlLength {
+		data := []byte(encodedParameters)
+		headers := [][]string{{"Content-Type", "application/x-www-form-urlencoded"}}
+		r, err = HTTPPost(baseUrl, &data, headers, c.username, c.password)
+	} else {
+		r, err = HTTPGet(fmt.Sprintf("%s?%s", baseUrl, encodedParameters), nil, c.username, c.password)
+	}
 	return &r, err
 
 }
