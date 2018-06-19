@@ -14,6 +14,12 @@ var userAgent = fmt.Sprintf("Go-solr/%s (+https://github.com/vanng822/go-solr)",
 
 var transport = http.Transport{}
 
+// Solr imposes a limit on the size of a URL send to it using GET requests. Thus
+// this library will switch to use to POST requests as the user query's grow up.
+// If you need, you can charge this value, but be aware of the URL limit in
+// your Solr distribution.
+var MaximumSolrUrlLengthSupported = 2083
+
 // HTTPPost make a POST request to path which also includes domain, headers are optional
 func HTTPPost(path string, data *[]byte, headers [][]string, username, password string) ([]byte, error) {
 	var (
@@ -147,10 +153,9 @@ func (c *Connection) Resource(source string, params *url.Values) (*[]byte, error
 	params.Set("wt", "json")
 	baseUrl := fmt.Sprintf("%s/%s/%s", c.url.String(), c.core, source)
 	encodedParameters := params.Encode()
-	maximumUrlLength := 2083
 	var r []byte
 	var err error
-	if len(baseUrl) + len(encodedParameters) >= maximumUrlLength {
+	if len(baseUrl) + len(encodedParameters) >= MaximumSolrUrlLengthSupported {
 		data := []byte(encodedParameters)
 		var headers [][]string
 		copy(headers, c.headers)
