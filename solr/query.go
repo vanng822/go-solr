@@ -66,7 +66,7 @@ func (q *Query) AddFacet(f string) {
 // Example: price:[* TO 500]
 func (q *Query) AddFacetQuery(fq string) {
 	q.params.Set("facet", "true")
-	q.params.Add("facet.query", f)
+	q.params.Add("facet.query", fq)
 }
 
 // mc (Facet min count) https://cwiki.apache.org/confluence/display/solr/Faceting#Faceting-Thefacet.mincountParameter
