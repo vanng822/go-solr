@@ -14,6 +14,12 @@ var userAgent = fmt.Sprintf("Go-solr/%s (+https://github.com/vanng822/go-solr)",
 
 var transport = http.Transport{}
 
+// Solr imposes a limit on the size of a URL send to it using GET requests. Thus
+// this library will switch to use to POST requests as the user query's grow up.
+// If you need, you can charge this value, but be aware of the URL limit in
+// your Solr distribution.
+var MaximumSolrUrlLengthSupported = 2083
+
 // HTTPPost make a POST request to path which also includes domain, headers are optional
 func HTTPPost(path string, data *[]byte, headers [][]string, username, password string) ([]byte, error) {
 	var (
@@ -116,6 +122,7 @@ type Connection struct {
 	core     string
 	username string
 	password string
+	headers [][]string
 }
 
 // NewConnection will parse solrUrl and return a connection object, solrUrl must be a absolute url or path
@@ -124,7 +131,6 @@ func NewConnection(solrUrl, core string) (*Connection, error) {
 	if err != nil {
 		return nil, err
 	}
-
 	return &Connection{url: u, core: core}, nil
 }
 
@@ -138,15 +144,32 @@ func (c *Connection) SetBasicAuth(username, password string) {
 	c.password = password
 }
 
+func (c *Connection) AddHeader(key, value string) {
+	header := []string{key, value}
+	c.headers = append(c.headers, header)
+}
+
 func (c *Connection) Resource(source string, params *url.Values) (*[]byte, error) {
 	params.Set("wt", "json")
-	r, err := HTTPGet(fmt.Sprintf("%s/%s/%s?%s", c.url.String(), c.core, source, params.Encode()), nil, c.username, c.password)
+	baseUrl := fmt.Sprintf("%s/%s/%s", c.url.String(), c.core, source)
+	encodedParameters := params.Encode()
+	var r []byte
+	var err error
+	if len(baseUrl) + len(encodedParameters) >= MaximumSolrUrlLengthSupported {
+		data := []byte(encodedParameters)
+		var headers [][]string
+		copy(headers, c.headers)
+		headers = append(headers, []string{"Content-Type", "application/x-www-form-urlencoded"})
+		r, err = HTTPPost(baseUrl, &data, headers, c.username, c.password)
+	} else {
+		r, err = HTTPGet(fmt.Sprintf("%s?%s", baseUrl, encodedParameters), c.headers, c.username, c.password)
+	}
 	return &r, err
 
 }
 
 // Update take optional params which can use to specify addition parameters such as commit=true
-func (c *Connection) Update(data map[string]interface{}, params *url.Values) (*SolrUpdateResponse, error) {
+func (c *Connection) Update(data interface{}, params *url.Values) (*SolrUpdateResponse, error) {
 
 	b, err := json2bytes(data)
 
