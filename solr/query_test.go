@@ -169,6 +169,17 @@ func TestSolrQueryAddFacet(t *testing.T) {
 	}
 }
 
+func TestSolrQueryAddFacetQuery(t *testing.T) {
+	q := NewQuery()
+	q.AddFacetQuery("price:[* TO 500]")
+	q.AddFacetQuery("price:[501 TO *]")
+	expected := "facet=true&facet.query=price%3A%5B%2A+TO+500%5D&facet.query=price%3A%5B501+TO+%2A%5D"
+	result := q.String()
+	if result != expected {
+		t.Errorf("expected '%s' but got '%s'", expected, result)
+	}
+}
+
 func TestSolrQuerySetFacetMinCount(t *testing.T) {
 	q := NewQuery()
 	q.SetFacetMinCount(10)
