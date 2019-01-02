@@ -2,12 +2,15 @@ package solr
 
 import (
 	"bytes"
+	"crypto/tls"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"net"
 	"net/http"
 	"net/url"
 	"strings"
+	"time"
 )
 
 var userAgent = fmt.Sprintf("Go-solr/%s (+https://github.com/vanng822/go-solr)", VERSION)
@@ -46,7 +49,24 @@ func HTTPPost(path string, data *[]byte, headers [][]string, username, password 
 
 // HTTPGet make a GET request to url, headers are optional
 func HTTPGet(url string, headers [][]string, username, password string) ([]byte, error) {
-	client := &http.Client{Transport: &transport}
+	clientTimeout := 10 * time.Second
+	transport := &http.Transport{
+		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+		Dial: (&net.Dialer{
+			Timeout:   clientTimeout,
+			KeepAlive: 0,
+			DualStack: false,
+		}).Dial,
+		TLSHandshakeTimeout:   clientTimeout,
+		ResponseHeaderTimeout: clientTimeout,
+		IdleConnTimeout:       0,
+		ExpectContinueTimeout: 0,
+		DisableKeepAlives:     true,
+		DisableCompression:    true,
+	}
+
+	client := &http.Client{Transport: transport}
+
 	req, err := http.NewRequest("GET", url, nil)
 
 	if err != nil {
@@ -116,6 +136,7 @@ type Connection struct {
 	core     string
 	username string
 	password string
+	timeout  int
 }
 
 // NewConnection will parse solrUrl and return a connection object, solrUrl must be a absolute url or path
