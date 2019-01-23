@@ -241,7 +241,7 @@ func (parser *MoreLikeThisParser) Parse(resp_ *[]byte) (*SolrMltResult, error) {
 	jsonbuf, err := bytes2json(resp_)
 	sr := &SolrMltResult{}
 	if err != nil {
-		return sr, nil
+		return sr, err
 	}
 	var resp = new(SolrResponse)
 	resp.Response = jsonbuf
