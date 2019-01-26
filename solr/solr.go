@@ -49,7 +49,7 @@ type FireworkCollection struct {
 
 // Parsed result for SearchHandler response, ie /select
 type FireworkSolrResult struct {
-	Status  int                // status quick access to status
+	Status  int                                  // status quick access to status
 	Results FireworkCollection `json:"response"` // results parsed documents, basically response object
 	QTime   int
 	Params  map[string]string `json:"params"`
@@ -62,7 +62,7 @@ type FireworkSolrResult struct {
 	Grouped        map[string]interface{} // grouped for grouping result if grouping Results will be empty
 	Stats          map[string]interface{}
 	MoreLikeThis   map[string]interface{} // MoreLikeThis using Search (select) Component
-	NextCursorMark string                 `json:"nextCursorMark"`
+	NextCursorMark string `json:"nextCursorMark"`
 }
 
 // Holding the search result
@@ -87,6 +87,7 @@ type SolrResult struct {
 	Stats          map[string]interface{}
 	MoreLikeThis   map[string]interface{} // MoreLikeThis using Search (select) Component
 	SpellCheck     map[string]interface{} // SpellCheck using SpellCheck (spell) Component
+	Suggest        map[string]interface{} // Suggest using Suggester (suggest) Component
 	NextCursorMark string
 }
 
@@ -97,6 +98,15 @@ type SolrMltResult struct {
 	Match          *Collection // Documents for match section
 	ResponseHeader map[string]interface{}
 	Error          map[string]interface{}
+}
+
+// Parsed result for any response that is not already handled
+type SolrAnyResult struct {
+	Status         int // status quick access to status
+	Results        *Collection // results parsed documents, basically response object
+	ResponseHeader map[string]interface{}
+	Error          map[string]interface{}
+	Payload        map[string]interface{}
 }
 
 type SolrInterface struct {

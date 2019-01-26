@@ -269,3 +269,51 @@ func (parser *MoreLikeThisParser) Parse(resp_ *[]byte) (*SolrMltResult, error) {
 	}
 	return sr, nil
 }
+
+type AnyResultParser interface {
+	Parse(*[]byte) (*SolrAnyResult, error)
+}
+
+type AnyParser struct {
+}
+
+func (parser *AnyParser) Parse(resp_ *[]byte) (*SolrAnyResult, error) {
+	jsonbuf, err := bytes2json(resp_)
+	sr := &SolrAnyResult{}
+	if err != nil {
+		return sr, nil
+	}
+	var resp = new(SolrResponse)
+	resp.Response = jsonbuf
+	resp.Status = int(jsonbuf["responseHeader"].(map[string]interface{})["status"].(float64))
+
+	sr.Results = new(Collection)
+	sr.Status = resp.Status
+	sr.Payload = make(map[string]interface{})
+
+	if responseHeader, ok := resp.Response["responseHeader"].(map[string]interface{}); ok {
+		sr.ResponseHeader = responseHeader
+	}
+
+	if resp.Status != 0 {
+		if err, ok := resp.Response["error"].(map[string]interface{}); ok {
+			sr.Error = err
+		}
+		return sr, err
+	}
+
+	for k, r := range resp.Response {
+		switch k {
+		case "response":
+			if resp, ok := r.(map[string]interface{}); ok {
+				ParseDocResponse(resp, sr.Results)
+			}
+		case "responseHeader":
+			continue
+		default:
+			sr.Payload[k] = r
+		}
+	}
+
+	return sr, nil
+}

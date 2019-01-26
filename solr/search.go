@@ -97,3 +97,15 @@ func (s *Search) SpellCheck(parser ResultParser) (*SolrResult, error) {
 	}
 	return parser.Parse(resp)
 }
+
+// This method is for making query to user-specific or any request handler endpoint
+func (s *Search) Any(endpoint string, parser AnyResultParser) (*SolrAnyResult, error) {
+	resp, err := s.Resource(endpoint, s.QueryParams())
+	if err != nil {
+		return nil, err
+	}
+	if parser == nil {
+		parser = new(AnyParser)
+	}
+	return parser.Parse(resp)
+}
