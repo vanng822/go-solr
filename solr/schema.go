@@ -50,9 +50,9 @@ func (s *Schema) Get(path string, params *url.Values) (*SolrResponse, error) {
 	}
 
 	if s.core != "" {
-		r, err = HTTPGet(fmt.Sprintf("%s/%s/schema%s?%s", s.url.String(), s.core, path, params.Encode()), nil, s.username, s.password)
+		r, err = HTTPGet(fmt.Sprintf("%s/%s/schema%s?%s", s.url.String(), s.core, path, params.Encode()), nil, s.username, s.password, 0)
 	} else {
-		r, err = HTTPGet(fmt.Sprintf("%s/schema%s?%s", s.url.String(), path, params.Encode()), nil, s.username, s.password)
+		r, err = HTTPGet(fmt.Sprintf("%s/schema%s?%s", s.url.String(), path, params.Encode()), nil, s.username, s.password, 0)
 	}
 	if err != nil {
 		return nil, err
@@ -166,9 +166,9 @@ func (s *Schema) Post(path string, data interface{}) (*SolrUpdateResponse, error
 	}
 	
 	if s.core != "" {
-		r, err = HTTPPost(fmt.Sprintf("%s/%s/schema/%s?wt=json", s.url.String(), s.core, strings.Trim(path, "/")), b, [][]string{{"Content-Type", "application/json"}}, s.username, s.password)
+		r, err = HTTPPost(fmt.Sprintf("%s/%s/schema/%s?wt=json", s.url.String(), s.core, strings.Trim(path, "/")), b, [][]string{{"Content-Type", "application/json"}}, s.username, s.password, 0)
 	} else {
-		r, err = HTTPPost(fmt.Sprintf("%s/schema/%s?wt=json", s.url.String(), strings.Trim(path, "/")), b, [][]string{{"Content-Type", "application/json"}}, s.username, s.password)
+		r, err = HTTPPost(fmt.Sprintf("%s/schema/%s?wt=json", s.url.String(), strings.Trim(path, "/")), b, [][]string{{"Content-Type", "application/json"}}, s.username, s.password, 0)
 	}
 	if err != nil {
 		return nil, err

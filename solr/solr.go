@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"math"
 	"net/url"
+	"time"
 )
 
 // Shortcut for map[string]interface{}
@@ -116,6 +117,12 @@ func NewSolrInterface(solrUrl, core string) (*SolrInterface, error) {
 // it will affect all places that use this Connection instance
 func (si *SolrInterface) SetCore(core string) {
 	si.conn.SetCore(core)
+}
+
+// Set timeout for non admin/schema requests, this is just wrapper to Connection.SetTimeout
+// which mean it will affect all places that use this Connection instance
+func (si *SolrInterface) SetTimeout(timeout time.Duration) {
+	si.conn.SetTimeout(timeout)
 }
 
 // SetBasicAuth sets the request's Authorization header to use HTTP Basic Authentication with the provided username and password.
@@ -244,7 +251,7 @@ func (si *SolrInterface) Schema() (*Schema, error) {
 // Return 'status' and QTime from solr, if everything is fine status should have value 'OK'
 // QTime will have value -1 if can not determine
 func (si *SolrInterface) Ping() (status string, qtime int, err error) {
-	r, err := HTTPGet(fmt.Sprintf("%s/%s/admin/ping?wt=json", si.conn.url.String(), si.conn.core), nil, si.conn.username, si.conn.password)
+	r, err := HTTPGet(fmt.Sprintf("%s/%s/admin/ping?wt=json", si.conn.url.String(), si.conn.core), nil, si.conn.username, si.conn.password, 0)
 	if err != nil {
 		return "", -1, err
 	}
