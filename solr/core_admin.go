@@ -33,7 +33,7 @@ func (ca *CoreAdmin) SetBasicAuth(username, password string) {
 // Method for making GET-request to any relitive path to /admin/ such as /admin/cores or /admin/info/threads
 func (ca *CoreAdmin) Get(path string, params *url.Values) (*SolrResponse, error) {
 	params.Set("wt", "json")
-	r, err := HTTPGet(fmt.Sprintf("%s/admin/%s?%s", ca.url.String(), path, params.Encode()), nil, ca.username, ca.password)
+	r, err := HTTPGet(fmt.Sprintf("%s/admin/%s?%s", ca.url.String(), path, params.Encode()), nil, ca.username, ca.password, 0)
 	if err != nil {
 		return nil, err
 	}

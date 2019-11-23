@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
+	"time"
 )
 
 var userAgent = fmt.Sprintf("Go-solr/%s (+https://github.com/vanng822/go-solr)", VERSION)
@@ -20,14 +21,14 @@ var transport = http.Transport{}
 // your Solr distribution.
 var MaximumSolrUrlLengthSupported = 2083
 
-// HTTPPost make a POST request to path which also includes domain, headers are optional
-func HTTPPost(path string, data *[]byte, headers [][]string, username, password string) ([]byte, error) {
+// HTTPPost make a POST request to path which also includes domain, headers and timeout are optional
+func HTTPPost(path string, data *[]byte, headers [][]string, username, password string, timeout time.Duration) ([]byte, error) {
 	var (
 		req *http.Request
 		err error
 	)
 
-	client := &http.Client{Transport: &transport}
+	client := &http.Client{Transport: &transport, Timeout: timeout}
 	if data == nil {
 		req, err = http.NewRequest("POST", path, nil)
 	} else {
@@ -50,9 +51,9 @@ func HTTPPost(path string, data *[]byte, headers [][]string, username, password 
 	return makeRequest(client, req)
 }
 
-// HTTPGet make a GET request to url, headers are optional
-func HTTPGet(url string, headers [][]string, username, password string) ([]byte, error) {
-	client := &http.Client{Transport: &transport}
+// HTTPGet make a GET request to url, headers and timeout are optional
+func HTTPGet(url string, headers [][]string, username, password string, timeout time.Duration) ([]byte, error) {
+	client := &http.Client{Transport: &transport, Timeout: timeout}
 	req, err := http.NewRequest("GET", url, nil)
 
 	if err != nil {
@@ -122,7 +123,8 @@ type Connection struct {
 	core     string
 	username string
 	password string
-	headers [][]string
+	headers  [][]string
+	timeout  time.Duration
 }
 
 // NewConnection will parse solrUrl and return a connection object, solrUrl must be a absolute url or path
@@ -137,6 +139,10 @@ func NewConnection(solrUrl, core string) (*Connection, error) {
 // Set to a new core
 func (c *Connection) SetCore(core string) {
 	c.core = core
+}
+
+func (c *Connection) SetTimeout(timeout time.Duration) {
+	c.timeout = timeout
 }
 
 func (c *Connection) SetBasicAuth(username, password string) {
@@ -155,14 +161,14 @@ func (c *Connection) Resource(source string, params *url.Values) (*[]byte, error
 	encodedParameters := params.Encode()
 	var r []byte
 	var err error
-	if len(baseUrl) + len(encodedParameters) >= MaximumSolrUrlLengthSupported {
+	if len(baseUrl)+len(encodedParameters) >= MaximumSolrUrlLengthSupported {
 		data := []byte(encodedParameters)
 		var headers [][]string
 		copy(headers, c.headers)
 		headers = append(headers, []string{"Content-Type", "application/x-www-form-urlencoded"})
-		r, err = HTTPPost(baseUrl, &data, headers, c.username, c.password)
+		r, err = HTTPPost(baseUrl, &data, headers, c.username, c.password, c.timeout)
 	} else {
-		r, err = HTTPGet(fmt.Sprintf("%s?%s", baseUrl, encodedParameters), c.headers, c.username, c.password)
+		r, err = HTTPGet(fmt.Sprintf("%s?%s", baseUrl, encodedParameters), c.headers, c.username, c.password, c.timeout)
 	}
 	return &r, err
 
@@ -183,7 +189,7 @@ func (c *Connection) Update(data interface{}, params *url.Values) (*SolrUpdateRe
 
 	params.Set("wt", "json")
 
-	r, err := HTTPPost(fmt.Sprintf("%s/%s/update/?%s", c.url.String(), c.core, params.Encode()), b, [][]string{{"Content-Type", "application/json"}}, c.username, c.password)
+	r, err := HTTPPost(fmt.Sprintf("%s/%s/update/?%s", c.url.String(), c.core, params.Encode()), b, [][]string{{"Content-Type", "application/json"}}, c.username, c.password, c.timeout)
 
 	if err != nil {
 		return nil, err

@@ -103,7 +103,7 @@ func TestSolrSuccessSelect(t *testing.T) {
 }
 
 func TestSolrConnectionPostWithoutDataSucces(t *testing.T) {
-	_, err := HTTPPost(fmt.Sprintf("%s/collection1/schema", solrUrl), nil, nil, "", "")
+	_, err := HTTPPost(fmt.Sprintf("%s/collection1/schema", solrUrl), nil, nil, "", "", 0)
 	if err != nil {
 		t.Errorf("Not expected an error")
 		return
@@ -111,7 +111,7 @@ func TestSolrConnectionPostWithoutDataSucces(t *testing.T) {
 }
 
 func TestSolrConnectionPostWithoutDataError(t *testing.T) {
-	_, err := HTTPPost("http://www.fakedomain.tld/collection1/schema", nil, nil, "", "")
+	_, err := HTTPPost("http://www.fakedomain.tld/collection1/schema", nil, nil, "", "", 0)
 	if err == nil {
 		t.Errorf("Expected an error")
 		return
@@ -125,7 +125,7 @@ func TestSolrConnectionPostWithoutDataError(t *testing.T) {
 }
 
 func TestSolrConnectionGetWithHeadersError(t *testing.T) {
-	_, err := HTTPGet("http://www.fakedomain.tld/collection1/schema", [][]string{{"Content-Type", "application/json"}}, "", "")
+	_, err := HTTPGet("http://www.fakedomain.tld/collection1/schema", [][]string{{"Content-Type", "application/json"}}, "", "", 0)
 	if err == nil {
 		t.Errorf("Expected an error")
 		return
