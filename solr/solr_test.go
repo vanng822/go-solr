@@ -355,6 +355,25 @@ func TestSolrSuccessStandaloneCommit(t *testing.T) {
 	}
 }
 
+func TestSolrSuccessStandaloneSoftCommit(t *testing.T) {
+
+	si, err := NewSolrInterface("http://127.0.0.1:12345/standalonesoftcommit", "core0")
+
+	if err != nil {
+		t.Errorf("Can not instance a new solr interface, err: %s", err)
+	}
+
+	res, err := si.SoftCommit()
+
+	if err != nil {
+		t.Errorf("cannot soft commit %s", err)
+	}
+
+	if res.Success != true {
+		t.Errorf("success expected to be true")
+	}
+}
+
 func TestMakeAddChunks(t *testing.T) {
 	docs := make([]Document, 0, 100)
 	for i := 0; i < 500; i++ {

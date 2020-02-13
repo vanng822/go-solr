@@ -213,6 +213,15 @@ func (si *SolrInterface) Commit() (*SolrUpdateResponse, error) {
 	return si.Update(M{}, params)
 }
 
+// Soft commit the changes since the last commit
+// see https://lucene.apache.org/solr/guide/8_0/updatehandlers-in-solrconfig.html
+func (si *SolrInterface) SoftCommit() (*SolrUpdateResponse, error) {
+	params := &url.Values{}
+	params.Add("commit", "true")
+	params.Add("softCommit", "true")
+	return si.Update(M{}, params)
+}
+
 func (si *SolrInterface) Optimize(params *url.Values) (*SolrUpdateResponse, error) {
 	if params == nil {
 		params = &url.Values{}
