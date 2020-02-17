@@ -69,6 +69,22 @@ func mockSuccessSelect(w http.ResponseWriter, req *http.Request) {
 		  }}`)
 }
 
+func mockSuccessRealTimeGet(w http.ResponseWriter, req *http.Request) {
+	logRequest(req)
+	io.WriteString(w, `{
+		"response":{"numFound":1,"start":0,"docs":[
+			{
+			  "id":"123",
+			  "title":["test"],
+			  "_version_":1658405911050321920}]
+		}}`)
+}
+
+func mockFailRealTimeGet(w http.ResponseWriter, req *http.Request) {
+	logRequest(req)
+	io.WriteString(w, `{}`)
+}
+
 func mockSuccessSpell(w http.ResponseWriter, req *http.Request) {
 	logRequest(req)
 	io.WriteString(w, `{
@@ -419,6 +435,8 @@ func mockMoreLikeThisError(w http.ResponseWriter, req *http.Request) {
 
 func mockStartServer() {
 	http.HandleFunc("/success/core0/select/", mockSuccessSelect)
+	http.HandleFunc("/realtimegetsuccess/core0/get/", mockSuccessRealTimeGet)
+	http.HandleFunc("/realtimegetfail/core0/get/", mockFailRealTimeGet)
 	http.HandleFunc("/fail/core0/select/", mockFailSelect)
 	http.HandleFunc("/facet_counts/core0/select/", mockSuccessSelectFacet)
 	http.HandleFunc("/highlight/core0/select/", mockSuccessSelectHighlight)

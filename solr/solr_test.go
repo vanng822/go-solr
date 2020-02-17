@@ -102,6 +102,48 @@ func TestSolrSuccessSelect(t *testing.T) {
 	}
 }
 
+func TestSolrRealTimeGetSuccess(t *testing.T) {
+	si, err := NewSolrInterface("http://127.0.0.1:12345/realtimegetsuccess", "core0")
+	if err != nil {
+		t.Errorf("Can not instance a new solr interface, err: %s", err)
+	}
+
+	q := NewQuery()
+	q.AddParam("id", "123")
+	s := si.Search(q)
+	res, err := s.RealTimeGet(nil)
+	if err != nil {
+		t.Errorf("cannot get %s", err)
+	}
+
+	if res.Results.NumFound != 1 {
+		t.Errorf("results.numFound expected to be 1")
+	}
+
+	if len(res.Results.Docs) != 1 {
+		t.Errorf("len of results.docs should be 1")
+	}
+
+	if res.Results.Docs[0].Get("id").(string) != "123" {
+		t.Errorf("id of document should be 123")
+	}
+}
+
+func TestSolrRealTimeGetFail(t *testing.T) {
+	si, err := NewSolrInterface("http://127.0.0.1:12345/realtimegetfail", "core0")
+	if err != nil {
+		t.Errorf("Can not instance a new solr interface, err: %s", err)
+	}
+
+	q := NewQuery()
+	q.AddParam("id", "")
+	s := si.Search(q)
+	_, err = s.RealTimeGet(nil)
+	if err == nil {
+		t.Errorf("Expected an error")
+	}
+}
+
 func TestSolrConnectionPostWithoutDataSucces(t *testing.T) {
 	_, err := HTTPPost(fmt.Sprintf("%s/collection1/schema", solrUrl), nil, nil, "", "", 0)
 	if err != nil {

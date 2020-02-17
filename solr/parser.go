@@ -2,6 +2,7 @@ package solr
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 )
 
@@ -268,4 +269,30 @@ func (parser *MoreLikeThisParser) Parse(resp_ *[]byte) (*SolrMltResult, error) {
 		}
 	}
 	return sr, nil
+}
+
+type RealTimeGetResultParser interface {
+	Parse(*[]byte) (*SolrGetResult, error)
+}
+
+type RealTimeGetParser struct {
+}
+
+// Parse function for RealTimeGetParser
+func (parser *RealTimeGetParser) Parse(resp_ *[]byte) (*SolrGetResult, error) {
+	sr := &SolrGetResult{}
+	jsonbuf, err := bytes2json(resp_)
+	if err != nil {
+		return sr, err
+	}
+
+	sr.Results = new(Collection)
+	if resp, ok := jsonbuf["response"].(map[string]interface{}); ok {
+		ParseDocResponse(resp, sr.Results)
+	} else {
+		// Should only happen when params are incorrectly defined
+		err = errors.New("Unable to parse realtime get response")
+	}
+
+	return sr, err
 }
