@@ -72,6 +72,31 @@ func (s *Search) Result(parser ResultParser) (*SolrResult, error) {
 	return parser.Parse(resp)
 }
 
+// RealTimeGet makes queries to the RealTimeGetHandler
+// See https://lucene.apache.org/solr/guide/8_0/realtime-get.html
+// This currently supports only the id (unique-key) and fq parameters
+// Regardless of what actual name the unique-key field has,
+// it should be specified as id or ids in the params
+func (s *Search) RealTimeGet(parser RealTimeGetResultParser) (*SolrRealtimeGetResult, error) {
+	// the response format is different with the id and ids params
+	// converting id to ids lets the response be parsed by ParseDocResponse()
+	if id := s.QueryParams().Get("id"); id != "" {
+		s.QueryParams().Set("ids", id)
+		s.QueryParams().Del("id")
+	}
+
+	resp, err := s.Resource("get", s.QueryParams())
+	if err != nil {
+		return nil, err
+	}
+
+	if parser == nil {
+		parser = new(RealTimeGetParser)
+	}
+
+	return parser.Parse(resp)
+}
+
 // This method is for making query to MoreLikeThisHandler
 // See http://wiki.apache.org/solr/MoreLikeThisHandler
 func (s *Search) MoreLikeThis(parser MltResultParser) (*SolrMltResult, error) {
