@@ -272,15 +272,15 @@ func (parser *MoreLikeThisParser) Parse(resp_ *[]byte) (*SolrMltResult, error) {
 }
 
 type RealTimeGetResultParser interface {
-	Parse(*[]byte) (*SolrGetResult, error)
+	Parse(*[]byte) (*SolrRealtimeGetResult, error)
 }
 
 type RealTimeGetParser struct {
 }
 
 // Parse function for RealTimeGetParser
-func (parser *RealTimeGetParser) Parse(resp_ *[]byte) (*SolrGetResult, error) {
-	sr := &SolrGetResult{}
+func (parser *RealTimeGetParser) Parse(resp_ *[]byte) (*SolrRealtimeGetResult, error) {
+	sr := &SolrRealtimeGetResult{}
 	jsonbuf, err := bytes2json(resp_)
 	if err != nil {
 		return sr, err

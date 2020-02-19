@@ -100,8 +100,8 @@ type SolrMltResult struct {
 	Error          map[string]interface{}
 }
 
-// SolrGetResult is the parsed result for the RealTimeGetHandler response ie /get
-type SolrGetResult struct {
+// SolrRealtimeGetResult is the parsed result for the RealTimeGetHandler response ie /get
+type SolrRealtimeGetResult struct {
 	Results *Collection
 }
 

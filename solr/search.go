@@ -77,7 +77,7 @@ func (s *Search) Result(parser ResultParser) (*SolrResult, error) {
 // This currently supports only the id (unique-key) and fq parameters
 // Regardless of what actual name the unique-key field has,
 // it should be specified as id or ids in the params
-func (s *Search) RealTimeGet(parser RealTimeGetResultParser) (*SolrGetResult, error) {
+func (s *Search) RealTimeGet(parser RealTimeGetResultParser) (*SolrRealtimeGetResult, error) {
 	// the response format is different with the id and ids params
 	// converting id to ids lets the response be parsed by ParseDocResponse()
 	if id := s.QueryParams().Get("id"); id != "" {
